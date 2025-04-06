@@ -1,0 +1,51 @@
+# === Python ===
+__pycache__/
+*.py[cod]
+*.sqlite3
+*.log
+*.pot
+*.pyc
+db.sqlite3
+env/
+venv/
+*.env
+*.env.*
+
+# === Django ===
+*.db
+media/
+staticfiles/
+local_settings.py
+
+# === Node / React ===
+node_modules/
+build/
+dist/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# === OS / IDE ===
+.DS_Store
+.vscode/
+.idea/
+*.swp
+
+# === Coverage / Testing ===
+coverage/
+htmlcov/
+*.cover
+*.py,cover
+.cache/
+nosetests.xml
+coverage.xml
+*.lcov
+
+# === Misc ===
+*.tgz
+*.bak
+*.tmp
+.env.local
+.env.production
+.env.development
+.env.test
