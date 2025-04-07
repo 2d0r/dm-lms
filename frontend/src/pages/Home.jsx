@@ -1,52 +1,88 @@
 import React, { useState, useEffect } from 'react';
-import api from '../api';
-import { getCourses } from '../services/coursesServices';
+import {
+    getCourses,
+    createCourse,
+    deleteCourse,
+} from '../services/coursesServices';
 import { getUsers } from '../services/usersServices';
 
 export default function Home() {
     const [courses, setCourses] = useState([]);
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+    const [users, setUsers] = useState([]);
 
     useEffect(() => {
         populateCourses();
     }, []);
 
+    useEffect(() => {
+        if (error) alert(error);
+    }, [error]);
+
     const populateCourses = async () => {
-        const courses = await getCourses();
-        const users = await getUsers();
-        console.log(users)
-        const coursesWithTeacherNames = courses.map((course) => {
-            const teacher = users.find(user => user.id === course.teacher);
-            return { ...course, teacherName: teacher.username };
-        });
-        setCourses(coursesWithTeacherNames);
-    };
-
-    const deleteCourse = async (id) => {
-        try {
-            const res = await api.delete(`/api/courses/delete/${id}/`);
-            if (res.status === 204) {
-                console.log('Course deleted!');
-                setCourses((courses) => courses.filter((el) => el.id !== id));
-            } else alert('Failed to delete course.');
-        } catch (error) {
-            alert(error);
+        const coursesRes = await getCourses();
+        const usersRes = await getUsers();
+        if (coursesRes.success && usersRes.success) {
+            const courses = coursesRes.data;
+            const users = usersRes.data;
+            setUsers(users);
+            const coursesWithTeacherNames = courses.map((course) => {
+                const teacher = users.find(
+                    (user) => user.id === course.teacher
+                );
+                return { ...course, teacherName: teacher.username };
+            });
+            setCourses(coursesWithTeacherNames);
+        } else {
+            setError(
+                coursesRes.error ||
+                usersRes.error ||
+                'Something went wrong while populating courses'
+            );
         }
     };
 
-    const createCourse = async (e) => {
+    // Create course
+    const handleCreateCourse = async (e) => {
+        setLoading(true);
         e.preventDefault();
-        try {
-            const res = await api.post('/api/courses/', { description, title });
-            if (res.status === 201) {
-                console.log('Course created!');
-                const newCourse = await res.data;
-                setCourses((courses) => [...courses, newCourse]);
-            } else alert('Failed to create course.');
-        } catch (error) {
-            alert(error);
+
+        const result = await createCourse({ description, title });
+        if (result.success) {
+            const newCourse = result.data;
+            const teacherName = users.find(
+                (user) => user.id === newCourse.teacher
+            ).username;
+
+            setCourses((courses) => [
+                ...courses,
+                { ...newCourse, teacherName },
+            ]);
+        } else {
+            setError(
+                result.error || 'Something went wrong while creating course'
+            );
         }
+
+        setLoading(false);
+    };
+
+    const handleDeleteCourse = async (id) => {
+        setLoading(true);
+
+        const result = await deleteCourse(id);
+        if (result.success) {
+            setCourses((courses) => courses.filter((el) => el.id !== id));
+        } else {
+            setError(
+                result.error || 'Something went wrong while deleting course'
+            );
+        }
+
+        setLoading(false);
     };
 
     return (
@@ -59,7 +95,9 @@ export default function Home() {
                             <h3>{course.title}</h3>
                             <p>{course.description}</p>
                             <p>Teacher: {course.teacherName}</p>
-                            <button onClick={() => deleteCourse(course.id)}>
+                            <button
+                                onClick={() => handleDeleteCourse(course.id)}
+                            >
                                 Delete
                             </button>
                         </div>
@@ -68,7 +106,7 @@ export default function Home() {
             </div>
             <div>
                 <h2>Create course</h2>
-                <form onSubmit={createCourse}>
+                <form onSubmit={handleCreateCourse}>
                     <label htmlFor='title'>Title:</label>
                     <input
                         type='text'
