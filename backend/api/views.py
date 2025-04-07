@@ -1,12 +1,16 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from rest_framework import generics
-from .serializers import UserSerializer, CourseSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .models import Course
+from rest_framework_simplejwt.views import TokenObtainPairView
+from .serializers import UserSerializer, CourseSerializer, MyTokenObtainPairSerializer
+from .models import Course, Profile
+from .permissions import IsAdmin, IsAdminOrTeacher
 
-class CourseListCreate(generics.ListCreateAPIView):
-    '''List and create courses.'''
+# Courses
+
+class CourseListView(generics.ListAPIView):
+    '''List courses.'''
     serializer_class = CourseSerializer
     permission_classes = [IsAuthenticated]
 
@@ -14,16 +18,26 @@ class CourseListCreate(generics.ListCreateAPIView):
         '''Return a list of all courses'''
         return Course.objects.all()
 
+class CourseCreateView(generics.CreateAPIView):
+    '''Create a new course.'''
+    queryset = Course.objects.all()
+    serializer_class = CourseSerializer
+    permission_classes = [IsAuthenticated, IsAdminOrTeacher]
+
+    # def get_queryset(self):
+    #     '''Return a list of all courses'''
+    #     return Course.objects.all()
+
     def perform_create(self, serializer):
         if serializer.is_valid():
             serializer.save(teacher=self.request.user)
         else:
             raise ValueError("Invalid data provided")
         
-class CourseDelete(generics.DestroyAPIView):
+class CourseDeleteView(generics.DestroyAPIView):
     '''Delete a course.'''
     serializer_class = CourseSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsAdminOrTeacher]
 
     # def perform_destroy(self, instance):
     #     '''Delete the course instance.'''
@@ -34,14 +48,15 @@ class CourseDelete(generics.DestroyAPIView):
         '''Return a list of all courses.'''
         return Course.objects.all()
 
-# Create your views here.
-class CreateUserView(generics.CreateAPIView):
+# Users
+
+class UserCreateView(generics.CreateAPIView):
     '''Create a new user.'''
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
 
-class UserList(generics.ListCreateAPIView):
+class UserListView(generics.ListCreateAPIView):
     '''List and create teachers.'''
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
@@ -55,3 +70,29 @@ class UserList(generics.ListCreateAPIView):
     #         serializer.save(teacher=self.request.user)
     #     else:
     #         raise ValueError("Invalid data provided")
+
+class UserDeleteView(generics.DestroyAPIView):
+    '''Delete a user and related profile.'''
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated, IsAdmin]
+    
+    def get_queryset(self):
+        '''Return a list of all courses.'''
+        return User.objects.all()
+
+    def perform_destroy(self, instance):
+        '''Override perform_destroy to delete related profile.'''
+        # Delete the related profile
+        try:
+            profile = Profile.objects.get(user=instance)
+            profile.delete()
+        except Profile.DoesNotExist:
+            pass  # Profile might not exist if not created for some users
+
+        # Delete the user
+        instance.delete()
+
+# Tokens
+
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer

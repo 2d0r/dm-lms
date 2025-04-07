@@ -8,7 +8,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 
 function Logout() {
     localStorage.clear();
-    return <Navigate to="/login" />;
+    return <Navigate to='/login' />;
 }
 
 function RegisterAndLogout() {
@@ -20,6 +20,10 @@ function App() {
     return (
         <BrowserRouter>
             <Routes>
+                <Route path='/login' element={<Login />} />
+                <Route path='/logout' element={<Logout />} />
+                <Route path='/register' element={<RegisterAndLogout />} />
+                <Route path='*' element={<NotFound />} />
                 <Route 
                     path='/'
                     element={
@@ -28,10 +32,6 @@ function App() {
                         </ProtectedRoute>
                     }
                 />
-                <Route path='/login' element={<Login />} />
-                <Route path='/logout' element={<Logout />} />
-                <Route path='/register' element={<RegisterAndLogout />} />
-                <Route path='*' element={<NotFound />} />
             </Routes>
         </BrowserRouter>
     );

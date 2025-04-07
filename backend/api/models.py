@@ -10,3 +10,20 @@ class Course(models.Model):
 
     def __str__(self):
         return self.tile
+
+class Role(models.TextChoices):
+    ADMIN = 'ADMIN', 'admin'
+    TEACHER = 'TEACHER', 'teacher'
+    STUDENT = 'STUDENT', 'student'
+
+class Profile(models.Model):
+    '''Profile model to include authentication credentials and other user details.'''
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    role = models.CharField(
+        max_length=20, 
+        choices=Role.choices, 
+        default=Role.STUDENT, # Default to the role with fewest permissions
+    )
+
+    def __str__(self):
+        return f'{self.user.username} - {self.role}'

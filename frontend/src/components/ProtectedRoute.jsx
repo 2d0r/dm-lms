@@ -8,6 +8,7 @@ export default function ProtectedRoute({ children }) {
     // Check someone is authorised before allowing them to access this route
     // Otherwise redirect or notify
     const [isAuthorised, setIsAuthorised] = useState(null);
+    const userRole = localStorage.getItem('role');
 
     // Run auth on load
     useEffect(() => {
@@ -28,7 +29,7 @@ export default function ProtectedRoute({ children }) {
                 setIsAuthorised(false);
             }
         } catch (error) {
-            console.log(error);
+            console.error(error);
             setIsAuthorised(false);
         }
     };

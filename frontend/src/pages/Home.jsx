@@ -5,6 +5,7 @@ import {
     deleteCourse,
 } from '../services/coursesServices';
 import { getUsers } from '../services/usersServices';
+import { useNavigate } from 'react-router-dom';
 
 export default function Home() {
     const [courses, setCourses] = useState([]);
@@ -13,6 +14,7 @@ export default function Home() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [users, setUsers] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         populateCourses();
@@ -33,14 +35,14 @@ export default function Home() {
                 const teacher = users.find(
                     (user) => user.id === course.teacher
                 );
-                return { ...course, teacherName: teacher.username };
+                return { ...course, teacherName: teacher.first_name };
             });
             setCourses(coursesWithTeacherNames);
         } else {
             setError(
                 coursesRes.error ||
-                usersRes.error ||
-                'Something went wrong while populating courses'
+                    usersRes.error ||
+                    'Something went wrong while populating courses'
             );
         }
     };
@@ -55,7 +57,7 @@ export default function Home() {
             const newCourse = result.data;
             const teacherName = users.find(
                 (user) => user.id === newCourse.teacher
-            ).username;
+            ).first_name;
 
             setCourses((courses) => [
                 ...courses,
@@ -130,6 +132,7 @@ export default function Home() {
                     <input type='submit' value='Submit' />
                 </form>
             </div>
+            <button onClick={() => navigate('/logout')}>Logout</button>
         </div>
     );
 }

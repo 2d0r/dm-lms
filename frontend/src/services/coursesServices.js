@@ -12,7 +12,7 @@ export const getCourses = async () => {
 
 export const createCourse = async ({ description, title }) => {
     try {
-        const res = await api.post('/api/courses/', { description, title });
+        const res = await api.post('/api/courses/create/', { description, title });
         return { success: true, data: res.data };
     } catch (error) {
         console.error(error);
