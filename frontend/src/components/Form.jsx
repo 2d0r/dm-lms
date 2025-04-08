@@ -26,7 +26,9 @@ export default function Form({ route, method }) {
                 });
                 localStorage.setItem(ACCESS_TOKEN, res.data.access);
                 localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
-                localStorage.setItem('role', res.data.role); // save role in local
+                localStorage.setItem('userRole', res.data.role);
+                localStorage.setItem('userId', res.data.id);
+                localStorage.setItem('userName', res.data.first_name);
                 navigate('/');
             } else if (method === 'register') {
                 const res = await api.post(route, {

@@ -29,3 +29,43 @@ export const deleteUser = async (id) => {
         return { success: false, error: error.response?.data || error.message };
     }
 }
+
+export const enrollSelf = async (courseId) => {
+    try {
+        const res = await api.post(`api/courses/${courseId}/enroll/`);
+        return { success: true, status: res.status };
+    } catch (error) {
+        console.error(error);
+        return { success: false, error: error.response?.data || error.message };
+    }
+}
+
+export const unenrollSelf = async (courseId) => {
+    try {
+        const res = await api.delete(`api/courses/${courseId}/unenroll/`);
+        return { success: true, status: res.status };
+    } catch (error) {
+        console.error(error);
+        return { success: false, error: error.response?.data || error.message };
+    }
+}
+
+export const enrollUser = async (courseId, userId) => {
+    try {
+        const res = await api.post(`api/courses/${courseId}/enroll/${userId}`);
+        return { success: true, status: res.status };
+    } catch (error) {
+        console.error(error);
+        return { success: false, error: error.response?.data || error.message };
+    }
+}
+
+export const unenrollUser = async (courseId, userId) => {
+    try {
+        const res = await api.delete(`api/courses/${courseId}/unenroll/${userId}/`);
+        return { success: true, status: res.status };
+    } catch (error) {
+        console.error(error);
+        return { success: false, error: error.response?.data || error.message };
+    }
+}

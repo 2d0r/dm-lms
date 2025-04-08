@@ -4,7 +4,7 @@ import {
     createCourse,
     deleteCourse,
 } from '../services/coursesServices';
-import { deleteUser, getUsers } from '../services/usersServices';
+import { deleteUser, enrollSelf, getUsers, unenrollSelf } from '../services/usersServices';
 import { useNavigate } from 'react-router-dom';
 
 export default function Home() {
@@ -16,7 +16,8 @@ export default function Home() {
     const [users, setUsers] = useState([]);
     const navigate = useNavigate();
 
-    const role = localStorage.getItem('role');
+    const currentUserRole = localStorage.getItem('userRole');
+    const currentUserId = localStorage.getItem('userId');
 
     useEffect(() => {
         populateCourses();
@@ -26,9 +27,9 @@ export default function Home() {
         if (error) alert(error);
     }, [error]);
 
-    // useEffect(() => {
-    //     if (users) console.log('users', users);
-    // }, [users]);
+    useEffect(() => {
+        if (courses) console.log('courses', courses);
+    }, [courses]);
 
     const populateCourses = async () => {
         const coursesRes = await getCourses();
@@ -72,7 +73,7 @@ export default function Home() {
         setLoading(false);
     };
 
-    const handleDeleteCourse = async id => {
+    const handleDeleteCourse = async (id) => {
         setLoading(true);
         const result = await deleteCourse(id);
         if (result.success) {
@@ -91,35 +92,58 @@ export default function Home() {
         if (result.success) {
             setUsers(users => users.filter(el => el.id !== id));
         } else {
-            setError(result.error || 'Something went wrong while deleting course');
+            setError(result.error || 'Something went wrong while deleting user');
         }
         setLoading(false);
     };
+
+    const handleEnroll = async (courseId) => {
+        const result = await enrollSelf(courseId);
+        if (result.success) {
+            await populateCourses();
+        } else {
+            setError(result.error || 'Something went wrong while unenrolling');
+        }
+    }
+
+    const handleUnenroll = async (courseId) => {
+        const result = await unenrollSelf(courseId);
+        if (result.success) {
+            await populateCourses();
+        } else {
+            setError(result.error || 'Something went wrong while unenrolling');
+        }
+    }
 
     return (
         <div>
             <div>
                 <h2>Courses</h2>
                 {courses.map(course => {
+                    const isEnrolled = !!course.enrolled_students.find(el => el === Number(currentUserId));
                     return (
                         <div key={`course-${course.id}`}>
                             <h3>{course.title}</h3>
                             <p>{course.description}</p>
                             <p>Teacher: {course.teacherName}</p>
-                            {['ADMIN', 'TEACHER'].includes(role) && (
-                                <button
-                                    onClick={() =>
-                                        handleDeleteCourse(course.id)
-                                    }
-                                >
+                            {['ADMIN', 'TEACHER'].includes(currentUserRole) && (
+                                <button onClick={() => handleDeleteCourse(course.id)}>
                                     Delete
                                 </button>
+                            )}
+                            {currentUserRole === 'STUDENT' && (
+                                <button 
+                                    onClick={() => {
+                                        if (isEnrolled) handleUnenroll(course.id);
+                                        else handleEnroll(course.id);
+                                    }}
+                                >{isEnrolled ? 'Unenroll' : 'Enroll'}</button>
                             )}
                         </div>
                     );
                 })}
             </div>
-            {['ADMIN', 'TEACHER'].includes(role) && (
+            {['ADMIN', 'TEACHER'].includes(currentUserRole) && (
                 <div>
                     <h2>Create course</h2>
                     <form onSubmit={handleCreateCourse}>
@@ -147,7 +171,7 @@ export default function Home() {
                     </form>
                 </div>
             )}
-            {role === 'ADMIN' && (
+            {currentUserRole === 'ADMIN' && (
                 <div>
                     <h2>Users</h2>
                     {users.map(user => {

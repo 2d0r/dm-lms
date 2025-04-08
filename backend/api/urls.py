@@ -7,5 +7,9 @@ urlpatterns = [
     path('courses/delete/<int:pk>/', views.CourseDeleteView.as_view(), name='course-delete'),
     path('users/<int:pk>/', views.UserListView.as_view(), name='user-find'),
     path('users/delete/<int:pk>/', views.UserDeleteView().as_view(), name='user-delete'),
+    path('courses/<int:course_id>/enroll/<int:user_id>', views.UserEnrollView().as_view(), name='enroll'),
+    path('courses/<int:course_id>/unenroll/<int:user_id>', views.UserUnenrollView().as_view(), name='unenroll'),
+    path('courses/<int:course_id>/enroll/', views.UserEnrollSelfView().as_view(), name='enroll-self'),
+    path('courses/<int:course_id>/unenroll/', views.UserUnenrollSelfView().as_view(), name='unenroll-self'),
     path('users/', views.UserListView.as_view(), name='user-list'),
 ]
