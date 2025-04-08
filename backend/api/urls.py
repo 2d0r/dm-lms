@@ -6,5 +6,6 @@ urlpatterns = [
     path('courses/create/', views.CourseCreateView.as_view(), name='course-create'),
     path('courses/delete/<int:pk>/', views.CourseDeleteView.as_view(), name='course-delete'),
     path('users/<int:pk>/', views.UserListView.as_view(), name='user-find'),
+    path('users/delete/<int:pk>/', views.UserDeleteView().as_view(), name='user-delete'),
     path('users/', views.UserListView.as_view(), name='user-list'),
 ]

@@ -24,10 +24,6 @@ class CourseCreateView(generics.CreateAPIView):
     serializer_class = CourseSerializer
     permission_classes = [IsAuthenticated, IsAdminOrTeacher]
 
-    # def get_queryset(self):
-    #     '''Return a list of all courses'''
-    #     return Course.objects.all()
-
     def perform_create(self, serializer):
         if serializer.is_valid():
             serializer.save(teacher=self.request.user)
@@ -77,7 +73,7 @@ class UserDeleteView(generics.DestroyAPIView):
     permission_classes = [IsAuthenticated, IsAdmin]
     
     def get_queryset(self):
-        '''Return a list of all courses.'''
+        '''Return a list of all users.'''
         return User.objects.all()
 
     def perform_destroy(self, instance):
