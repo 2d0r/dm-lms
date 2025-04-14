@@ -20,6 +20,7 @@ class CourseListView(generics.ListAPIView):
         '''Return a list of all courses'''
         return Course.objects.all()
 
+
 class CourseCreateView(generics.CreateAPIView):
     '''Create a new course.'''
     queryset = Course.objects.all()
@@ -31,6 +32,13 @@ class CourseCreateView(generics.CreateAPIView):
             serializer.save(teacher=self.request.user)
         else:
             raise ValueError("Invalid data provided")
+
+
+class CourseUpdateView(generics.UpdateAPIView):
+    queryset = Course.objects.all()
+    serializer_class = CourseSerializer
+    permission_classes = [IsAuthenticated, IsAdminOrTeacher]
+
         
 class CourseDeleteView(generics.DestroyAPIView):
     '''Delete a course.'''
@@ -54,6 +62,7 @@ class UserCreateView(generics.CreateAPIView):
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
 
+
 class UserListView(generics.ListCreateAPIView):
     '''List and create teachers.'''
     serializer_class = UserSerializer
@@ -68,6 +77,7 @@ class UserListView(generics.ListCreateAPIView):
     #         serializer.save(teacher=self.request.user)
     #     else:
     #         raise ValueError("Invalid data provided")
+
 
 class UserDeleteView(generics.DestroyAPIView):
     '''Delete a user and related profile.'''
@@ -90,6 +100,7 @@ class UserDeleteView(generics.DestroyAPIView):
         # Delete the user
         instance.delete()
 
+
 class UserEnrollSelfView(APIView):
     permission_classes = [IsAuthenticated, IsStudent]
 
@@ -100,6 +111,7 @@ class UserEnrollSelfView(APIView):
             return Response({'message': 'Enrolled successfully'})
         except Course.DoesNotExist:
             return Response({'error': 'Course or user not found'}, status=404)
+
 
 class UserUnenrollSelfView(APIView):
     permission_classes = [IsAuthenticated, IsStudent]
@@ -124,7 +136,8 @@ class UserEnrollView(APIView):
             return Response({'message': 'Enrolled successfully'})
         except Course.DoesNotExist:
             return Response({'error': 'Course or user not found'}, status=404)
-        
+
+
 class UserUnenrollView(APIView):
     permission_classes = [IsAuthenticated, IsAdmin]
 

@@ -1,0 +1,13 @@
+.floating-rows .row form {
+    .teacher {
+        cursor: pointer;
+    }
+    .description {
+        min-width: 100%;
+    }
+    .description textarea {
+        height: 100% !important;
+        margin-top: 18px;
+        border: none;
+    }
+}

@@ -10,7 +10,8 @@
     display: flex;
     flex-wrap: wrap;
     /* justify-content: center; */
-    width: calc(4 * var(--card-width) + 3 * var(--gap));
+    gap: 36px;
+    width: calc(3 * var(--card-width) + 2 * var(--gap));
 }
 
 .course-card {

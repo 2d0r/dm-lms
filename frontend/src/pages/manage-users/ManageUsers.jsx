@@ -3,6 +3,7 @@ import { deleteUser, getUsers } from '../../services/usersServices';
 import Layout from '../../components/layout/Layout';
 import './ManageUsers.css';
 import '../../styles/floatingRows.css';
+import '../../styles/floatingButton.css';
 import { getCourses } from '../../services/coursesServices';
 
 export default function ManageUsers() {
@@ -100,6 +101,7 @@ export default function ManageUsers() {
                     );
                 })}
             </div>
+            <button className='floating-button'>Add User</button>
         </Layout>
     );
 }

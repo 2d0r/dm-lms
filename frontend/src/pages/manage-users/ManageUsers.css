@@ -1,13 +1,21 @@
 @import url('../../constants.css');
 
+:root {
+    --row-height: 80px;
+}
+
 .users-table {
     /* Styled in index.css > .floating-rows */
+    max-height: calc(10 * var(--row-height) + 9 * var(--floating-rows-gap));
 }
 
 .users-table .row {
     height: 80px;
 
-    .name { min-width: 270px; }
+    .name { 
+        min-width: 270px; 
+        font: var(--font-h2);
+    }
     .id { min-width: 60px; }
     .username { min-width: 140px; }
     .role { min-width: 100px; }

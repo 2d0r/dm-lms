@@ -3,8 +3,13 @@
 .courses-table .row {
     height: 80px;
 
-    .title { min-width: 270px; }
-    .teacher { min-width: 140px;}
+    .title { 
+        min-width: 270px; 
+        font: var(--font-h2);
+    }
+    .teacher { 
+        min-width: 140px;
+    }
     .students { 
         min-width: 200px; 
         cursor: pointer;

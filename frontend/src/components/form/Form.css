@@ -21,7 +21,7 @@
     align-items: center;
     justify-content: center;
     font: var(--font-detail);
-    background-image: var(--bg-gradient-glass-white);
+    background-image: var(--gradient-glass-white);
 }
 
 .form-container .form-input {
@@ -48,7 +48,7 @@
         color: #1c1c1c;
     }
     .redirect-button {
-        background-image: var(--bg-gradient-glass-white);
+        background-image: var(--gradient-glass-white);
         color: var(--lilac);
     }
 }

@@ -1,9 +1,11 @@
 :root {
-  --bg-gradient-glass-white: linear-gradient(90deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.1) 100%);
-
   --black: #1C1C1C;
   --grey: rgb(139, 139, 139);
   --lilac: #B48ED5;
+  --lilac-faded: rgb(180, 142, 213, 0.3);
+  --lilac-dark: #2a2232;
+  --gradient-glass-white: linear-gradient(90deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.1) 100%);
+  --gradient-lilac-black: linear-gradient(90deg, var(--black) 0%, var(--lilac) 100%);
 
   --border: 1px solid white;
 
@@ -12,4 +14,6 @@
   --font-body: 400 12px 'Playfair', serif;
   --font-button: 800 12px 'Playfair', serif;
   --font-detail: 12px 'anonymous-bold', monotype;
+
+  --floating-rows-gap: 12px;
 }

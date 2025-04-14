@@ -15,7 +15,9 @@ body {
 main {
     width: 100vw;
     min-height: 70vh;
+    padding-bottom: 72px;
     position: relative;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
 }

@@ -1,0 +1,21 @@
+@import url('../constants.css');
+
+.floating-button {
+    /* position: absolute;
+    bottom: 60px; */
+    margin-top: 60px;
+    border: var(--border);
+    background-image: var(--gradient-lilac-black);
+    padding: 18px;
+    font: var(--font-h2);
+    color: white;
+    cursor: pointer;
+    /* transform: scale(1); */
+    transition-duration: 1s;
+
+    &:hover {
+        /* transform: scale(1.05); */
+        background-image: linear-gradient(var(--lilac));
+        /* background-color: var(--lilac); */
+    }
+}

@@ -1,41 +1,48 @@
 import React, { useEffect, useState } from 'react';
 import './ManageCourses.css';
 import '../../styles/floatingRows.css';
+import '../../styles/floatingButton.css';
 import Layout from '../../components/layout/Layout';
-import { getCourses } from '../../services/coursesServices';
+import { deleteCourse, getCourses } from '../../services/coursesServices';
 import { getUsers } from '../../services/usersServices';
+import EditableCourseRow from '../../components/editable-course-row/EditableCourseRow';
 
 export default function ManageCourses() {
     const [courses, setCourses] = useState([]);
-
-    const currentUser = {
-        name: localStorage.getItem('userName'),
-        role: localStorage.getItem('userRole'),
-        id: localStorage.getItem('userId'),
-    };
+    const [users, setUsers] = useState([]);
+    const [showCreateCourseRow, setShowCreateCourseRow] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+    const [editableCourseId, setEditableCourseId] = useState(null);
 
     useEffect(() => {
-        populateCourses(currentUser.name);
+        populateCourses({refetch: true});
     }, []);
 
-    const populateCourses = async () => {
-        const coursesRes = await getCourses();
-        if (!coursesRes.success) {
-            alert(
-                coursesRes.error ||
-                    usersRes.error ||
-                    'Something went wrong while fetching courses'
-            );
-            return;
+    const populateCourses = async (options) => {
+        let updateCourses = [];
+        if (options.refetch && !options.updatedCourses) {
+            const coursesRes = await getCourses();
+            if (coursesRes.success) {
+                updateCourses = coursesRes.data;
+            } else {
+                alert(
+                    coursesRes.error ||
+                        usersRes.error ||
+                        'Something went wrong while fetching courses'
+                );
+                return;
+            }
+        } else {
+            updateCourses = options.updatedCourses;
         }
-
         // Populate enrolled students
         // Get teacher name
         const usersRes = await getUsers();
         if (usersRes.success) {
             const users = usersRes.data;
-            const courses = coursesRes.data;
-            const coursesWithTeacherNames = courses.map(course => {
+            setUsers(users);
+            const coursesWithTeacherNames = updateCourses.map(course => {
                 const enrolledStudentsNames = users
                     .filter(user => course.enrolled_students.includes(user.id))
                     .map(user => user.first_name);
@@ -45,9 +52,7 @@ export default function ManageCourses() {
             setCourses(coursesWithTeacherNames);
         } else {
             alert(
-                coursesRes.error ||
-                    usersRes.error ||
-                    'Something went wrong while fetching users'
+                usersRes.error || 'Something went wrong while fetching users'
             );
             return;
         }
@@ -66,10 +71,50 @@ export default function ManageCourses() {
         setLoading(false);
     };
 
+    const handleClickToCreateCourse = () => {
+        setShowCreateCourseRow(true);
+    }
+
+    const handleCreatedCourse = (newCourse) => {
+        populateCourses({
+            refetch: false, 
+            updatedCourses: [...courses, newCourse],
+        });
+        setShowCreateCourseRow(false);
+    }
+
+    const handleEditedCourse = (updatedCourse, idx) => {
+        // const unchangedCourses = courses.filter(el => el.id !== updatedCourse.id);
+        populateCourses({
+            refetch: false,
+            updatedCourses: [...courses.slice(0, idx), updatedCourse, ...courses.slice(idx + 1)],
+        });
+        setEditableCourseId(null);
+        setShowCreateCourseRow(false);
+    }
+
+    const handleCancelCreate = () => {
+        setEditableCourseId(null);
+        setShowCreateCourseRow(false);
+    }
+
+    
+
     return (
         <Layout>
             <div className='courses-table floating-rows'>
                 {courses.map((course, idx) => {
+                    if (editableCourseId === course.id) {
+                        return (
+                            <EditableCourseRow
+                                key={`course-${course.id}`}
+                                course={course}
+                                onCancelCreate={handleCancelCreate}
+                                onCreatedCourse={handleCreatedCourse}
+                                onEditedCourse={(updatedCourse) => handleEditedCourse(updatedCourse, idx)}
+                            />
+                        )
+                    }
                     return (
                         <div className='row' key={`course-${idx}`}>
                             <div className='title'>
@@ -82,20 +127,31 @@ export default function ManageCourses() {
                             </div>
                             <div className='students'>
                                 <label>Students</label>
-                                {course.enrolledStudentsNames.join(', ')}
+                                {course.enrolledStudentsNames?.join(', ') || ''}
                             </div>
                             <div className='description'>
                                 <label>Description</label>
                                 {course.description}
                             </div>
                             <div className='buttons'>
-                                <button>Edit</button>
-                                <button onClick={handleDeleteCourse}>Delete</button>
+                                <button onClick={() => setEditableCourseId(course.id)}>Edit</button>
+                                <button onClick={() => handleDeleteCourse(course.id)}>Delete</button>
                             </div>
                         </div>
                     );
                 })}
+                {showCreateCourseRow && (
+                    <EditableCourseRow 
+                        onCancelCreate={() => setShowCreateCourseRow(false)}
+                        onCreatedCourse={handleCreatedCourse}
+                    />
+                )}
             </div>
+            <button 
+                className='floating-button' 
+                type='button' 
+                onClick={handleClickToCreateCourse}
+            >Create Course</button>
         </Layout>
     );
 }

@@ -1,0 +1,23 @@
+@import url('../../constants.css');
+
+.floating-rows .row form {
+    .teacher {
+        cursor: pointer;
+    }
+    div:hover label {
+        color: var(--lilac);
+    }
+    .description textarea {
+        height: 100%;
+        margin-top: 18px;
+        border: none;
+    }
+    .students select {
+        margin-top: 18px;
+    }
+}
+
+.floating-rows .row.editable {
+    /* border: 2px solid var(--lilac); */
+    background-color: var(--lilac-dark);
+}

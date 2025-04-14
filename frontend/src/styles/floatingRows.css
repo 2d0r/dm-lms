@@ -4,7 +4,7 @@
     margin-top: 90px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: var(--floating-rows-gap);
 }
 
 .floating-rows .row {
@@ -14,13 +14,14 @@
     display: flex;
     color: white;
 
-    > div {
+    > div, form > div {
         display: flex;
         align-items: center;
         padding: 12px;
         position: relative;
     }
-    > div:not(:last-child) {
+    > div:not(:last-child),
+    form > div:not(:last-child) {
         border-right: var(--border);
     }
     label {
@@ -54,5 +55,14 @@
 .floating-rows .row:hover {
     label {
         color: var(--grey);
+    }
+}
+
+.floating-rows .row form {
+    display: flex;
+    width: 100%;
+
+    input {
+        width: 100%;
     }
 }
