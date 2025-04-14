@@ -1,0 +1,77 @@
+@import url('../../constants.css');
+
+:root {
+    --card-width: 260px;
+    --gap: 36px;
+}
+
+.course-grid {
+    margin-top: 90px;
+    display: flex;
+    flex-wrap: wrap;
+    /* justify-content: center; */
+    width: calc(4 * var(--card-width) + 3 * var(--gap));
+}
+
+.course-card {
+    width: var(--card-width);
+    height: 240px;
+    border: 1px solid white;
+    background-color: var(--black);
+    display: flex;
+    flex-direction: column;
+    color: white;
+    
+
+    .delete-button {
+        width: auto;
+    }
+
+    .enroll-button {
+        width: auto;
+    }
+}
+
+.course-card .card-head {
+    width: 100%;
+    border-bottom: var(--border);
+    padding: 24px 24px 12px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    .title {
+        font: var(--font-h2);
+    }
+
+    .subtitle {
+        font: var(--font-body);
+    }
+}
+
+.course-card .description {
+    width: 100%;
+    height: 100%;
+    border-bottom: var(--border);
+    padding: 12px 24px;
+}
+
+.course-card .buttons {
+    width: 100%;
+    min-height: 30px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: 30px;
+    font: var(--font-button);
+
+    button {
+        border-left: var(--border);
+        padding: 0 12px;
+    }
+    button.highlight {
+        background-color: var(--lilac);
+        color: var(--black);
+        cursor: pointer;
+    }
+
+}

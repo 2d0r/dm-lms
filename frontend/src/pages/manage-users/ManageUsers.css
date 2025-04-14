@@ -1,0 +1,19 @@
+@import url('../../constants.css');
+
+.users-table {
+    /* Styled in index.css > .floating-rows */
+}
+
+.users-table .row {
+    height: 80px;
+
+    .name { min-width: 270px; }
+    .id { min-width: 60px; }
+    .username { min-width: 140px; }
+    .role { min-width: 100px; }
+    .courses { 
+        width: 100%; 
+        font: var(--font-detail);
+    }
+}
+

@@ -1,0 +1,58 @@
+@import url('../constants.css');
+
+.floating-rows {
+    margin-top: 90px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.floating-rows .row {
+    width: 900px;
+    border: var(--border);
+    background-color: var(--black);
+    display: flex;
+    color: white;
+
+    > div {
+        display: flex;
+        align-items: center;
+        padding: 12px;
+        position: relative;
+    }
+    > div:not(:last-child) {
+        border-right: var(--border);
+    }
+    label {
+        position: absolute;
+        top: 6px;
+        font: var(--font-detail);
+        color: transparent;
+    }
+    .buttons {
+        min-width: 60px;
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+    }
+    .buttons button {
+        height: 100%;
+        width: 100%;
+        cursor: pointer;
+        padding: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font: var(--font-detail);
+        color: var(--lilac);
+    }
+    .buttons button:not(:last-child) {
+        border-bottom: var(--border);
+    }
+}
+
+.floating-rows .row:hover {
+    label {
+        color: var(--grey);
+    }
+}

@@ -1,0 +1,20 @@
+@import 'tailwindcss';
+/* Tailwind is not yet used, this cancels default stylings */
+
+@font-face {
+  font-family: 'anonymous-bold';
+  src: local('AnonymousPro-Regular'), url('./assets/fonts/AnonymousPro-Bold.ttf') format('truetype');
+}
+@font-face {
+    font-family: 'Playfair';
+    src: url('./assets/fonts/PlayfairDisplay-VariableFont_wght.ttf');
+}
+
+body {
+    font-family: 'Playfair';
+    font-size: 12pt;
+    background-image: url('./assets/images/bg-fabric-262626.svg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}

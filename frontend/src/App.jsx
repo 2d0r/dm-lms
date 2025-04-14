@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Home from './pages/Home';
+import Login from './pages/login/Login';
+import Register from './pages/register/Register';
+import Courses from './pages/Courses';
 import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/ProtectedRoute';
+import ManageUsers from './pages/manage-users/ManageUsers';
+import MyCourses from './pages/my-courses/MyCourses';
+import MyLearning from './pages/MyLearning';
+import ManageCourses from './pages/manage-courses/ManageCourses';
 
 function Logout() {
     localStorage.clear();
@@ -28,7 +32,39 @@ function App() {
                     path='/'
                     element={
                         <ProtectedRoute>
-                            <Home />
+                            <Courses />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route 
+                    path='/my-courses'
+                    element={
+                        <ProtectedRoute>
+                            <MyCourses />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route 
+                    path='/manage-users'
+                    element={
+                        <ProtectedRoute>
+                            <ManageUsers />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route 
+                    path='/my-learning'
+                    element={
+                        <ProtectedRoute>
+                            <MyLearning />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route 
+                    path='/manage-courses'
+                    element={
+                        <ProtectedRoute>
+                            <ManageCourses />
                         </ProtectedRoute>
                     }
                 />

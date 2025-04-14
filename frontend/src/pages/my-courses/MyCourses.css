@@ -1,0 +1,17 @@
+@import url('../../constants.css');
+
+.courses-table .row {
+    height: 80px;
+
+    .title { min-width: 270px; }
+    .teacher { min-width: 140px;}
+    .students { 
+        min-width: 200px; 
+        cursor: pointer;
+        font: var(--font-detail);
+    }
+    .description {
+        width: 100%;
+        font: var(--font-detail);
+    }
+}

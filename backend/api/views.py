@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import UserSerializer, CourseSerializer, MyTokenObtainPairSerializer
 from .models import Course, Profile
-from .permissions import IsAdmin, IsAdminOrTeacher, IsStudent
+from .permissions import IsAdmin, IsAdminOrTeacher, IsStudent, IsTeacher
 
 # Courses
 
@@ -128,7 +128,7 @@ class UserEnrollView(APIView):
 class UserUnenrollView(APIView):
     permission_classes = [IsAuthenticated, IsAdmin]
 
-    def delete(self, request, course_id, user_id):
+    def delete(self, course_id, user_id):
         try:
             course = Course.objects.get(pk=course_id)
             user = User.objects.get(pk=user_id)

@@ -1,0 +1,21 @@
+@import url('../../constants.css');
+
+body {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    background-color: var(--black);
+}
+
+/* .wrapper {
+    width: 100%;
+    display: flex;
+} */
+
+main {
+    width: 100vw;
+    min-height: 70vh;
+    position: relative;
+    display: flex;
+    justify-content: center;
+}

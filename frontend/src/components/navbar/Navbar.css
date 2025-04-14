@@ -1,0 +1,30 @@
+@import url('../../constants.css');
+
+header {
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding-top: 24px;
+}
+
+header .site-title {
+    font-size: xxx-large;
+    font-weight: 800;
+    color: var(--black);
+    text-shadow: 2px 2px 0px white;
+}
+
+nav {
+    width: 600px;
+    height: 80px;
+    border: 1px solid white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    background-color: var(--black);
+    color: white;
+    font-size: 20px;
+}
