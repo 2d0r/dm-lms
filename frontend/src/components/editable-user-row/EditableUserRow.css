@@ -1,0 +1,38 @@
+.floating-rows .row.editable.edit-user {
+    height: 100px;
+}
+
+.floating-rows .row form {
+    .teacher {
+        cursor: pointer;
+    }
+    .description {
+        width: 100%;
+    }
+    .description textarea {
+        height: 100% !important;
+        margin-top: 18px;
+        border: none;
+    }
+    .username-password {
+        min-width: 140px;
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+        div {
+            position: relative;
+            height: 100%;
+            padding: 16px 12px 0 12px;
+        }
+        .username {
+            border-bottom: var(--border);
+        }
+    }
+    .role {
+        cursor: pointer;
+        select {
+            cursor: pointer;
+            height: 100%;
+        }
+    }
+}

@@ -30,7 +30,18 @@ export default function Form({ route, method }) {
                 localStorage.setItem('userRole', res.data.role);
                 localStorage.setItem('userId', res.data.id);
                 localStorage.setItem('userName', res.data.first_name);
-                navigate('/');
+
+                // Navigate based on role
+                switch (res.data.role) {
+                    case 'STUDENT':
+                        navigate('/');
+                        break;
+                    case 'TEACHER':
+                        navigate('/');
+                        break;
+                    case 'ADMIN':
+                        navigate('/manage-courses');
+                }
             } else if (method === 'register') {
                 const res = await api.post(route, {
                     username,

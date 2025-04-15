@@ -16,8 +16,3 @@
         margin-top: 18px;
     }
 }
-
-.floating-rows .row.editable {
-    /* border: 2px solid var(--lilac); */
-    background-color: var(--lilac-dark);
-}

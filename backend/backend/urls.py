@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 from api.views import UserCreateView, MyTokenObtainPairView
 # Pre-built views for JWT authentication
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework_simplejwt.views import TokenRefreshView
 
 urlpatterns = [
     path('admin/', admin.site.urls),

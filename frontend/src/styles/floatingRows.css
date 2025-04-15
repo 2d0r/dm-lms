@@ -50,6 +50,10 @@
     .buttons button:not(:last-child) {
         border-bottom: var(--border);
     }
+    button.disabled {
+        color: var(--grey);
+        cursor: auto;
+    }
 }
 
 .floating-rows .row:hover {
@@ -65,4 +69,8 @@
     input {
         width: 100%;
     }
+}
+
+.floating-rows .row.editable {
+    background-color: var(--lilac-dark);
 }

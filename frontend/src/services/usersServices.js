@@ -69,3 +69,27 @@ export const unenrollUser = async (courseId, userId) => {
         return { success: false, error: error.response?.data || error.message };
     }
 }
+
+export const createUser = async ({ name, username, password, role }) => {
+    try {
+        const res = await api.post('/api/users/create/', { 
+            username, password, 
+            first_name: name,
+            profile: { role: role.toUpperCase() }, 
+        });
+        return { success: true, data: res.data };
+    } catch (error) {
+        console.error(error);
+        return { success: false, error: error.response?.data || error.message }
+    }
+};
+
+export const updateUser = async ({ id, name, username, password, role }) => {
+    try {
+        const res = await api.patch(`/api/courses/update/${id}/`, { name, username, password, role });
+        return { success: true, data: res.data };
+    } catch (error) {
+        console.error(error);
+        return { success: false, error: error.response?.data || error.message }
+    }
+}

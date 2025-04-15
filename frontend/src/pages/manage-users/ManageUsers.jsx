@@ -5,20 +5,46 @@ import './ManageUsers.css';
 import '../../styles/floatingRows.css';
 import '../../styles/floatingButton.css';
 import { getCourses } from '../../services/coursesServices';
+import EditableUserRow from '../../components/editable-user-row/EditableUserRow';
 
 export default function ManageUsers() {
     const [users, setUsers] = useState([]);
     const [courses, setCourses] = useState([]);
+    const [editableUserId, setEditableUserId] = useState(null);
+    const [showNewUserRow, setShowNewUserRow] = useState(false);
+
+    const currentUserId = localStorage.getItem('userId');
+
+    useEffect(() => {
+        populateUsers();
+        loadCourses();
+    }, []);
+
+    const getCourseNamesForUser = user => {
+        if (user.profile.role === 'STUDENT') {
+            return courses
+                .filter(el => el.enrolled_students.includes(user.id))
+                .map(el => el.title);
+        } else if (user.profile.role === 'TEACHER') {
+            return courses
+                .filter(el => el.teacher === user.id)
+                .map(el => el.title);
+        }
+        return [];
+    };
 
     const populateUsers = async () => {
         const res = await getUsers();
         if (res.success) {
-            setUsers(res.data);
+            const newUsers = res.data;
+            const newUsersWithCourseNames = newUsers.map(user => ({
+                ...user,
+                courseNames: getCourseNamesForUser(user),
+            }));
+            console.log('newUsersWithCourseNames', newUsersWithCourseNames);
+            setUsers(newUsersWithCourseNames);
         } else {
-            alert(
-                res.error ||
-                'Something went wrong while populating users'
-            );
+            alert(res.error || 'Something went wrong while populating users');
         }
     };
 
@@ -27,30 +53,14 @@ export default function ManageUsers() {
         if (res.success) {
             setCourses(res.data);
         } else {
-            alert(
-                res.error ||
-                'Something went wrong while populating users'
-            );
+            alert(res.error || 'Something went wrong while populating users');
         }
-    }
-
-    const getCoursesForUser = (userId) => {
-        const user = users.find(el => el.id === userId);
-        if (user.profile.role === 'STUDENT') {
-            return courses.filter(el => el.enrolled_students.includes(user.id)).map(el => el.title).join(', ');
-        } else if (user.profile.role === 'TEACHER') {
-            return courses.filter(el => el.teacher === user.id).map(el => el.title).join(', ');
-        }
-        return 'N/A';
-    }
-
-    useEffect(() => {
-        populateUsers();
-        loadCourses();
-    }, []);
+    };
 
     const handleDeleteUser = async id => {
-        setLoading(true);
+        if (id === Number(currentUserId)) {
+            return;
+        }
         const result = await deleteUser(id);
         if (result.success) {
             setUsers(users => users.filter(el => el.id !== id));
@@ -59,23 +69,56 @@ export default function ManageUsers() {
                 result.error || 'Something went wrong while deleting user'
             );
         }
-        setLoading(false);
     };
 
+    const handleCreatedUser = newCourse => {
+        populateUsers({
+            refetch: false,
+            updatedCourses: [...courses, newCourse],
+        });
+        setShowNewUserRow(false);
+    };
+
+    const handleEditedUser = (updatedCourse, idx) => {
+        // const unchangedCourses = courses.filter(el => el.id !== updatedCourse.id);
+        populateUsers({
+            refetch: false,
+            updatedCourses: [
+                ...courses.slice(0, idx),
+                updatedCourse,
+                ...courses.slice(idx + 1),
+            ],
+        });
+        setEditableUserId(null);
+        setShowNewUserRow(false);
+    };
+
+    const handleCancelEdit = () => {
+        setEditableUserId(null);
+        setShowNewUserRow(false);
+    };
 
     return (
         <Layout>
             <div className='users-table floating-rows'>
                 {users.map(user => {
+                    if (user.id === editableUserId) {
+                        return (
+                            <EditableUserRow
+                                key={`user-${user.id}`}
+                                user={user}
+                                onCancelCreate={handleCancelEdit}
+                                onEditedUser={updatedUser =>
+                                    handleEditedUser(updatedUser, idx)
+                                }
+                            />
+                        );
+                    }
                     return (
                         <div className='row' key={`user-${user.id}`}>
                             <div className='name'>
                                 <label>Name</label>
                                 {user.first_name || 'N/A'}
-                            </div>
-                            <div className='id'>
-                                <label>Id</label>
-                                {user.id}
                             </div>
                             <div className='username'>
                                 <label>Username</label>
@@ -87,11 +130,20 @@ export default function ManageUsers() {
                             </div>
                             <div className='courses'>
                                 <label>Courses</label>
-                                {getCoursesForUser(user.id)}
+                                {getCourseNamesForUser(user).join(', ') || 'N/A'}
                             </div>
                             <div className='buttons'>
-                                <button>Edit</button>
                                 <button
+                                    onClick={() => setEditableUserId(user.id)}
+                                >
+                                    Edit
+                                </button>
+                                <button
+                                    className={
+                                        user.id === Number(currentUserId)
+                                            ? 'disabled'
+                                            : ''
+                                    }
                                     onClick={() => handleDeleteUser(user.id)}
                                 >
                                     Delete
@@ -100,8 +152,19 @@ export default function ManageUsers() {
                         </div>
                     );
                 })}
+                {showNewUserRow && (
+                    <EditableUserRow
+                        onCancelCreate={() => setShowNewUserRow(false)}
+                        onCreatedUser={handleCreatedUser}
+                    />
+                )}
             </div>
-            <button className='floating-button'>Add User</button>
+            <button
+                className='floating-button'
+                onClick={() => setShowNewUserRow(true)}
+            >
+                Add User
+            </button>
         </Layout>
     );
 }

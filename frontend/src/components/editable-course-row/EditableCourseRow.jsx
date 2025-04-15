@@ -1,12 +1,18 @@
 import React, { useState } from 'react';
 import { createCourse, updateCourse } from '../../services/coursesServices';
 import './EditableCourseRow.css';
+import '../../styles/floatingRows.css';
 
 export default function EditableCourseRow(props) {
-    const [title, setTitle] = useState(props.course.title || '');
-    const [description, setDescription] = useState(
-        props.course.description || ''
-    );
+    const course = props.course || {
+        title: '',
+        description: '',
+        teacher: '',
+        enrolledStudentsNames: [],
+    }
+
+    const [title, setTitle] = useState(course.title);
+    const [description, setDescription] = useState(course.description);
 
     const handleCreateCourse = async e => {
         e.preventDefault();
@@ -22,7 +28,7 @@ export default function EditableCourseRow(props) {
     const handleEditCourse = async (e) => {
         e.preventDefault();
         const result = await updateCourse({ 
-            id: props.course.id, title, description 
+            id: course.id, title, description 
         });
         if (result.success) {
             const udpatedCourse = result.data;
@@ -55,14 +61,14 @@ export default function EditableCourseRow(props) {
                 </div>
                 <div className='teacher'>
                     <label htmlFor='teacher'>Edit Teacher</label>
-                    {props.course.teacherName}
+                    {course.teacherName}
                     {/* <Dropdown options={teachers} /> */}
                 </div>
                 <div className='students'>
                     <label htmlFor='students'>Edit Students</label>
-                    {props.course.enrolledStudentsNames.join(', ')}
+                    {course.enrolledStudentsNames.join(', ')}
                     {/* <select name='teacher' id='students' multiple>
-                        {props.course.enrolledStudentsNames.map(name => {
+                        {course.enrolledStudentsNames.map(name => {
                             return <option value={name} key={`option-${name}`}>{name}</option>
                         })}
                     </select> */}
@@ -81,7 +87,7 @@ export default function EditableCourseRow(props) {
                     />
                 </div>
                 <div className='buttons'>
-                    {!!props.course ? (
+                    {props.course ? (
                         <>
                             <button type='submit'>Done</button>
                             <button type='button' onClick={handleCancelCreate}>

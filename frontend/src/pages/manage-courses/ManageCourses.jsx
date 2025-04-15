@@ -10,9 +10,9 @@ import EditableCourseRow from '../../components/editable-course-row/EditableCour
 export default function ManageCourses() {
     const [courses, setCourses] = useState([]);
     const [users, setUsers] = useState([]);
-    const [showCreateCourseRow, setShowCreateCourseRow] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [showNewCourseRow, setShowNewCourseRow] = useState(false);
     const [editableCourseId, setEditableCourseId] = useState(null);
 
     useEffect(() => {
@@ -71,16 +71,12 @@ export default function ManageCourses() {
         setLoading(false);
     };
 
-    const handleClickToCreateCourse = () => {
-        setShowCreateCourseRow(true);
-    }
-
     const handleCreatedCourse = (newCourse) => {
         populateCourses({
             refetch: false, 
             updatedCourses: [...courses, newCourse],
         });
-        setShowCreateCourseRow(false);
+        setShowNewCourseRow(false);
     }
 
     const handleEditedCourse = (updatedCourse, idx) => {
@@ -90,12 +86,12 @@ export default function ManageCourses() {
             updatedCourses: [...courses.slice(0, idx), updatedCourse, ...courses.slice(idx + 1)],
         });
         setEditableCourseId(null);
-        setShowCreateCourseRow(false);
+        setShowNewCourseRow(false);
     }
 
-    const handleCancelCreate = () => {
+    const handleCancelEdit = () => {
         setEditableCourseId(null);
-        setShowCreateCourseRow(false);
+        setShowNewCourseRow(false);
     }
 
     
@@ -109,8 +105,7 @@ export default function ManageCourses() {
                             <EditableCourseRow
                                 key={`course-${course.id}`}
                                 course={course}
-                                onCancelCreate={handleCancelCreate}
-                                onCreatedCourse={handleCreatedCourse}
+                                onCancelCreate={handleCancelEdit}
                                 onEditedCourse={(updatedCourse) => handleEditedCourse(updatedCourse, idx)}
                             />
                         )
@@ -140,9 +135,9 @@ export default function ManageCourses() {
                         </div>
                     );
                 })}
-                {showCreateCourseRow && (
+                {showNewCourseRow && (
                     <EditableCourseRow 
-                        onCancelCreate={() => setShowCreateCourseRow(false)}
+                        onCancelCreate={() => setShowNewCourseRow(false)}
                         onCreatedCourse={handleCreatedCourse}
                     />
                 )}
@@ -150,7 +145,7 @@ export default function ManageCourses() {
             <button 
                 className='floating-button' 
                 type='button' 
-                onClick={handleClickToCreateCourse}
+                onClick={() => setShowNewCourseRow(true)}
             >Create Course</button>
         </Layout>
     );
