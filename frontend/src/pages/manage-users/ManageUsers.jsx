@@ -6,29 +6,36 @@ import '../../styles/floatingRows.css';
 import '../../styles/floatingButton.css';
 import { getCourses } from '../../services/coursesServices';
 import EditableUserRow from '../../components/editable-user-row/EditableUserRow';
+import SelectionModal from '../../components/selection-modal/SelectionModal';
 
 export default function ManageUsers() {
     const [users, setUsers] = useState([]);
     const [courses, setCourses] = useState([]);
     const [editableUserId, setEditableUserId] = useState(null);
     const [showNewUserRow, setShowNewUserRow] = useState(false);
+    const [selectionModal, setSelectionModal] = useState({ type: '', selectedIds: [], id: null });
 
     const currentUserId = localStorage.getItem('userId');
 
     useEffect(() => {
-        populateUsers();
         loadCourses();
     }, []);
 
-    const getCourseNamesForUser = user => {
+    useEffect(() => {
+        if(courses.length) {
+            populateUsers();
+        }
+    }, [courses]);
+
+    const getCoursesForUser = (user, courses) => {
         if (user.profile.role === 'STUDENT') {
             return courses
                 .filter(el => el.enrolled_students.includes(user.id))
-                .map(el => el.title);
+                .map(el => ({ title: el.title, id: el.id }));
         } else if (user.profile.role === 'TEACHER') {
             return courses
                 .filter(el => el.teacher === user.id)
-                .map(el => el.title);
+                .map(el => ({ title: el.title, id: el.id }));
         }
         return [];
     };
@@ -37,11 +44,15 @@ export default function ManageUsers() {
         const res = await getUsers();
         if (res.success) {
             const newUsers = res.data;
-            const newUsersWithCourseNames = newUsers.map(user => ({
-                ...user,
-                courseNames: getCourseNamesForUser(user),
-            }));
-            console.log('newUsersWithCourseNames', newUsersWithCourseNames);
+            const newUsersWithCourseNames = newUsers.map(user => {
+                const coursesForUser = getCoursesForUser(user, courses);
+                return {
+                    ...user,
+                    courseNames: coursesForUser.map(el => el.title),
+                    courseIds: coursesForUser.map(el => el.id),
+                }
+                
+            });
             setUsers(newUsersWithCourseNames);
         } else {
             alert(res.error || 'Something went wrong while populating users');
@@ -98,7 +109,15 @@ export default function ManageUsers() {
         setShowNewUserRow(false);
     };
 
-    return (
+    return (<>
+        {selectionModal.id && (
+            <SelectionModal 
+                type={selectionModal.type}
+                selectedIds={selectionModal.selectedIds}
+                id={selectionModal.id}
+                onCloseModal={() => setSelectionModal({type: '', selectedIds: [], id: null})}
+            />
+        )}
         <Layout>
             <div className='users-table floating-rows'>
                 {users.map(user => {
@@ -111,6 +130,7 @@ export default function ManageUsers() {
                                 onEditedUser={updatedUser =>
                                     handleEditedUser(updatedUser, idx)
                                 }
+                                onEditCourses={({type, id, selectedIds}) => setSelectionModal({type, id, selectedIds})}
                             />
                         );
                     }
@@ -130,7 +150,7 @@ export default function ManageUsers() {
                             </div>
                             <div className='courses'>
                                 <label>Courses</label>
-                                {getCourseNamesForUser(user).join(', ') || 'N/A'}
+                                {user.courseNames.join(', ') || 'N/A'}
                             </div>
                             <div className='buttons'>
                                 <button
@@ -156,6 +176,7 @@ export default function ManageUsers() {
                     <EditableUserRow
                         onCancelCreate={() => setShowNewUserRow(false)}
                         onCreatedUser={handleCreatedUser}
+                        onEditCourses={({type, id, selectedIds}) => setSelectionModal({type, id, selectedIds})}
                     />
                 )}
             </div>
@@ -166,5 +187,5 @@ export default function ManageUsers() {
                 Add User
             </button>
         </Layout>
-    );
+    </>);
 }

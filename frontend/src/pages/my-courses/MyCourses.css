@@ -1,13 +1,12 @@
-@import url('../../constants.css');
+@import url('../../styles/constants.css');
 
-.courses-table .row {
+#my-courses .row {
     height: 80px;
 
     .title { min-width: 270px; }
     .teacher { min-width: 140px;}
     .students { 
-        min-width: 200px; 
-        cursor: pointer;
+        min-width: 200px;
         font: var(--font-detail);
     }
     .description {

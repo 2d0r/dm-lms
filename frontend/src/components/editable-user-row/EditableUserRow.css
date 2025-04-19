@@ -1,8 +1,8 @@
-.floating-rows .row.editable.edit-user {
+#editable-user-row {
     height: 100px;
 }
 
-.floating-rows .row form {
+#editable-user-row form {
     .teacher {
         cursor: pointer;
     }
@@ -34,5 +34,8 @@
             cursor: pointer;
             height: 100%;
         }
+    }
+    .courses {
+        cursor: pointer;
     }
 }

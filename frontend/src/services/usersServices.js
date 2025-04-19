@@ -20,6 +20,16 @@ export const getUser = async (id) => {
     }
 }
 
+export const getUsersByRole = async (role) => {
+    try {
+        const res = await api.get(`/api/users/?role=${role}`);
+        return { success: true, data: res.data };
+    } catch (error) {
+        console.error(error);
+        return { success: false, error: error.response?.data || error.message };
+    }
+};
+
 export const deleteUser = async (id) => {
     try {
         const res = await api.delete(`/api/users/delete/${id}/`);

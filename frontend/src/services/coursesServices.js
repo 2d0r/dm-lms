@@ -12,7 +12,7 @@ export const getCourses = async () => {
 
 export const getCourse = async (id) => {
     try {
-        const res = await api.get(`/api/courses/${id}`);
+        const res = await api.get(`/api/courses/${id}/`);
         return { success: true, data: res.data };
     } catch (error) {
         console.error(error);
@@ -40,6 +40,17 @@ export const updateCourse = async ({ id, description, title }) => {
     }
 }
 
+export const updateCourseTeacher = async ({ courseId, teacherId }) => {
+    console.log('Course id, teacher id', courseId, teacherId);
+    try {
+        const res = await api.patch(`/api/courses/update/${courseId}/`, { teacher: teacherId });
+        return { success: true, data: res.data };
+    } catch (error) {
+        console.error(error);
+        return { success: false, error: error.response?.data || error.message }
+    }
+}
+
 export const deleteCourse = async (id) => {
     try {
         const res = await api.delete(`/api/courses/delete/${id}/`);
@@ -50,3 +61,12 @@ export const deleteCourse = async (id) => {
     }
 };
 
+export const setCourseTeacher = async (teacherId, courseId) => {
+    try {
+        const res = await api.put(`/api/courses/${courseId}/teachers/${teacherId}/`);
+        return { success: true, status: res.status };
+    } catch (error) {
+        console.error(error);
+        return { success: false, error: error.response?.data || error.message };
+    }
+}

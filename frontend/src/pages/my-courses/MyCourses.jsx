@@ -71,7 +71,7 @@ export default function MyCourses() {
 
     return (
         <Layout>
-            <div className='courses-table floating-rows'>
+            <div id='my-courses' className='floating-rows'>
                 {courses.map((course, idx) => {
                     return (
                         <div className='row' key={`course-${idx}`}>

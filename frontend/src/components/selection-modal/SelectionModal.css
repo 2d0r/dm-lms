@@ -1,0 +1,90 @@
+@import url('../../styles/constants.css');
+
+.modal-overlay {
+    position: absolute;
+    z-index: 20;
+    top: 0; bottom: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(28, 28, 28, 0.6);
+    backdrop-filter: blur(1px);
+}
+
+.selection-modal {
+    width: 400px;
+    max-height: 50vh;
+    overflow-y:scroll;
+    border: var(--border);
+    background-color: var(--black);
+    color: white;
+
+    .top-bar {
+        width: 100%;
+        height: 36px;
+        background-image: var(--gradient-glass-white);
+        border-bottom: var(--border);
+        position: relative;
+        display: flex;
+        justify-content: center;
+    }
+
+    .title {
+        padding: 6px;
+        font: var(--font-h3);
+    }
+
+    .close-button {
+        position: absolute;
+        right: 1px;
+        height: 100%;
+        width: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        border-left: var(--border);
+    }
+}
+
+.selection-modal li {
+    height: 36px;
+    display: flex;
+    border-bottom: var(--border);
+    font: var(--font-h3);
+
+    .name {
+        width: 100%;
+        border-right: var(--border);
+        display: flex;
+        align-items: center;
+        padding: 0 6px;
+    }
+    .checkbox {
+        min-width: 36px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .checkbox.checked {
+        background-color: var(--lilac);
+    }
+}
+
+.selection-modal button.submit {
+    height: 36px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0 6px;
+    font: var(--font-detail);
+    font-size: large;
+    color: var(--lilac);
+
+}

@@ -6,6 +6,7 @@ import Layout from '../../components/layout/Layout';
 import { deleteCourse, getCourses } from '../../services/coursesServices';
 import { getUsers } from '../../services/usersServices';
 import EditableCourseRow from '../../components/editable-course-row/EditableCourseRow';
+import SelectionModal from '../../components/selection-modal/SelectionModal';
 
 export default function ManageCourses() {
     const [courses, setCourses] = useState([]);
@@ -14,6 +15,7 @@ export default function ManageCourses() {
     const [error, setError] = useState('');
     const [showNewCourseRow, setShowNewCourseRow] = useState(false);
     const [editableCourseId, setEditableCourseId] = useState(null);
+    const [selectionModal, setSelectionModal] = useState({type: '', id: null, selectedIds: []});
 
     useEffect(() => {
         populateCourses({refetch: true});
@@ -98,7 +100,15 @@ export default function ManageCourses() {
 
     return (
         <Layout>
-            <div className='courses-table floating-rows'>
+            {selectionModal.id && (
+                <SelectionModal 
+                    type={selectionModal.type}
+                    id={selectionModal.id}
+                    selectedIds={selectionModal.selectedIds}
+                    onCloseModal={() => setSelectionModal({type: '', selectedIds: [], id: null})}
+                />
+            )}
+            <div id='manage-courses' className='floating-rows'>
                 {courses.map((course, idx) => {
                     if (editableCourseId === course.id) {
                         return (
@@ -107,6 +117,7 @@ export default function ManageCourses() {
                                 course={course}
                                 onCancelCreate={handleCancelEdit}
                                 onEditedCourse={(updatedCourse) => handleEditedCourse(updatedCourse, idx)}
+                                onShowSelectionModal={(type, id, selectedIds) => setSelectionModal({type, id, selectedIds})}
                             />
                         )
                     }
@@ -139,6 +150,7 @@ export default function ManageCourses() {
                     <EditableCourseRow 
                         onCancelCreate={() => setShowNewCourseRow(false)}
                         onCreatedCourse={handleCreatedCourse}
+                        onShowSelectionModal={(type, id, selectedIds) => setSelectionModal({type, id, selectedIds})}
                     />
                 )}
             </div>

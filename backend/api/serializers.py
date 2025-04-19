@@ -35,7 +35,6 @@ class CourseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
         fields = ['id', 'title', 'description', 'created_at', 'teacher', 'enrolled_students']
-        extra_kwargs = {'teacher': {'read_only': True}}
 
 # custom token serialiser which returns role to frontend
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):

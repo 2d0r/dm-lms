@@ -5,29 +5,15 @@ import '../../styles/floatingRows.css';
 
 export default function EditableUserRow(props) {
 
-    const user = props.user || {
-        first_name: '',
-        username: '',
-        role: '',
-        password: '',
-        courses: [],
-        courseNames: [],
-    }
-
-    const [name, setName] = useState(user.first_name);
-    const [username, setUsername] = useState(user.username);
-    const [role, setRole] = useState(user.role);
-    const [password, setPassword] = useState(user.password);
-    const [courses, setCourses] = useState(user.courses);
-    const [courseNames, setCourseNames] = useState(user.courseNames);
-
-    useEffect(() => {
-        console.log('user', props.user);
-    }, []);
+    const [name, setName] = useState(props.user.first_name || '');
+    const [username, setUsername] = useState(props.user.username || '');
+    const [role, setRole] = useState(props.user.role || '');
+    const [password, setPassword] = useState(props.user.password || '');
+    const [courseIds, setCourseIds] = useState(props.user.courseIds || []);
+    const [courseNames, setCourseNames] = useState(props.user.courseNames || []);
 
     const handleCreateUser = async e => {
         e.preventDefault();
-        console.log({ name, username, password, role });
         const result = await createUser({ name, username, password, role: role || 'STUDENT' });
         if (result.success) {
             const newUser = result.data;
@@ -53,13 +39,19 @@ export default function EditableUserRow(props) {
             alert(result.error || 'Something went wrong while editing user');
         }
     }
-
     const handleCancelCreate = () => {
         props.onCancelCreate();
     };
+    const handleEditCourses = () => {
+        props.onEditCourses({
+            type: 'selectCourses', 
+            selectedIds: courseIds,
+            id: props.user.id || null,
+        });
+    }
 
     return (
-        <div className='row editable edit-user'>
+        <div id='editable-user-row' className='row editable'>
             <form
                 onSubmit={props.user ? handleEditUser : handleCreateUser}
             >
@@ -112,9 +104,9 @@ export default function EditableUserRow(props) {
                     </select>
                     {/* <Dropdown /> */}
                 </div>
-                <div className='courses'>
+                <div className='courses' onClick={handleEditCourses}>
                     <label htmlFor='courses'>Edit Courses</label>
-                    {/* {user.courseNames?.join(', ')} */}
+                    {courseNames?.join(', ')}
                     {/* <Multiselect options={students} /> */}
                 </div>
                 <div className='buttons'>

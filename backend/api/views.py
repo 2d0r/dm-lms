@@ -64,19 +64,17 @@ class UserCreateView(generics.CreateAPIView):
 
 
 class UserListView(generics.ListCreateAPIView):
-    '''List and create teachers.'''
+    '''List and create users.'''
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        '''Return a list of all teachers'''
+        role = self.request.GET.get('role', '')
+        
+        if role:
+            return User.objects.filter(profile__role=role)
+        '''Return a list of all users'''
         return User.objects.all()
-
-    # def perform_create(self, serializer):
-    #     if serializer.is_valid():
-    #         serializer.save(teacher=self.request.user)
-    #     else:
-    #         raise ValueError("Invalid data provided")
 
 
 class UserDeleteView(generics.DestroyAPIView):

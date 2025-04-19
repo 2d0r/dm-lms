@@ -10,7 +10,6 @@ export default function EditableCourseRow(props) {
         teacher: '',
         enrolledStudentsNames: [],
     }
-
     const [title, setTitle] = useState(course.title);
     const [description, setDescription] = useState(course.description);
 
@@ -36,14 +35,19 @@ export default function EditableCourseRow(props) {
         } else {
             alert(result.error || 'Something went wrong while editing course');
         }
-    }
-
+    };
     const handleCancelCreate = () => {
         props.onCancelCreate();
     };
+    const handleEditTeacher = () => {
+        props.onShowSelectionModal('selectTeacher', props.course.id, [props.course.teacher]);
+    };
+    const handleEditStudents = () => {
+        props.onShowSelectionModal('selectStudents', props.course.id, props.course.enrolled_students);
+    };
 
     return (
-        <div className='row editable'>
+        <div id='editable-course-row' className='row editable'>
             <form
                 onSubmit={props.course ? handleEditCourse : handleCreateCourse}
             >
@@ -59,12 +63,12 @@ export default function EditableCourseRow(props) {
                         value={title}
                     />
                 </div>
-                <div className='teacher'>
+                <div className='teacher' onClick={handleEditTeacher}>
                     <label htmlFor='teacher'>Edit Teacher</label>
                     {course.teacherName}
                     {/* <Dropdown options={teachers} /> */}
                 </div>
-                <div className='students'>
+                <div className='students' onClick={handleEditStudents}>
                     <label htmlFor='students'>Edit Students</label>
                     {course.enrolledStudentsNames.join(', ')}
                     {/* <select name='teacher' id='students' multiple>

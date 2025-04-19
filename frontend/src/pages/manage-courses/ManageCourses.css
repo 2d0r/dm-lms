@@ -1,6 +1,6 @@
-@import url('../../constants.css');
+@import url('../../styles/constants.css');
 
-.courses-table .row {
+#manage-courses .row {
     height: 80px;
 
     .title { 
@@ -11,8 +11,7 @@
         min-width: 140px;
     }
     .students { 
-        min-width: 200px; 
-        cursor: pointer;
+        min-width: 200px;
         font: var(--font-detail);
     }
     .description {

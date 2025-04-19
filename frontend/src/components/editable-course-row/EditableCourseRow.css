@@ -1,16 +1,16 @@
-@import url('../../constants.css');
+@import url('../../styles/constants.css');
 
-.floating-rows .row form {
+#editable-course-row form {
     .teacher {
         cursor: pointer;
-    }
-    div:hover label {
-        color: var(--lilac);
     }
     .description textarea {
         height: 100%;
         margin-top: 18px;
         border: none;
+    }
+    .students {
+        cursor: pointer;
     }
     .students select {
         margin-top: 18px;

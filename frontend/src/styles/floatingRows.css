@@ -1,4 +1,4 @@
-@import url('../constants.css');
+@import url('./constants.css');
 
 .floating-rows {
     margin-top: 90px;
@@ -28,7 +28,8 @@
         position: absolute;
         top: 6px;
         font: var(--font-detail);
-        color: transparent;
+        color: var(--grey);
+        visibility: hidden;
     }
     .buttons {
         min-width: 60px;
@@ -58,7 +59,7 @@
 
 .floating-rows .row:hover {
     label {
-        color: var(--grey);
+        visibility: visible;
     }
 }
 
@@ -71,6 +72,12 @@
     }
 }
 
-.floating-rows .row.editable {
+.floating-rows .editable {
     background-color: var(--lilac-dark);
+    label {
+        visibility: visible;
+    }
+    div:hover label {
+        color: var(--lilac);
+    }
 }
