@@ -45,7 +45,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        font: var(--font-detail);
+        font: var(--font-button-small);
         color: var(--lilac);
     }
     .buttons button:not(:last-child) {

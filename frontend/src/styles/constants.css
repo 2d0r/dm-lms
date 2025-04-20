@@ -12,8 +12,9 @@
   --font-h2: 600  20px 'Playfair', serif;
   --font-h3: 600 16px 'Playfair', serif;
   --font-body: 400 12px 'Playfair', serif;
-  --font-button: 800 12px 'Playfair', serif;
-  --font-detail: 12px 'anonymous-bold', monotype;
+  --font-button: large 'Anonymous-bold', monotype;
+  --font-button-small: 12px 'Anonymous-bold', monotype;
+  --font-detail: 12px 'Anonymous-bold', monotype;
 
   --floating-rows-gap: 12px;
 }

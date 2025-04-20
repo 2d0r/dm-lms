@@ -41,9 +41,18 @@ export const updateCourse = async ({ id, description, title }) => {
 }
 
 export const updateCourseTeacher = async ({ courseId, teacherId }) => {
-    console.log('Course id, teacher id', courseId, teacherId);
     try {
         const res = await api.patch(`/api/courses/update/${courseId}/`, { teacher: teacherId });
+        return { success: true, data: res.data };
+    } catch (error) {
+        console.error(error);
+        return { success: false, error: error.response?.data || error.message }
+    }
+}
+
+export const updateCourseStudents = async ({ courseId, studentIds }) => {
+    try {
+        const res = await api.patch(`/api/courses/update/${courseId}/`, { enrolled_students: studentIds });
         return { success: true, data: res.data };
     } catch (error) {
         console.error(error);

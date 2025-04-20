@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import './SelectionModal.css';
-import { getUsersByRole } from '../../services/usersServices';
-import { getCourses, updateCourseTeacher } from '../../services/coursesServices';
+import { getUsersByRole, updateUserEnrollments } from '../../services/usersServices';
+import { getCourses, updateCourseStudents, updateCourseTeacher } from '../../services/coursesServices';
 import CloseIcon from '@mui/icons-material/Close';
 import DoneIcon from '@mui/icons-material/Done';
+import { useSession } from '../../context/SessionContext';
 
 export default function SelectionModal({ type, selectedIds, id, onCloseModal }) {
 
     const [title, setTitle] = useState('');
     const [list, setList] = useState([]);
+    const { reloadCourse, reloadUser, setError } = useSession();
 
     const populateTeachers = async () => {
         const res = await getUsersByRole('TEACHER');
@@ -46,20 +48,48 @@ export default function SelectionModal({ type, selectedIds, id, onCloseModal }) 
         }
     };
 
-    const setCourseTeacher = async () => {
+    const handleSubmitNewCourseTeacher = async () => {
         // Set new teacher for course
         const selectedTeacherId = list.find(el => el.check === true).id;
-        // Don't update databse if the same teacher is selected
+        // Don't update database if the same teacher is selected
         if (selectedIds.includes(selectedTeacherId)) {
             return;
         }
         const res = await updateCourseTeacher({ courseId: id, teacherId: selectedTeacherId });
         if (!res.success) {
-            alert(res.error || 'Something went wrong while changing course\'s teacher');
+            setError(res.error || 'Something went wrong while changing course\'s teacher');
         }
+        await reloadCourse(id);
+    }
+
+    const handleSubmitNewCourseStudents = async () => {
+        const selectedStudentIds = list.filter(el => el.check === true).map(el => el.id);
+        // Don't update database if the selection is the same
+        if (selectedIds === selectedStudentIds) {
+            return;
+        }
+        const res = await updateCourseStudents({ courseId: id, studentIds: selectedStudentIds });
+        if (!res.success) {
+            setError(res.error || 'Something went wrong while changing course\'s students');
+        }
+        await reloadCourse(id);
+    }
+
+    const handleSubmitNewStudentEnrollments = async () => {
+        const selectedCourseIds = list.filter(el => el.check === true).map(el => el.id);
+        // Don't update database if the selection is the same
+        if (selectedIds === selectedCourseIds) {
+            return;
+        }
+        const res = await updateUserEnrollments({ userId: id, courseIds: selectedCourseIds });
+        if (!res.success) {
+            setError(res.error || 'Something went wrong while updating user\'s enrollments');
+        }
+        await reloadUser(id);
     }
 
     useEffect(() => {
+        console.log('type', type)
         switch (type) {
             case 'selectTeacher':
                 setTitle('Select Teacher');
@@ -69,7 +99,11 @@ export default function SelectionModal({ type, selectedIds, id, onCloseModal }) 
                 setTitle('Select Students');
                 populateStudents();
                 break;
-            case 'selectCourses':
+            case 'selectCoursesForTeacher':
+                setTitle('Select Courses');
+                populateCourses();
+                break;
+            case 'selectCoursesForStudent':
                 setTitle('Select Courses');
                 populateCourses();
                 break;
@@ -78,25 +112,6 @@ export default function SelectionModal({ type, selectedIds, id, onCloseModal }) 
                 break;
         }
     }, []);
-
-    const handleSubmit = () => {
-        switch (type) {
-            case 'selectTeacher':
-                setCourseTeacher();
-                break;
-            case 'selectStudents':
-                // Enroll and unenroll students to/from course
-                break;
-            case 'selectCourses':
-                // If teacher, can't currently update without replacing
-                // If student, enroll/unenroll from courses
-                break;
-            default:
-                setTitle('');
-                break;
-        }
-        onCloseModal();
-    }
 
     const handleCheckbox = (idx) => {
         setList(prevList => {
@@ -113,6 +128,28 @@ export default function SelectionModal({ type, selectedIds, id, onCloseModal }) 
                 ...newList.slice(idx + 1)
             ];
         });
+    }
+
+    const handleSubmit = () => {
+        switch (type) {
+            case 'selectTeacher':
+                handleSubmitNewCourseTeacher();
+                break;
+            case 'selectStudents':
+                // Enroll and unenroll students to/from course
+                handleSubmitNewCourseStudents();
+                break;
+            case 'selectCoursesForTeacher':
+                // If teacher, can't currently update without replacing
+                break;
+            case 'selectCoursesForStudent':
+                handleSubmitNewStudentEnrollments();
+                break;
+            default:
+                setTitle('');
+                break;
+        }
+        onCloseModal();
     }
 
     return (
@@ -135,7 +172,7 @@ export default function SelectionModal({ type, selectedIds, id, onCloseModal }) 
                         </li>;
                     })}
                 </ul>
-                <button className='submit' onClick={handleSubmit}>Save</button>
+                <button className='submit' onClick={handleSubmit}>Done</button>
             </div>
         </div>
     );

@@ -1,16 +1,39 @@
 import React, { useEffect, useState } from 'react';
-import { createUser, updateUser } from '../../services/usersServices';
+import { createUser, getUser, updateUser } from '../../services/usersServices';
 import './EditableUserRow.css';
 import '../../styles/floatingRows.css';
+import { useSession } from '../../context/SessionContext';
+import { useGetUserDisplayData } from '../../hooks/userHooks';
 
 export default function EditableUserRow(props) {
 
+    const { loadedUsers } = useSession();
     const [name, setName] = useState(props.user.first_name || '');
     const [username, setUsername] = useState(props.user.username || '');
-    const [role, setRole] = useState(props.user.role || '');
+    const [role, setRole] = useState(props.user.profile.role || '');
     const [password, setPassword] = useState(props.user.password || '');
     const [courseIds, setCourseIds] = useState(props.user.courseIds || []);
     const [courseNames, setCourseNames] = useState(props.user.courseNames || []);
+    const getUserDisplayData = useGetUserDisplayData();
+
+    const updateUserForDisplay = () => {
+        const user = loadedUsers.find(el => el.id === props.user.id);
+        const userForDisplay = getUserDisplayData(user, user.courses);
+        console.log('userForDisplay', userForDisplay);
+        setName(userForDisplay.name);
+        setUsername(userForDisplay.username);
+        setRole(userForDisplay.profile.role);
+        setCourseNames(userForDisplay.courseNames);
+        // setCourseIds(userForDisplay.courseIds);
+    }
+
+    useEffect(() => {
+        updateUserForDisplay();
+    }, []);
+
+    useEffect(() => {
+        updateUserForDisplay();
+    }, [loadedUsers]);
 
     const handleCreateUser = async e => {
         e.preventDefault();
@@ -44,7 +67,7 @@ export default function EditableUserRow(props) {
     };
     const handleEditCourses = () => {
         props.onEditCourses({
-            type: 'selectCourses', 
+            type: role === 'STUDENT' ? 'selectCoursesForStudent' : 'selectCoursesForTeacher', 
             selectedIds: courseIds,
             id: props.user.id || null,
         });
@@ -87,7 +110,7 @@ export default function EditableUserRow(props) {
                             id='password'
                             name='password'
                             placeholder='Password'
-                            required
+                            required={!props.user}
                             onChange={e => setPassword(e.target.value)}
                             value={password}
                         />
@@ -107,24 +130,12 @@ export default function EditableUserRow(props) {
                 <div className='courses' onClick={handleEditCourses}>
                     <label htmlFor='courses'>Edit Courses</label>
                     {courseNames?.join(', ')}
-                    {/* <Multiselect options={students} /> */}
                 </div>
                 <div className='buttons'>
-                    {!!props.user ? (
-                        <>
-                            <button type='submit'>Done</button>
-                            <button type='button' onClick={handleCancelCreate}>
-                                Cancel
-                            </button>
-                        </>
-                    ) : (
-                        <>
-                            <button type='submit'>Add</button>
-                            <button type='button' onClick={handleCancelCreate}>
-                                Cancel
-                            </button>
-                        </>
-                    )}
+                    <button type='submit'>Save</button>
+                    <button type='button' onClick={handleCancelCreate}>
+                        Cancel
+                    </button>
                 </div>
             </form>
         </div>

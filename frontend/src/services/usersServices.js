@@ -82,10 +82,10 @@ export const unenrollUser = async (courseId, userId) => {
 
 export const createUser = async ({ name, username, password, role }) => {
     try {
-        const res = await api.post('/api/users/create/', { 
-            username, password, 
+        const res = await api.post('/api/users/create/', {
+            username, password,
             first_name: name,
-            profile: { role: role.toUpperCase() }, 
+            profile: { role: role.toUpperCase() },
         });
         return { success: true, data: res.data };
     } catch (error) {
@@ -96,7 +96,20 @@ export const createUser = async ({ name, username, password, role }) => {
 
 export const updateUser = async ({ id, name, username, password, role }) => {
     try {
-        const res = await api.patch(`/api/courses/update/${id}/`, { name, username, password, role });
+        const payload = { first_name: name, username, role };
+        if (password) payload.password = password;
+        
+        const res = await api.patch(`/api/users/update/${id}/`, payload);
+        return { success: true, data: res.data };
+    } catch (error) {
+        console.error(error);
+        return { success: false, error: error.response?.data || error.message }
+    }
+}
+
+export const updateUserEnrollments = async ({ userId, courseIds }) => {
+    try {
+        const res = await api.patch(`/api/users/${userId}/enrollments/`, { courseIds });
         return { success: true, data: res.data };
     } catch (error) {
         console.error(error);

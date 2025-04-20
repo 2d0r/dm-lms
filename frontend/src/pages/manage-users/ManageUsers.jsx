@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { deleteUser, getUsers } from '../../services/usersServices';
+import { deleteUser } from '../../services/usersServices';
 import Layout from '../../components/layout/Layout';
 import './ManageUsers.css';
 import '../../styles/floatingRows.css';
 import '../../styles/floatingButton.css';
-import { getCourses } from '../../services/coursesServices';
 import EditableUserRow from '../../components/editable-user-row/EditableUserRow';
 import SelectionModal from '../../components/selection-modal/SelectionModal';
+import { useSession } from '../../context/SessionContext';
 
 export default function ManageUsers() {
-    const [users, setUsers] = useState([]);
+    const { loadCourses, loadedCourses, loadUsers } = useSession();
+    const [usersForDisplay, setUsersForDisplay] = useState([]);
     const [courses, setCourses] = useState([]);
     const [editableUserId, setEditableUserId] = useState(null);
     const [showNewUserRow, setShowNewUserRow] = useState(false);
@@ -18,14 +19,8 @@ export default function ManageUsers() {
     const currentUserId = localStorage.getItem('userId');
 
     useEffect(() => {
-        loadCourses();
+        populateUsers();
     }, []);
-
-    useEffect(() => {
-        if(courses.length) {
-            populateUsers();
-        }
-    }, [courses]);
 
     const getCoursesForUser = (user, courses) => {
         if (user.profile.role === 'STUDENT') {
@@ -41,31 +36,17 @@ export default function ManageUsers() {
     };
 
     const populateUsers = async () => {
-        const res = await getUsers();
-        if (res.success) {
-            const newUsers = res.data;
-            const newUsersWithCourseNames = newUsers.map(user => {
-                const coursesForUser = getCoursesForUser(user, courses);
-                return {
-                    ...user,
-                    courseNames: coursesForUser.map(el => el.title),
-                    courseIds: coursesForUser.map(el => el.id),
-                }
-                
-            });
-            setUsers(newUsersWithCourseNames);
-        } else {
-            alert(res.error || 'Something went wrong while populating users');
-        }
-    };
-
-    const loadCourses = async () => {
-        const res = await getCourses();
-        if (res.success) {
-            setCourses(res.data);
-        } else {
-            alert(res.error || 'Something went wrong while populating users');
-        }
+        const courses = await loadCourses();
+        const newUsers = await loadUsers();
+        const newUsersWithCourseNames = newUsers.map(user => {
+            const coursesForUser = getCoursesForUser(user, courses);
+            return {
+                ...user,
+                courseNames: coursesForUser.map(el => el.title),
+                courseIds: coursesForUser.map(el => el.id),
+            }
+        });
+        setUsersForDisplay(newUsersWithCourseNames);
     };
 
     const handleDeleteUser = async id => {
@@ -74,7 +55,7 @@ export default function ManageUsers() {
         }
         const result = await deleteUser(id);
         if (result.success) {
-            setUsers(users => users.filter(el => el.id !== id));
+            setUsersForDisplay(users => users.filter(el => el.id !== id));
         } else {
             setError(
                 result.error || 'Something went wrong while deleting user'
@@ -120,17 +101,17 @@ export default function ManageUsers() {
         )}
         <Layout>
             <div className='users-table floating-rows'>
-                {users.map(user => {
+                {usersForDisplay.map((user, idx) => {
                     if (user.id === editableUserId) {
                         return (
                             <EditableUserRow
                                 key={`user-${user.id}`}
                                 user={user}
-                                onCancelCreate={handleCancelEdit}
                                 onEditedUser={updatedUser =>
                                     handleEditedUser(updatedUser, idx)
                                 }
                                 onEditCourses={({type, id, selectedIds}) => setSelectionModal({type, id, selectedIds})}
+                                onCancelCreate={handleCancelEdit}
                             />
                         );
                     }

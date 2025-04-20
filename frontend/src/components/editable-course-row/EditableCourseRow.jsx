@@ -1,33 +1,56 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { createCourse, updateCourse } from '../../services/coursesServices';
 import './EditableCourseRow.css';
 import '../../styles/floatingRows.css';
+import { useSession } from '../../context/SessionContext';
+import { useGetCourseDisplayData } from '../../hooks/courseHooks';
 
 export default function EditableCourseRow(props) {
-    const course = props.course || {
-        title: '',
-        description: '',
-        teacher: '',
-        enrolledStudentsNames: [],
-    }
-    const [title, setTitle] = useState(course.title);
-    const [description, setDescription] = useState(course.description);
 
-    const handleCreateCourse = async e => {
+    const [title, setTitle] = useState(props.course.title || '');
+    const [description, setDescription] = useState(props.course.description || '');
+    const [teacherId, setTeacherId] = useState(props.course.teacher || '');
+    const [teacherName, setTeacherName] = useState(props.course.teacherName || '');
+    const [enrolledStudents, setEnrolledStudents] = useState(props.course.enrolled_students || []);
+    const [enrolledStudentsNames, setEnrolledStudentsNames] = useState(props.course.enrolledStudentsNames || []);
+    const { loadedCourses, setLoadedCourses, setError } = useSession();
+    const getCourseDisplayData = useGetCourseDisplayData();
+
+    const updateCourseForDisplay = () => {
+        const course = loadedCourses.find(el => el.id === props.course.id);
+        const courseForDisplay = getCourseDisplayData(course);
+        setTitle(courseForDisplay.title);
+        setDescription(courseForDisplay.description);
+        setTeacherId(courseForDisplay.teacher);
+        setTeacherName(courseForDisplay.teacherName);
+        setEnrolledStudentsNames(courseForDisplay.enrolledStudentsNames);
+        setEnrolledStudents(courseForDisplay.enrolled_students);
+    }
+
+    useEffect(() => {
+        updateCourseForDisplay();
+    }, []);
+
+    useEffect(() => {
+        updateCourseForDisplay();
+    }, [loadedCourses]);
+
+    const handleCreateCourse = async (e) => {
         e.preventDefault();
         const result = await createCourse({ description, title });
         if (result.success) {
             const newCourse = result.data;
-            props.onCreatedCourse(newCourse);
+            setLoadedCourses(prev => ({...prev, newCourse}));
+            // props.onCreatedCourse(newCourse);
         } else {
-            alert(result.error || 'Something went wrong while creating course');
+            setError(result.error || 'Something went wrong while creating course');
         }
     };
 
     const handleEditCourse = async (e) => {
         e.preventDefault();
         const result = await updateCourse({ 
-            id: course.id, title, description 
+            id: props.course.id, title, description 
         });
         if (result.success) {
             const udpatedCourse = result.data;
@@ -40,10 +63,10 @@ export default function EditableCourseRow(props) {
         props.onCancelCreate();
     };
     const handleEditTeacher = () => {
-        props.onShowSelectionModal('selectTeacher', props.course.id, [props.course.teacher]);
+        props.onShowSelectionModal('selectTeacher', props.course.id, [teacherId]);
     };
     const handleEditStudents = () => {
-        props.onShowSelectionModal('selectStudents', props.course.id, props.course.enrolled_students);
+        props.onShowSelectionModal('selectStudents', props.course.id, enrolledStudents);
     };
 
     return (
@@ -65,18 +88,11 @@ export default function EditableCourseRow(props) {
                 </div>
                 <div className='teacher' onClick={handleEditTeacher}>
                     <label htmlFor='teacher'>Edit Teacher</label>
-                    {course.teacherName}
-                    {/* <Dropdown options={teachers} /> */}
+                    {teacherName}
                 </div>
                 <div className='students' onClick={handleEditStudents}>
                     <label htmlFor='students'>Edit Students</label>
-                    {course.enrolledStudentsNames.join(', ')}
-                    {/* <select name='teacher' id='students' multiple>
-                        {course.enrolledStudentsNames.map(name => {
-                            return <option value={name} key={`option-${name}`}>{name}</option>
-                        })}
-                    </select> */}
-                    {/* <Multiselect options={students} /> */}
+                    {enrolledStudentsNames.join(', ')}
                 </div>
                 <div className='description'>
                     <label htmlFor='description'>Edit Description</label>
@@ -91,21 +107,10 @@ export default function EditableCourseRow(props) {
                     />
                 </div>
                 <div className='buttons'>
-                    {props.course ? (
-                        <>
-                            <button type='submit'>Done</button>
-                            <button type='button' onClick={handleCancelCreate}>
-                                Cancel
-                            </button>
-                        </>
-                    ) : (
-                        <>
-                            <button type='submit'>Add</button>
-                            <button type='button' onClick={handleCancelCreate}>
-                                Cancel
-                            </button>
-                        </>
-                    )}
+                    <button type='submit'>Save</button>
+                    <button type='button' onClick={handleCancelCreate}>
+                        Cancel
+                    </button>
                 </div>
             </form>
         </div>

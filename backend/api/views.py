@@ -19,6 +19,12 @@ class CourseListView(generics.ListAPIView):
     def get_queryset(self):
         '''Return a list of all courses'''
         return Course.objects.all()
+    
+class CourseView(generics.RetrieveAPIView):
+    '''Retrieve a single course by ID.'''
+    queryset = Course.objects.all()
+    serializer_class = CourseSerializer
+    permission_classes = [IsAuthenticated]
 
 
 class CourseCreateView(generics.CreateAPIView):
@@ -75,6 +81,17 @@ class UserListView(generics.ListCreateAPIView):
             return User.objects.filter(profile__role=role)
         '''Return a list of all users'''
         return User.objects.all()
+    
+class UserView(generics.RetrieveAPIView):
+    '''Retrieve a single course by ID.'''
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated, IsAdmin]
+
+class UserUpdateView(generics.UpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated, IsAdmin]
 
 
 class UserDeleteView(generics.DestroyAPIView):
@@ -147,6 +164,19 @@ class UserUnenrollView(APIView):
             return Response({'message': 'Unenrolled successfully'})
         except Course.DoesNotExist:
             return Response({'error': 'Course or user not found'}, status=404)
+        
+class UserUpdateEnrollmentsView(APIView):
+    permission_classes = [IsAuthenticated, IsAdmin]  # Or IsAdminUser if only admins can update others
+
+    def patch(self, request, user_id):
+        try:
+            user = User.objects.get(pk=user_id)
+            course_ids = request.data.get('courseIds', [])
+            courses = Course.objects.filter(id__in=course_ids)
+            user.courses.set(courses)  # replaces current list
+            return Response({'message': 'Courses updated successfully'})
+        except User.DoesNotExist:
+            return Response({'error': 'User not found'}, status=404)
 
 # Tokens
 

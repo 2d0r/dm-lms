@@ -1,16 +1,17 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import api from '../../api';
 import { useNavigate } from 'react-router-dom';
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '../../constants';
 import './Form.css';
+import { useSession } from '../../context/SessionContext';
 
 export default function Form({ route, method }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [loading, setLoading] = useState(false);
     const [fullName, setFullName] = useState('');
     const [role, setRole] = useState('role');
     const navigate = useNavigate();
+    const { setError, setLoading } = useSession();
 
     const title = method === 'login' ? 'Login' : 'Register';
     const submitLabel = title;
@@ -41,6 +42,10 @@ export default function Form({ route, method }) {
                         break;
                     case 'ADMIN':
                         navigate('/manage-courses');
+                        break;
+                    default:
+                        navigate('/');
+                        break;
                 }
             } else if (method === 'register') {
                 const res = await api.post(route, {
@@ -49,10 +54,13 @@ export default function Form({ route, method }) {
                     first_name: fullName,
                     profile: { role: role.toUpperCase() }
                 });
+                if (!res.success) {
+                    setError(res.error || 'Something went wrong while registering user.');
+                }
                 navigate('/login');
             }
         } catch (error) {
-            alert(error);
+            setError(error);
         } finally {
             setLoading(false);
         }

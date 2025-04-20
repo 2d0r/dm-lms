@@ -3,7 +3,7 @@ from . import views
 
 urlpatterns = [
     path('courses/', views.CourseListView.as_view(), name='course-list'),
-    path('courses/<int:pk>/', views.CourseListView.as_view(), name='course-get'),
+    path('courses/<int:pk>/', views.CourseView.as_view(), name='course-get'),
     path('courses/create/', views.CourseCreateView.as_view(), name='course-create'),
     path('courses/update/<int:pk>/', views.CourseUpdateView.as_view(), name='course-update'),
     path('courses/delete/<int:pk>/', views.CourseDeleteView.as_view(), name='course-delete'),
@@ -12,7 +12,9 @@ urlpatterns = [
     path('courses/<int:course_id>/enroll/', views.UserEnrollSelfView().as_view(), name='enroll-self'),
     path('courses/<int:course_id>/unenroll/', views.UserUnenrollSelfView().as_view(), name='unenroll-self'),
     path('users/', views.UserListView.as_view(), name='user-list'),
-    path('users/<int:pk>/', views.UserListView.as_view(), name='user-find'),
+    path('users/<int:pk>/', views.UserView.as_view(), name='user-get'),
     path('users/delete/<int:pk>/', views.UserDeleteView().as_view(), name='user-delete'),
     path('users/create/', views.UserCreateView().as_view(), name='user-create'),
+    path('users/update/<int:pk>/', views.UserUpdateView.as_view(), name='user-update'),
+    path('users/<int:user_id>/enrollments/', views.UserUpdateEnrollmentsView.as_view(), name='user-update-enrollments'),
 ]

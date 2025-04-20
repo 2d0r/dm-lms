@@ -3,68 +3,45 @@ import './ManageCourses.css';
 import '../../styles/floatingRows.css';
 import '../../styles/floatingButton.css';
 import Layout from '../../components/layout/Layout';
-import { deleteCourse, getCourses } from '../../services/coursesServices';
-import { getUsers } from '../../services/usersServices';
+import { deleteCourse } from '../../services/coursesServices';
 import EditableCourseRow from '../../components/editable-course-row/EditableCourseRow';
 import SelectionModal from '../../components/selection-modal/SelectionModal';
+import { useSession } from '../../context/SessionContext';
+import { useGetCourseDisplayData } from '../../hooks/courseHooks';
 
 export default function ManageCourses() {
-    const [courses, setCourses] = useState([]);
-    const [users, setUsers] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState('');
+    const [coursesForDisplay, setCoursesForDisplay] = useState([]);
     const [showNewCourseRow, setShowNewCourseRow] = useState(false);
     const [editableCourseId, setEditableCourseId] = useState(null);
     const [selectionModal, setSelectionModal] = useState({type: '', id: null, selectedIds: []});
+    const { loadCourses, loadUsers, setError, setLoading } = useSession();
+    const getCourseDisplayData = useGetCourseDisplayData();
 
     useEffect(() => {
-        populateCourses({refetch: true});
+        populateCourses();
     }, []);
 
     const populateCourses = async (options) => {
-        let updateCourses = [];
-        if (options.refetch && !options.updatedCourses) {
-            const coursesRes = await getCourses();
-            if (coursesRes.success) {
-                updateCourses = coursesRes.data;
-            } else {
-                alert(
-                    coursesRes.error ||
-                        usersRes.error ||
-                        'Something went wrong while fetching courses'
-                );
-                return;
-            }
+        let updatedCourses = [];
+        if (!options?.updatedCourses) {
+            updatedCourses = await loadCourses();
         } else {
-            updateCourses = options.updatedCourses;
+            updatedCourses = options.updatedCourses;
         }
-        // Populate enrolled students
-        // Get teacher name
-        const usersRes = await getUsers();
-        if (usersRes.success) {
-            const users = usersRes.data;
-            setUsers(users);
-            const coursesWithTeacherNames = updateCourses.map(course => {
-                const enrolledStudentsNames = users
-                    .filter(user => course.enrolled_students.includes(user.id))
-                    .map(user => user.first_name);
-                const teacherName = users.find(user => user.id === course.teacher).first_name;
-                return { ...course, teacherName, enrolledStudentsNames };
-            });
-            setCourses(coursesWithTeacherNames);
-        } else {
-            alert(
-                usersRes.error || 'Something went wrong while fetching users'
-            );
-            return;
-        }
+        // Get course relational data for display
+        const updatedUsers = await loadUsers();
+        const newCoursesForDisplay = updatedCourses.map(course => {
+            const relatedUsers = updatedUsers.filter(user => course.teacher === user.id || course.enrolled_students.includes(user.id));
+            return getCourseDisplayData(course, relatedUsers);
+        });
+        setCoursesForDisplay(newCoursesForDisplay);
     };
 
     const handleDeleteCourse = async (courseId) => {
         setLoading(true);
         const result = await deleteCourse(courseId);
         if (result.success) {
-            setCourses(courses => courses.filter(el => el.id !== courseId));
+            setCoursesForDisplay(courses => courses.filter(el => el.id !== courseId));
         } else {
             setError(
                 result.error || 'Something went wrong while deleting course'
@@ -75,8 +52,7 @@ export default function ManageCourses() {
 
     const handleCreatedCourse = (newCourse) => {
         populateCourses({
-            refetch: false, 
-            updatedCourses: [...courses, newCourse],
+            updatedCourses: [...coursesForDisplay, newCourse],
         });
         setShowNewCourseRow(false);
     }
@@ -84,8 +60,7 @@ export default function ManageCourses() {
     const handleEditedCourse = (updatedCourse, idx) => {
         // const unchangedCourses = courses.filter(el => el.id !== updatedCourse.id);
         populateCourses({
-            refetch: false,
-            updatedCourses: [...courses.slice(0, idx), updatedCourse, ...courses.slice(idx + 1)],
+            updatedCourses: [...coursesForDisplay.slice(0, idx), updatedCourse, ...coursesForDisplay.slice(idx + 1)],
         });
         setEditableCourseId(null);
         setShowNewCourseRow(false);
@@ -109,7 +84,7 @@ export default function ManageCourses() {
                 />
             )}
             <div id='manage-courses' className='floating-rows'>
-                {courses.map((course, idx) => {
+                {coursesForDisplay.map((course, idx) => {
                     if (editableCourseId === course.id) {
                         return (
                             <EditableCourseRow

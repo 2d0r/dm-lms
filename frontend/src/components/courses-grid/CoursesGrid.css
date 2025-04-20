@@ -68,11 +68,11 @@
     button {
         border-left: var(--border);
         padding: 0 12px;
+        font: var(--font-button-small)
     }
     button.highlight {
         background-color: var(--lilac);
         color: var(--black);
         cursor: pointer;
     }
-
 }

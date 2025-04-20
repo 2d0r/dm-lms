@@ -2,7 +2,7 @@
 /* Tailwind is not yet used, this cancels default stylings */
 
 @font-face {
-  font-family: 'anonymous-bold';
+  font-family: 'Anonymous-bold';
   src: local('AnonymousPro-Regular'), url('./assets/fonts/AnonymousPro-Bold.ttf') format('truetype');
 }
 @font-face {
