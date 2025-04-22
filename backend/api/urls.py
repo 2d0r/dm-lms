@@ -11,10 +11,13 @@ urlpatterns = [
     path('courses/<int:course_id>/unenroll/<int:user_id>', views.UserUnenrollView().as_view(), name='unenroll'),
     path('courses/<int:course_id>/enroll/', views.UserEnrollSelfView().as_view(), name='enroll-self'),
     path('courses/<int:course_id>/unenroll/', views.UserUnenrollSelfView().as_view(), name='unenroll-self'),
+
     path('users/', views.UserListView.as_view(), name='user-list'),
     path('users/<int:pk>/', views.UserView.as_view(), name='user-get'),
     path('users/delete/<int:pk>/', views.UserDeleteView().as_view(), name='user-delete'),
     path('users/create/', views.UserCreateView().as_view(), name='user-create'),
     path('users/update/<int:pk>/', views.UserUpdateView.as_view(), name='user-update'),
     path('users/<int:user_id>/enrollments/', views.UserUpdateEnrollmentsView.as_view(), name='user-update-enrollments'),
+
+    path('users/<int:user_id>/courses/', views.UserCourseView.as_view(), name='courses-user-get'),
 ]

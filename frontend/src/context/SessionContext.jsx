@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { getCourse, getCourses } from '../services/coursesServices';
+import { getCourse, getCourses, getUserCourses } from '../services/coursesServices';
 import { getUser, getUsers } from '../services/usersServices';
 
 const SessionContext = createContext();
@@ -15,58 +15,69 @@ export default function SessionProvider({ children }) {
     }, [error]);
 
     const loadCourses = async () => {
-        const res = await getCourses();
-        if (res.success) {
-            setLoadedCourses(res.data);
-            return res.data;
+        const result = await getCourses();
+        if (result.success) {
+            setLoadedCourses(result.data);
+            return result.data;
         } else {
-            setError(res.error || 'Something went wrong while fetching courses.');
-            return [];
-        }
-    }
-
-    const loadUsers = async () => {
-        const res = await getUsers();
-        if (res.success) {
-            setLoadedUsers(res.data);
-            return res.data;
-        } else {
-            setError(res.error || 'Something went wrong while fetching users.');
+            setError(result.error || 'Something went wrong while fetching courses.');
             return [];
         }
     }
 
     const reloadCourse = async (courseId) => {
-        const res = await getCourse(courseId);
-        if (res.success) {
-            const reloadedCourse = res.data;
+        const result = await getCourse(courseId);
+        if (result.success) {
+            const reloadedCourse = result.data;
             setLoadedCourses(prev => [
                 ...prev.filter(el => el.id !== courseId),
                 reloadedCourse,
             ]);
         } else {
-            setError(res.error || 'Something went wrong while reloading course.');
+            setError(result.error || 'Something went wrong while reloading course.');
         }
     };
 
+    const loadUserCourses = async ({ userId, userRole }) => {
+        const result = await getUserCourses({ userId, userRole });
+        if (result.success) {
+            setLoadedUsers(result.data);
+            return result.data;
+        } else {
+            setError(result.error || 'Something went wrong while fetching courses for user.');
+            return [];
+        }
+    }
+
+    const loadUsers = async () => {
+        const result = await getUsers();
+        if (result.success) {
+            setLoadedUsers(result.data);
+            return result.data;
+        } else {
+            setError(result.error || 'Something went wrong while fetching users.');
+            return [];
+        }
+    }
+
     const reloadUser = async (userId) => {
-        const res = await getUser(userId);
-        if (res.success) {
-            const reloadedUser = res.data;
+        const result = await getUser(userId);
+        if (result.success) {
+            const reloadedUser = result.data;
             console.log('reloadedUser', reloadedUser);
             setLoadedUsers(prev => [
                 ...prev.filter(el => el.id !== userId),
                 reloadedUser,
             ]);
         } else {
-            setError(res.error || 'Something went wrong while reloading course.');
+            setError(result.error || 'Something went wrong while reloading course.');
         }
     }
 
     const contextValue = {
-        loadedCourses, loadedUsers,
-        loadCourses, loadUsers,
-        reloadCourse, reloadUser,
+        loadedCourses, loadCourses, reloadCourse,
+        loadedUsers, loadUsers, reloadUser,
+        loadUserCourses,
         setError, setLoading
     };
 

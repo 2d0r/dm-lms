@@ -6,7 +6,6 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 # A serialiser converts python objects to JSON, to be used in API
 
 class CourseSerializer(serializers.ModelSerializer):
-    '''Serialiser for the Course model.'''
     class Meta:
         model = Course
         fields = ['id', 'title', 'description', 'created_at', 'teacher', 'enrolled_students']
@@ -29,10 +28,11 @@ class ProfileSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     profile = ProfileSerializer()
     courses = CourseSerializer(many=True, read_only=True)
+    courses_taught = CourseSerializer(many=True, read_only=True)
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'password', 'first_name', 'profile', 'courses']
+        fields = ['id', 'username', 'email', 'password', 'first_name', 'profile', 'courses', 'courses_taught']
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):

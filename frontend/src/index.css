@@ -38,3 +38,7 @@ select {
     -webkit-appearance: none;
     -moz-appearance: none;
 }
+
+.no-edit {
+    cursor: default;
+}

@@ -1,18 +1,22 @@
 @import url('../../styles/constants.css');
 
 #editable-course-row form {
-    .teacher {
-        cursor: pointer;
-    }
     .description textarea {
         height: 100%;
         margin-top: 18px;
         border: none;
     }
-    .students {
+    .students, .teacher {
         cursor: pointer;
+
+        &.no-edit label {
+            color: var(--grey);
+        }
     }
     .students select {
         margin-top: 18px;
+    }
+    .no-edit {
+        cursor: default;
     }
 }

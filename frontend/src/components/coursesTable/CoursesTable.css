@@ -1,6 +1,6 @@
 @import url('../../styles/constants.css');
 
-#manage-courses .row {
+#courses-table .row {
     height: 80px;
 
     .title { 

@@ -89,8 +89,8 @@ export default function CoursesGrid(props) {
                             <span className='subtitle'>prof. {course.teacherName}</span>
                         </div>
                         <div className='description'>{course.description}</div>
-                        <div className='buttons'>
-                            {['ADMIN', 'TEACHER'].includes(currentRole) && (
+                        <div className='buttons' hidden={currentRole === 'TEACHER'}>
+                            {currentRole === 'ADMIN' && (
                                 <button
                                     className='delete-button'
                                     onClick={() => handleDeleteCourse(course.id)}

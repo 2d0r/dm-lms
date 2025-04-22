@@ -13,6 +13,7 @@
     background-color: var(--black);
     display: flex;
     color: white;
+    cursor: default;
 
     > div, form > div {
         display: flex;
@@ -74,6 +75,8 @@
 
 .floating-rows .editable {
     background-color: var(--lilac-dark);
+    cursor: auto;
+
     label {
         visibility: visible;
     }

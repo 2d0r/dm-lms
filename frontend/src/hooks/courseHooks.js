@@ -10,6 +10,9 @@ export const useGetCourseDisplayData = () => {
             setError('Failed to get course display info. Users should be loaded before this operation.')
             return { ...course, enrolledStudentsNames: [], teacherName: '' };
         }
+
+        console.log(course);
+
         return {
             ...course,
             enrolledStudentsNames: users.filter(el => course.enrolled_students.includes(el.id)).map(el => el.first_name),

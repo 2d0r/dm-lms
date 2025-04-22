@@ -60,6 +60,7 @@ class CourseDeleteView(generics.DestroyAPIView):
         '''Return a list of all courses.'''
         return Course.objects.all()
 
+
 # Users
 
 class UserCreateView(generics.CreateAPIView):
@@ -177,6 +178,27 @@ class UserUpdateEnrollmentsView(APIView):
             return Response({'message': 'Courses updated successfully'})
         except User.DoesNotExist:
             return Response({'error': 'User not found'}, status=404)
+
+class UserCourseView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, user_id):
+        role = request.GET.get('role', '').upper()
+
+        try:
+            user = User.objects.get(pk=user_id)
+        except User.DoesNotExist:
+            return Response({'error': 'User not found'}, status=404)
+
+        if role == 'TEACHER':
+            courses = user.courses_taught.all()  # related_name on FK
+        elif role == 'STUDENT':
+            courses = user.courses.all()  # related_name on M2M
+        else:
+            return Response({'error': 'Invalid role'}, status=400)
+
+        serializer = CourseSerializer(courses, many=True)
+        return Response(serializer.data)
 
 # Tokens
 

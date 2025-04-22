@@ -5,20 +5,26 @@ import '../../styles/floatingRows.css';
 import { useSession } from '../../context/SessionContext';
 import { useGetCourseDisplayData } from '../../hooks/courseHooks';
 
-export default function EditableCourseRow(props) {
+export default function EditableCourseRow({ 
+    course={}, 
+    onCancelCreate, onShowSelectionModal,
+    onCreatedCourse, onEditedCourse,
+}) {
 
-    const [title, setTitle] = useState(props.course.title || '');
-    const [description, setDescription] = useState(props.course.description || '');
-    const [teacherId, setTeacherId] = useState(props.course.teacher || '');
-    const [teacherName, setTeacherName] = useState(props.course.teacherName || '');
-    const [enrolledStudents, setEnrolledStudents] = useState(props.course.enrolled_students || []);
-    const [enrolledStudentsNames, setEnrolledStudentsNames] = useState(props.course.enrolledStudentsNames || []);
-    const { loadedCourses, setLoadedCourses, setError } = useSession();
+    const [title, setTitle] = useState(course.title || '');
+    const [description, setDescription] = useState(course.description || '');
+    const [teacherId, setTeacherId] = useState(course.teacher || '');
+    const [teacherName, setTeacherName] = useState(course.teacherName || '');
+    const [enrolledStudents, setEnrolledStudents] = useState(course.enrolled_students || []);
+    const [enrolledStudentsNames, setEnrolledStudentsNames] = useState(course.enrolledStudentsNames || []);
+    const { loadedCourses, reloadCourse, setError } = useSession();
     const getCourseDisplayData = useGetCourseDisplayData();
+    const userRole = localStorage.getItem('userRole');
+    const isNewCourse = !course.id;
 
     const updateCourseForDisplay = () => {
-        const course = loadedCourses.find(el => el.id === props.course.id);
-        const courseForDisplay = getCourseDisplayData(course);
+        const newCourse = loadedCourses.find(el => el.id === course.id);
+        const courseForDisplay = getCourseDisplayData(newCourse);
         setTitle(courseForDisplay.title);
         setDescription(courseForDisplay.description);
         setTeacherId(courseForDisplay.teacher);
@@ -28,52 +34,59 @@ export default function EditableCourseRow(props) {
     }
 
     useEffect(() => {
-        updateCourseForDisplay();
+        if (loadedCourses.length && !isNewCourse) updateCourseForDisplay();
+        if (userRole === 'TEACHER') {
+            const userId = localStorage.getItem('userId');
+            const userName = localStorage.getItem('userName');
+            setTeacherId(userId);
+            setTeacherName(userName);
+        }
     }, []);
 
     useEffect(() => {
-        updateCourseForDisplay();
+        if (loadedCourses.length && !isNewCourse) updateCourseForDisplay();
     }, [loadedCourses]);
 
     const handleCreateCourse = async (e) => {
         e.preventDefault();
-        const result = await createCourse({ description, title });
+        const result = await createCourse({ description, title, teacherId });
         if (result.success) {
             const newCourse = result.data;
-            setLoadedCourses(prev => ({...prev, newCourse}));
-            // props.onCreatedCourse(newCourse);
+            reloadCourse(newCourse.id);
+            onCreatedCourse(newCourse);
         } else {
             setError(result.error || 'Something went wrong while creating course');
         }
     };
-
     const handleEditCourse = async (e) => {
         e.preventDefault();
         const result = await updateCourse({ 
-            id: props.course.id, title, description 
+            id: course.id, title, description 
         });
         if (result.success) {
             const udpatedCourse = result.data;
-            props.onEditedCourse(udpatedCourse);
+            onEditedCourse(udpatedCourse);
         } else {
             alert(result.error || 'Something went wrong while editing course');
         }
     };
     const handleCancelCreate = () => {
-        props.onCancelCreate();
+        onCancelCreate();
     };
     const handleEditTeacher = () => {
-        props.onShowSelectionModal('selectTeacher', props.course.id, [teacherId]);
+        if (userRole === 'ADMIN') {
+            onShowSelectionModal('selectTeacher', course.id, [teacherId]);
+        }
     };
     const handleEditStudents = () => {
-        props.onShowSelectionModal('selectStudents', props.course.id, enrolledStudents);
+        if (userRole === 'ADMIN') {
+            onShowSelectionModal('selectStudents', course.id, enrolledStudents);
+        }
     };
 
     return (
         <div id='editable-course-row' className='row editable'>
-            <form
-                onSubmit={props.course ? handleEditCourse : handleCreateCourse}
-            >
+            <form onSubmit={isNewCourse ? handleCreateCourse : handleEditCourse} >
                 <div className='title'>
                     <label htmlFor='title'>Edit Title</label>
                     <input
@@ -86,12 +99,12 @@ export default function EditableCourseRow(props) {
                         value={title}
                     />
                 </div>
-                <div className='teacher' onClick={handleEditTeacher}>
-                    <label htmlFor='teacher'>Edit Teacher</label>
+                <div className={`teacher${userRole === 'TEACHER' ? ' no-edit' : ''}`} onClick={handleEditTeacher}>
+                    <label htmlFor='teacher'>{userRole === 'TEACHER' ? '' : 'Edit '}Teacher</label>
                     {teacherName}
                 </div>
-                <div className='students' onClick={handleEditStudents}>
-                    <label htmlFor='students'>Edit Students</label>
+                <div className={`students${userRole === 'TEACHER' ? ' no-edit': ''}`} onClick={handleEditStudents}>
+                    <label htmlFor='students'>{userRole === 'TEACHER' ? '' : 'Edit '}Students</label>
                     {enrolledStudentsNames.join(', ')}
                 </div>
                 <div className='description'>

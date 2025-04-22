@@ -22,7 +22,7 @@ export default function ManageUsers() {
         populateUsers();
     }, []);
 
-    const getCoursesForUser = (user, courses) => {
+    const getUserCourses = (user, courses) => {
         if (user.profile.role === 'STUDENT') {
             return courses
                 .filter(el => el.enrolled_students.includes(user.id))
@@ -39,7 +39,7 @@ export default function ManageUsers() {
         const courses = await loadCourses();
         const newUsers = await loadUsers();
         const newUsersWithCourseNames = newUsers.map(user => {
-            const coursesForUser = getCoursesForUser(user, courses);
+            const coursesForUser = getUserCourses(user, courses);
             return {
                 ...user,
                 courseNames: coursesForUser.map(el => el.title),
