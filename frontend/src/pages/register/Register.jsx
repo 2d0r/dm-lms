@@ -1,10 +1,10 @@
 import React from 'react';
-import Form from '../../components/form/Form';
+import AuthForm from '../../components/authForm/AuthForm';
 
 export default function Register() {
     return (
         <section className='form-overlay'>
-            <Form route='/api/user/register/' method='register' />
+            <AuthForm route='/api/user/register/' method='register' />
         </section>
     );
 }

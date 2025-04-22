@@ -4,7 +4,7 @@ import './EditableCourseRow.css';
 import '../../styles/floatingRows.css';
 import { useSession } from '../../context/SessionContext';
 import { useGetCourseDisplayData } from '../../hooks/courseHooks';
-import SelectionModal from '../selection-modal/SelectionModal';
+import SelectionModal from '../selectionModal/SelectionModal';
 
 export default function EditableCourseRow({ 
     course={}, 

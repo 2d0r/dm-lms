@@ -43,9 +43,9 @@ export default function SelectionModal({ type, selectedIds, id, onUpdatedSelecti
     }, [list]);
 
     const populateTeachers = async () => {
-        const res = await getUsersByRole('TEACHER');
-        if (res.success) {
-            const teachers = res.data;
+        const response = await getUsersByRole('TEACHER');
+        if (response.success) {
+            const teachers = response.data;
             setList(teachers.map(teacher => ({ 
                 id: teacher.id,
                 name: teacher.first_name, 
@@ -55,9 +55,9 @@ export default function SelectionModal({ type, selectedIds, id, onUpdatedSelecti
     };
 
     const populateStudents = async () => {
-        const res = await getUsersByRole('STUDENT');
-        if (res.success) {
-            const students = res.data;
+        const response = await getUsersByRole('STUDENT');
+        if (response.success) {
+            const students = response.data;
             setList(students.map(student => ({ 
                 id: student.id,
                 name: student.first_name, 
@@ -67,9 +67,9 @@ export default function SelectionModal({ type, selectedIds, id, onUpdatedSelecti
     };
 
     const populateCourses = async () => {
-        const res = await getCourses();
-        if (res.success) {
-            const courses = res.data;
+        const response = await getCourses();
+        if (response.success) {
+            const courses = response.data;
             setList(
                 courses.map(course => ({ 
                     id: course.id,

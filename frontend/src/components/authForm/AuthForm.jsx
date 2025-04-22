@@ -2,10 +2,10 @@ import { useState } from 'react';
 import api from '../../api';
 import { useNavigate } from 'react-router-dom';
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '../../constants';
-import './Form.css';
+import './AuthForm.css';
 import { useSession } from '../../context/SessionContext';
 
-export default function Form({ route, method }) {
+export default function AuthForm({ route, method }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [fullName, setFullName] = useState('');
@@ -22,22 +22,22 @@ export default function Form({ route, method }) {
 
         try {
             if (method === 'login') {
-                const res = await api.post(route, {
+                const response = await api.post(route, {
                     username,
                     password,
                 });
                 setUserState(prev => ({
                     ...prev,
-                    role: res.data.role,
-                    id: res.data.id,
-                    name: res.data.first_name,
+                    role: response.data.role,
+                    id: response.data.id,
+                    name: response.data.first_name,
                 }));
-                localStorage.setItem(ACCESS_TOKEN, res.data.access);
-                localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
-                localStorage.setItem('userId', res.data.id);
+                localStorage.setItem(ACCESS_TOKEN, response.data.access);
+                localStorage.setItem(REFRESH_TOKEN, response.data.refresh);
+                localStorage.setItem('userId', response.data.id);
 
                 // Navigate based on role
-                switch (res.data.role) {
+                switch (response.data.role) {
                     case 'STUDENT':
                         navigate('/');
                         break;
@@ -52,14 +52,14 @@ export default function Form({ route, method }) {
                         break;
                 }
             } else if (method === 'register') {
-                const res = await api.post(route, {
+                const response = await api.post(route, {
                     username,
                     password,
                     first_name: fullName,
                     profile: { role: role.toUpperCase() }
                 });
-                if (!res.success) {
-                    setError(res.error || 'Something went wrong while registering user.');
+                if (!response.success) {
+                    setError(response.error || 'Something went wrong while registering user.');
                 }
                 navigate('/login');
             }

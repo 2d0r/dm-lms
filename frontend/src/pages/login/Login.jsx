@@ -1,11 +1,11 @@
 import React from 'react';
-import Form from '../../components/form/Form';
+import AuthForm from '../../components/authForm/AuthForm';
 import './Login.css';
 
 export default function Login() {
     return (
         <section className='form-overlay'>
-            <Form route='/api/token/' method='login' />
+            <AuthForm route='/api/token/' method='login' />
         </section>
     );
 }

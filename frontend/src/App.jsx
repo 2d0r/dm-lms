@@ -5,10 +5,10 @@ import Register from './pages/register/Register';
 import Courses from './pages/Courses';
 import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/ProtectedRoute';
-import ManageUsers from './pages/manage-users/ManageUsers';
-import MyCourses from './pages/my-courses/MyCourses';
+import ManageUsers from './pages/manageUsers/ManageUsers';
+import MyCourses from './pages/MyCourses';
 import MyLearning from './pages/MyLearning';
-import ManageCourses from './pages/manage-courses/ManageCourses';
+import ManageCourses from './pages/ManageCourses';
 
 function Logout() {
     localStorage.clear();
@@ -37,9 +37,17 @@ function App() {
                     }
                 />
                 <Route 
+                    path='/my-learning'
+                    element={
+                        <ProtectedRoute authorisedRole='STUDENT'>
+                            <MyLearning />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route 
                     path='/my-courses'
                     element={
-                        <ProtectedRoute>
+                        <ProtectedRoute authorisedRole='TEACHER'>
                             <MyCourses />
                         </ProtectedRoute>
                     }
@@ -47,23 +55,15 @@ function App() {
                 <Route 
                     path='/manage-users'
                     element={
-                        <ProtectedRoute>
+                        <ProtectedRoute authorisedRole='ADMIN'>
                             <ManageUsers />
-                        </ProtectedRoute>
-                    }
-                />
-                <Route 
-                    path='/my-learning'
-                    element={
-                        <ProtectedRoute>
-                            <MyLearning />
                         </ProtectedRoute>
                     }
                 />
                 <Route 
                     path='/manage-courses'
                     element={
-                        <ProtectedRoute>
+                        <ProtectedRoute authorisedRole='ADMIN'>
                             <ManageCourses />
                         </ProtectedRoute>
                     }

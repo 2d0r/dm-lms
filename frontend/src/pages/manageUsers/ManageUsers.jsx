@@ -4,8 +4,8 @@ import Layout from '../../components/layout/Layout';
 import './ManageUsers.css';
 import '../../styles/floatingRows.css';
 import '../../styles/floatingButton.css';
-import EditableUserRow from '../../components/editable-user-row/EditableUserRow';
-import SelectionModal from '../../components/selection-modal/SelectionModal';
+import EditableUserRow from '../../components/editableUserRow/EditableUserRow';
+import SelectionModal from '../../components/selectionModal/SelectionModal';
 import { useSession } from '../../context/SessionContext';
 
 export default function ManageUsers() {

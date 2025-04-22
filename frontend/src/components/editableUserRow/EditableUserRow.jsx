@@ -4,7 +4,7 @@ import './EditableUserRow.css';
 import '../../styles/floatingRows.css';
 import { useSession } from '../../context/SessionContext';
 import { useGetUserDisplayData } from '../../hooks/userHooks';
-import SelectionModal from '../selection-modal/SelectionModal';
+import SelectionModal from '../selectionModal/SelectionModal';
 import { useGetCourseNameFromId } from '../../hooks/courseHooks';
 
 export default function EditableUserRow({
