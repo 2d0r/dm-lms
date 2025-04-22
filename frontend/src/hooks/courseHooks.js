@@ -11,8 +11,6 @@ export const useGetCourseDisplayData = () => {
             return { ...course, enrolledStudentsNames: [], teacherName: '' };
         }
 
-        console.log(course);
-
         return {
             ...course,
             enrolledStudentsNames: users.filter(el => course.enrolled_students.includes(el.id)).map(el => el.first_name),

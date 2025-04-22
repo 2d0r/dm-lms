@@ -11,7 +11,7 @@ export default function Form({ route, method }) {
     const [fullName, setFullName] = useState('');
     const [role, setRole] = useState('role');
     const navigate = useNavigate();
-    const { setError, setLoading } = useSession();
+    const { setUserState, setError, setLoading } = useSession();
 
     const title = method === 'login' ? 'Login' : 'Register';
     const submitLabel = title;
@@ -26,11 +26,14 @@ export default function Form({ route, method }) {
                     username,
                     password,
                 });
+                setUserState(prev => ({
+                    ...prev,
+                    role: res.data.role,
+                    id: res.data.id,
+                    name: res.data.first_name,
+                }));
                 localStorage.setItem(ACCESS_TOKEN, res.data.access);
                 localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
-                localStorage.setItem('userRole', res.data.role);
-                localStorage.setItem('userId', res.data.id);
-                localStorage.setItem('userName', res.data.first_name);
 
                 // Navigate based on role
                 switch (res.data.role) {

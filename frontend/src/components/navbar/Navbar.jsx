@@ -1,26 +1,28 @@
 import React from 'react';
 import './Navbar.css';
 import NavButton from '../navButton/NavButton';
+import { useSession } from '../../context/SessionContext';
 
 export default function Navbar() {
-    const currentRole = localStorage.getItem('userRole');
+    const { userState } = useSession();
+    const { role } = userState;
 
     return (
         <header>
             <span className='site-title'>D&M Academy</span>
             <nav>
-                {currentRole === 'STUDENT' || currentRole === 'TEACHER' ? (
+                {role === 'STUDENT' || role === 'TEACHER' ? (
                     <NavButton label='Courses' path='/' />
                 ) : (
                     <NavButton label='Courses' path='/manage-courses' />
                 )}
-                {currentRole === 'STUDENT' && (
+                {role === 'STUDENT' && (
                     <NavButton label='My Learning' path='/my-learning' />
                 )}
-                {currentRole === 'TEACHER' && (
+                {role === 'TEACHER' && (
                     <NavButton label='My Courses' path='/my-courses' />
                 )}
-                {currentRole === 'ADMIN' && (
+                {role === 'ADMIN' && (
                     <NavButton label='Users' path='/manage-users' />
                 )}
                 <NavButton label='Logout' path='/logout' />

@@ -2,13 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { deleteCourse, getCourses } from '../../services/coursesServices';
 import { enrollSelf, getUsers, unenrollSelf } from '../../services/usersServices';
 import './CoursesGrid.css';
+import { useSession } from '../../context/SessionContext';
 
 export default function CoursesGrid(props) {
+    const { userState, setLoading, setError } = useSession();
     const [courses, setCourses] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState('');
-    const currentRole = localStorage.getItem('userRole');
-    const currentUserId = localStorage.getItem('userId');
 
     const populateCourses = async () => {
         const coursesRes = await getCourses();
@@ -36,10 +34,6 @@ export default function CoursesGrid(props) {
     useEffect(() => {
         populateCourses();
     }, []);
-
-    useEffect(() => {
-        if (error) alert(error);
-    }, [error]);
     
 
     const handleEnroll = async (courseId) => {
@@ -78,7 +72,7 @@ export default function CoursesGrid(props) {
         <div className='course-grid'>
             {courses.map(course => {
                 const isEnrolled = !!course.enrolled_students.find(
-                    el => el === Number(currentUserId)
+                    el => el === Number(userState.id)
                 );
                 const buttonLabel = isEnrolled && props.studentId ? 'Unenroll' : isEnrolled ? 'Enrolled' : 'Enroll';
                 
@@ -89,8 +83,8 @@ export default function CoursesGrid(props) {
                             <span className='subtitle'>prof. {course.teacherName}</span>
                         </div>
                         <div className='description'>{course.description}</div>
-                        <div className='buttons' hidden={currentRole === 'TEACHER'}>
-                            {currentRole === 'ADMIN' && (
+                        <div className='buttons' hidden={userState.role === 'TEACHER'}>
+                            {userState.role === 'ADMIN' && (
                                 <button
                                     className='delete-button'
                                     onClick={() => handleDeleteCourse(course.id)}
@@ -98,7 +92,7 @@ export default function CoursesGrid(props) {
                                     Delete
                                 </button>
                             )}
-                            {currentRole === 'STUDENT' && (
+                            {userState.role === 'STUDENT' && (
                                 <button 
                                     className={!isEnrolled || props.studentId ? 'highlight' : ''}
                                     onClick={() => {

@@ -4,11 +4,20 @@ import { getUser, getUsers } from '../services/usersServices';
 
 const SessionContext = createContext();
 
+const DEFAULT_USER_STATE = {
+    id: '',
+    access: '',
+    refresh: '',
+    role: '',
+    name: '',
+}
+
 export default function SessionProvider({ children }) {
     const [loadedCourses, setLoadedCourses] = useState([]);
     const [loadedUsers, setLoadedUsers] = useState([]);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [userState, setUserState] = useState(DEFAULT_USER_STATE);
 
     useEffect(() => {
         if (error) alert(JSON.stringify(error));
@@ -77,6 +86,7 @@ export default function SessionProvider({ children }) {
     const contextValue = {
         loadedCourses, loadCourses, reloadCourse,
         loadedUsers, loadUsers, reloadUser,
+        userState, setUserState,
         loadUserCourses,
         setError, setLoading
     };

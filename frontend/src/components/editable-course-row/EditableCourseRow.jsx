@@ -17,9 +17,9 @@ export default function EditableCourseRow({
     const [teacherName, setTeacherName] = useState(course.teacherName || '');
     const [enrolledStudents, setEnrolledStudents] = useState(course.enrolled_students || []);
     const [enrolledStudentsNames, setEnrolledStudentsNames] = useState(course.enrolledStudentsNames || []);
-    const { loadedCourses, reloadCourse, setError } = useSession();
+    const { loadedCourses, reloadCourse, userState, setError } = useSession();
     const getCourseDisplayData = useGetCourseDisplayData();
-    const userRole = localStorage.getItem('userRole');
+    const userRole = userState.role;
     const isNewCourse = !course.id;
 
     const updateCourseForDisplay = () => {
@@ -36,10 +36,8 @@ export default function EditableCourseRow({
     useEffect(() => {
         if (loadedCourses.length && !isNewCourse) updateCourseForDisplay();
         if (userRole === 'TEACHER') {
-            const userId = localStorage.getItem('userId');
-            const userName = localStorage.getItem('userName');
-            setTeacherId(userId);
-            setTeacherName(userName);
+            setTeacherId(userState.id);
+            setTeacherName(userState.name);
         }
     }, []);
 

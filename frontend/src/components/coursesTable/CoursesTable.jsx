@@ -9,14 +9,12 @@ import { useSession } from '../../context/SessionContext';
 import { useGetCourseDisplayData } from '../../hooks/courseHooks';
 
 export default function CoursesTable() {
+    const { loadCourses, loadUsers, setError, setLoading, loadUserCourses, userState } = useSession();
     const [coursesForDisplay, setCoursesForDisplay] = useState([]);
     const [showNewCourseRow, setShowNewCourseRow] = useState(false);
     const [editableCourseId, setEditableCourseId] = useState(null);
     const [selectionModal, setSelectionModal] = useState({type: '', id: null, selectedIds: []});
-    const { loadCourses, loadUsers, setError, setLoading, loadUserCourses } = useSession();
     const getCourseDisplayData = useGetCourseDisplayData();
-    const userRole = localStorage.getItem('userRole');
-    const userId = Number(localStorage.getItem('userId'));
 
     useEffect(() => {
         populateCourses();
@@ -27,8 +25,8 @@ export default function CoursesTable() {
 
         if (options?.updatedCourses) {
             updatedCourses = options.updatedCourses;
-        } else if (userRole === 'TEACHER') {
-            updatedCourses = await loadUserCourses({ userId, userRole });
+        } else if (userState.role === 'TEACHER') {
+            updatedCourses = await loadUserCourses({ userId: userState.id, userRole: userState.role });
         } else {
             updatedCourses = await loadCourses();
         }

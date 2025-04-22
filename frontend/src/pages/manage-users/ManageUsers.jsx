@@ -9,14 +9,12 @@ import SelectionModal from '../../components/selection-modal/SelectionModal';
 import { useSession } from '../../context/SessionContext';
 
 export default function ManageUsers() {
-    const { loadCourses, loadedCourses, loadUsers } = useSession();
+    const { loadCourses, loadUsers, userState } = useSession();
     const [usersForDisplay, setUsersForDisplay] = useState([]);
     const [courses, setCourses] = useState([]);
     const [editableUserId, setEditableUserId] = useState(null);
     const [showNewUserRow, setShowNewUserRow] = useState(false);
     const [selectionModal, setSelectionModal] = useState({ type: '', selectedIds: [], id: null });
-
-    const currentUserId = localStorage.getItem('userId');
 
     useEffect(() => {
         populateUsers();
@@ -50,7 +48,7 @@ export default function ManageUsers() {
     };
 
     const handleDeleteUser = async id => {
-        if (id === Number(currentUserId)) {
+        if (id === Number(userState.id)) {
             return;
         }
         const result = await deleteUser(id);
@@ -72,7 +70,6 @@ export default function ManageUsers() {
     };
 
     const handleEditedUser = (updatedCourse, idx) => {
-        // const unchangedCourses = courses.filter(el => el.id !== updatedCourse.id);
         populateUsers({
             refetch: false,
             updatedCourses: [
@@ -141,7 +138,7 @@ export default function ManageUsers() {
                                 </button>
                                 <button
                                     className={
-                                        user.id === Number(currentUserId)
+                                        user.id === Number(userState.id)
                                             ? 'disabled'
                                             : ''
                                     }
