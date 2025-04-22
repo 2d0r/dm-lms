@@ -6,11 +6,9 @@ const SessionContext = createContext();
 
 const DEFAULT_USER_STATE = {
     id: '',
-    access: '',
-    refresh: '',
     role: '',
     name: '',
-}
+};
 
 export default function SessionProvider({ children }) {
     const [loadedCourses, setLoadedCourses] = useState([]);
@@ -18,6 +16,10 @@ export default function SessionProvider({ children }) {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const [userState, setUserState] = useState(DEFAULT_USER_STATE);
+
+    useEffect(() => {
+        loadUserDetails();
+    }, []);
 
     useEffect(() => {
         if (error) alert(JSON.stringify(error));
@@ -73,7 +75,6 @@ export default function SessionProvider({ children }) {
         const result = await getUser(userId);
         if (result.success) {
             const reloadedUser = result.data;
-            console.log('reloadedUser', reloadedUser);
             setLoadedUsers(prev => [
                 ...prev.filter(el => el.id !== userId),
                 reloadedUser,
@@ -89,6 +90,19 @@ export default function SessionProvider({ children }) {
         userState, setUserState,
         loadUserCourses,
         setError, setLoading
+    };
+
+    const loadUserDetails = async () => {
+        const result = await getUser(localStorage.getItem('userId'));
+        if (result.success) {
+            const user = result.data;
+            setUserState(prev => ({
+                ...prev,
+                role: user.profile.role,
+                id: user.id,
+                name: user.first_name,
+            }));
+        }
     };
 
     return (

@@ -89,7 +89,6 @@ export default function SelectionModal({ type, selectedIds, id, onCloseModal }) 
     }
 
     useEffect(() => {
-        console.log('type', type)
         switch (type) {
             case 'selectTeacher':
                 setTitle('Select Teacher');

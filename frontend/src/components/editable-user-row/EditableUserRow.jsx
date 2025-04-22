@@ -6,26 +6,31 @@ import { useSession } from '../../context/SessionContext';
 import { useGetUserDisplayData } from '../../hooks/userHooks';
 
 export default function EditableUserRow(props) {
-
-    const { loadedUsers } = useSession();
+    const { loadedUsers, userState } = useSession();
     const [name, setName] = useState(props.user.first_name || '');
     const [username, setUsername] = useState(props.user.username || '');
     const [role, setRole] = useState(props.user.profile.role || '');
     const [password, setPassword] = useState(props.user.password || '');
     const [courseIds, setCourseIds] = useState(props.user.courseIds || []);
-    const [courseNames, setCourseNames] = useState(props.user.courseNames || []);
+    const [courseNames, setCourseNames] = useState(
+        props.user.courseNames || []
+    );
     const getUserDisplayData = useGetUserDisplayData();
 
     const updateUserForDisplay = () => {
         const user = loadedUsers.find(el => el.id === props.user.id);
-        const userForDisplay = getUserDisplayData(user, user.courses);
+        const relatedCourses =
+            user.profile.role === 'STUDENT'
+                ? user.courses
+                : user.courses_taught;
+        const userForDisplay = getUserDisplayData(user, relatedCourses);
         console.log('userForDisplay', userForDisplay);
         setName(userForDisplay.name);
         setUsername(userForDisplay.username);
         setRole(userForDisplay.profile.role);
         setCourseNames(userForDisplay.courseNames);
-        // setCourseIds(userForDisplay.courseIds);
-    }
+        // setCourseIds(userForDisplay.courses);
+    };
 
     useEffect(() => {
         updateUserForDisplay();
@@ -37,7 +42,12 @@ export default function EditableUserRow(props) {
 
     const handleCreateUser = async e => {
         e.preventDefault();
-        const result = await createUser({ name, username, password, role: role || 'STUDENT' });
+        const result = await createUser({
+            name,
+            username,
+            password,
+            role: role || 'STUDENT',
+        });
         if (result.success) {
             const newUser = result.data;
             props.onCreatedUser(newUser);
@@ -46,14 +56,14 @@ export default function EditableUserRow(props) {
         }
     };
 
-    const handleEditUser = async (e) => {
+    const handleEditUser = async e => {
         e.preventDefault();
-        const result = await updateUser({ 
-            id: props.user.id, 
+        const result = await updateUser({
+            id: props.user.id,
             name,
             username,
             password,
-            role 
+            role,
         });
         if (result.success) {
             const udpatedUser = result.data;
@@ -61,23 +71,25 @@ export default function EditableUserRow(props) {
         } else {
             alert(result.error || 'Something went wrong while editing user');
         }
-    }
+    };
     const handleCancelCreate = () => {
         props.onCancelCreate();
     };
     const handleEditCourses = () => {
+        if (role === 'TEACHER') return;
         props.onEditCourses({
-            type: role === 'STUDENT' ? 'selectCoursesForStudent' : 'selectCoursesForTeacher', 
+            type:
+                role === 'STUDENT'
+                    ? 'selectCoursesForStudent'
+                    : 'selectCoursesForTeacher',
             selectedIds: courseIds,
             id: props.user.id || null,
         });
-    }
+    };
 
     return (
         <div id='editable-user-row' className='row editable'>
-            <form
-                onSubmit={props.user ? handleEditUser : handleCreateUser}
-            >
+            <form onSubmit={props.user ? handleEditUser : handleCreateUser}>
                 <div className='name'>
                     <label htmlFor='name'>Edit Name</label>
                     <input
@@ -118,7 +130,10 @@ export default function EditableUserRow(props) {
                 </div>
                 <div className='role'>
                     <label htmlFor='role'>Edit Role</label>
-                    <select name='role' id='role' defaultValue={role}
+                    <select
+                        name='role'
+                        id='role'
+                        defaultValue={role}
                         onChange={() => setRole(e.target.value)}
                     >
                         <option value='STUDENT'>STUDENT</option>
@@ -127,8 +142,13 @@ export default function EditableUserRow(props) {
                     </select>
                     {/* <Dropdown /> */}
                 </div>
-                <div className='courses' onClick={handleEditCourses}>
-                    <label htmlFor='courses'>Edit Courses</label>
+                <div
+                    className={`courses${role === 'TEACHER' ? ' no-edit' : ''}`}
+                    onClick={handleEditCourses}
+                >
+                    <label htmlFor='courses'>
+                        {role === 'TEACHER' ? 'Courses (Edit in Manage Courses)' : 'Edit Courses'}
+                    </label>
                     {courseNames?.join(', ')}
                 </div>
                 <div className='buttons'>

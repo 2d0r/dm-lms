@@ -5,16 +5,17 @@
     z-index: 20;
     top: 0; bottom: 0;
     left: 0;
-    height: 100vh;
+    height: 100%;
     width: 100vw;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     background-color: rgb(28, 28, 28, 0.6);
     backdrop-filter: blur(1px);
 }
 
 .selection-modal {
+    margin-top: 25vh;
     width: 400px;
     max-height: 50vh;
     overflow-y:scroll;

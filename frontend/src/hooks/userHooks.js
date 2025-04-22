@@ -1,18 +1,20 @@
 import { useSession } from '../context/SessionContext'
 
 export const useGetUserDisplayData = () => {
-    const { loadedCourses, setError } = useSession();
+    const { loadedCourses } = useSession();
 
     return (user, relatedCourses = []) => {
-        const courses = relatedCourses.length ? relatedCourses : loadedCourses;
-
-        if (courses.length === 0) {
-            setError('Failed to get course display info. Users should be loaded before this operation.')
-            return { ...user, courseNames: [] };
+        let courses = [];
+        if (relatedCourses.length) {
+            courses = relatedCourses;
+        } else if (user.profile.role === 'STUDENT') {
+            courses = loadedCourses.filter(course => user.courses.includes(course.id));
+        } else if (user.profile.role === 'TEACHER') {
+            courses = loadedCourses.filter(course => user.courses_taught.includes(course.id));
         }
-        return {
-            ...user,
-            courseNames: courses.map(course => course.title),
-        };
+
+        const courseNames = courses.map(course => course.title);
+
+        return { ...user, courseNames };
     }
 }

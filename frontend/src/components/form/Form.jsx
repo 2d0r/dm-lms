@@ -34,6 +34,7 @@ export default function Form({ route, method }) {
                 }));
                 localStorage.setItem(ACCESS_TOKEN, res.data.access);
                 localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
+                localStorage.setItem('userId', res.data.id);
 
                 // Navigate based on role
                 switch (res.data.role) {

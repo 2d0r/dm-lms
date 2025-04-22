@@ -38,4 +38,10 @@
     .courses {
         cursor: pointer;
     }
+    .no-edit {
+        cursor: default;
+        label {
+            color: var(--grey);
+        }
+    }
 }
