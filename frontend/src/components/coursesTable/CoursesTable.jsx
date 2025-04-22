@@ -7,13 +7,13 @@ import EditableCourseRow from '../../components/editable-course-row/EditableCour
 import SelectionModal from '../../components/selection-modal/SelectionModal';
 import { useSession } from '../../context/SessionContext';
 import { useGetCourseDisplayData } from '../../hooks/courseHooks';
+import { DEFAULT_SELECTION_MODAL_STATE } from '../../lib/constants';
 
 export default function CoursesTable() {
-    const { loadCourses, loadUsers, setError, setLoading, loadUserCourses, userState } = useSession();
+    const { loadCourses, loadUsers, setError, setLoading, loadUserCourses, userState, selectionModal, setSelectionModal } = useSession();
     const [coursesForDisplay, setCoursesForDisplay] = useState([]);
     const [showNewCourseRow, setShowNewCourseRow] = useState(false);
     const [editableCourseId, setEditableCourseId] = useState(null);
-    const [selectionModal, setSelectionModal] = useState({type: '', id: null, selectedIds: []});
     const getCourseDisplayData = useGetCourseDisplayData();
 
     useEffect(() => {
@@ -57,6 +57,7 @@ export default function CoursesTable() {
             updatedCourses: [...coursesForDisplay, newCourse],
         });
         setShowNewCourseRow(false);
+        setSelectionModal(DEFAULT_SELECTION_MODAL_STATE);
     }
 
     const handleEditedCourse = (updatedCourse, idx) => {
@@ -66,24 +67,16 @@ export default function CoursesTable() {
         });
         setEditableCourseId(null);
         setShowNewCourseRow(false);
+        setSelectionModal(DEFAULT_SELECTION_MODAL_STATE);
     }
 
     const handleCancelEdit = () => {
         setEditableCourseId(null);
         setShowNewCourseRow(false);
     }
-
     
 
     return (<>
-        {selectionModal.id && (
-            <SelectionModal 
-                type={selectionModal.type}
-                id={selectionModal.id}
-                selectedIds={selectionModal.selectedIds}
-                onCloseModal={() => setSelectionModal({type: '', selectedIds: [], id: null})}
-            />
-        )}
         <div id='courses-table' className='floating-rows'>
             {coursesForDisplay.map((course, idx) => {
                 if (editableCourseId === course.id) {
@@ -93,7 +86,6 @@ export default function CoursesTable() {
                             course={course}
                             onCancelCreate={handleCancelEdit}
                             onEditedCourse={(updatedCourse) => handleEditedCourse(updatedCourse, idx)}
-                            onShowSelectionModal={(type, id, selectedIds) => setSelectionModal({type, id, selectedIds})}
                         />
                     )
                 }
@@ -126,7 +118,6 @@ export default function CoursesTable() {
                 <EditableCourseRow 
                     onCancelCreate={() => setShowNewCourseRow(false)}
                     onCreatedCourse={handleCreatedCourse}
-                    onShowSelectionModal={(type, id, selectedIds) => setSelectionModal({type, id, selectedIds})}
                 />
             )}
         </div>

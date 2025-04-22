@@ -9,12 +9,11 @@ import SelectionModal from '../../components/selection-modal/SelectionModal';
 import { useSession } from '../../context/SessionContext';
 
 export default function ManageUsers() {
-    const { loadCourses, loadUsers, userState } = useSession();
+    const { loadCourses, loadUsers, loadedUsers, userState, selectionModal, setSelectionModal } = useSession();
     const [usersForDisplay, setUsersForDisplay] = useState([]);
     const [courses, setCourses] = useState([]);
     const [editableUserId, setEditableUserId] = useState(null);
     const [showNewUserRow, setShowNewUserRow] = useState(false);
-    const [selectionModal, setSelectionModal] = useState({ type: '', selectedIds: [], id: null });
 
     useEffect(() => {
         populateUsers();
@@ -82,20 +81,12 @@ export default function ManageUsers() {
         setShowNewUserRow(false);
     };
 
-    const handleCancelEdit = () => {
+    const handleCancel = () => {
         setEditableUserId(null);
         setShowNewUserRow(false);
     };
 
     return (<>
-        {selectionModal.id && (
-            <SelectionModal 
-                type={selectionModal.type}
-                selectedIds={selectionModal.selectedIds}
-                id={selectionModal.id}
-                onCloseModal={() => setSelectionModal({type: '', selectedIds: [], id: null})}
-            />
-        )}
         <Layout>
             <div className='users-table floating-rows'>
                 {usersForDisplay.map((user, idx) => {
@@ -107,8 +98,8 @@ export default function ManageUsers() {
                                 onEditedUser={updatedUser =>
                                     handleEditedUser(updatedUser, idx)
                                 }
-                                onEditCourses={({type, id, selectedIds}) => setSelectionModal({type, id, selectedIds})}
-                                onCancelCreate={handleCancelEdit}
+                                onEditCourses={(options) => setSelectionModal(options)}
+                                onCancel={handleCancel}
                             />
                         );
                     }
@@ -152,9 +143,9 @@ export default function ManageUsers() {
                 })}
                 {showNewUserRow && (
                     <EditableUserRow
-                        onCancelCreate={() => setShowNewUserRow(false)}
+                        onCancel={handleCancel}
                         onCreatedUser={handleCreatedUser}
-                        onEditCourses={({type, id, selectedIds}) => setSelectionModal({type, id, selectedIds})}
+                        onEditCourses={(options) => setSelectionModal(options)}
                     />
                 )}
             </div>

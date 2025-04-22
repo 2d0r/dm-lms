@@ -21,8 +21,10 @@ export const getCourse = async (id) => {
 }
 
 export const createCourse = async ({ description, title, teacherId }) => {
+    const payload = {title, description, teacher: teacherId};
+
     try {
-        const result = await api.post('/api/courses/create/', { description, title, teacher: teacherId });
+        const result = await api.post('/api/courses/create/', payload);
         return { success: true, data: result.data };
     } catch (error) {
         console.error(error);
@@ -30,29 +32,16 @@ export const createCourse = async ({ description, title, teacherId }) => {
     }
 };
 
-export const updateCourse = async ({ id, description, title }) => {
-    try {
-        const result = await api.patch(`/api/courses/update/${id}/`, { description, title });
-        return { success: true, data: result.data };
-    } catch (error) {
-        console.error(error);
-        return { success: false, error: error.response?.data || error.message }
-    }
-}
+export const updateCourse = async ({ id, description, title, teacherId, studentIds }) => {
 
-export const updateCourseTeacher = async ({ courseId, teacherId }) => {
-    try {
-        const result = await api.patch(`/api/courses/update/${courseId}/`, { teacher: teacherId });
-        return { success: true, data: result.data };
-    } catch (error) {
-        console.error(error);
-        return { success: false, error: error.response?.data || error.message }
-    }
-}
+    const payload = {};
+    if (title) payload.title = title;
+    if (description) payload.description = description;
+    if (teacherId) payload.teacher = teacherId;
+    if (studentIds) payload.enrolled_students = studentIds;
 
-export const updateCourseStudents = async ({ courseId, studentIds }) => {
     try {
-        const result = await api.patch(`/api/courses/update/${courseId}/`, { enrolled_students: studentIds });
+        const result = await api.patch(`/api/courses/update/${id}/`, payload);
         return { success: true, data: result.data };
     } catch (error) {
         console.error(error);

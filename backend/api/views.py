@@ -94,6 +94,20 @@ class UserUpdateView(generics.UpdateAPIView):
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated, IsAdmin]
 
+    def update(self, request, *args, **kwargs):
+        response = super().update(request, *args, **kwargs)
+        user = self.get_object()
+
+        # Update related profile.role if provided
+        role = request.data.get('role')
+        if role:
+            profile = getattr(user, 'profile', None)
+            if profile:
+                profile.role = role
+                profile.save()
+
+        return response
+
 
 class UserDeleteView(generics.DestroyAPIView):
     '''Delete a user and related profile.'''

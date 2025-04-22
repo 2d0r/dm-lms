@@ -4,26 +4,27 @@ import './EditableCourseRow.css';
 import '../../styles/floatingRows.css';
 import { useSession } from '../../context/SessionContext';
 import { useGetCourseDisplayData } from '../../hooks/courseHooks';
+import SelectionModal from '../selection-modal/SelectionModal';
 
 export default function EditableCourseRow({ 
     course={}, 
-    onCancelCreate, onShowSelectionModal,
-    onCreatedCourse, onEditedCourse,
+    onCancelCreate, onCreatedCourse, onEditedCourse,
 }) {
 
+    const { loadedCourses, loadedUsers, userState, selectionModal, setSelectionModal, setError, setLoadedCourses } = useSession();
     const [title, setTitle] = useState(course.title || '');
     const [description, setDescription] = useState(course.description || '');
     const [teacherId, setTeacherId] = useState(course.teacher || '');
     const [teacherName, setTeacherName] = useState(course.teacherName || '');
     const [enrolledStudents, setEnrolledStudents] = useState(course.enrolled_students || []);
     const [enrolledStudentsNames, setEnrolledStudentsNames] = useState(course.enrolledStudentsNames || []);
-    const { loadedCourses, reloadCourse, userState, setError } = useSession();
     const getCourseDisplayData = useGetCourseDisplayData();
     const userRole = userState.role;
     const isNewCourse = !course.id;
 
     const updateCourseForDisplay = () => {
         const newCourse = loadedCourses.find(el => el.id === course.id);
+        if (!newCourse) return;
         const courseForDisplay = getCourseDisplayData(newCourse);
         setTitle(courseForDisplay.title);
         setDescription(courseForDisplay.description);
@@ -32,6 +33,8 @@ export default function EditableCourseRow({
         setEnrolledStudentsNames(courseForDisplay.enrolledStudentsNames);
         setEnrolledStudents(courseForDisplay.enrolled_students);
     }
+
+    // HOOKS
 
     useEffect(() => {
         if (loadedCourses.length && !isNewCourse) updateCourseForDisplay();
@@ -45,44 +48,104 @@ export default function EditableCourseRow({
         if (loadedCourses.length && !isNewCourse) updateCourseForDisplay();
     }, [loadedCourses]);
 
+
+    // HANDLERS
+
     const handleCreateCourse = async (e) => {
         e.preventDefault();
-        const result = await createCourse({ description, title, teacherId });
-        if (result.success) {
-            const newCourse = result.data;
-            reloadCourse(newCourse.id);
-            onCreatedCourse(newCourse);
-        } else {
+        let result = await createCourse({ description, title, teacherId });
+        if (!result.success) {
             setError(result.error || 'Something went wrong while creating course');
+            return;
         }
+        let newCourse = result.data;
+
+        // Update course selections
+        result = await updateCourse({id: newCourse.id, teacherId, studentIds: enrolledStudents});
+        if (!result.success) {
+            setError(result.error || 'Something went wrong while changing course\'s teacher');
+        }
+        newCourse = result.data;
+
+        setLoadedCourses(prev => ({
+            ...prev.filter(el => el.id !== newCourse.id),
+            newCourse,
+        }));
+        onCreatedCourse(newCourse);
     };
+
     const handleEditCourse = async (e) => {
         e.preventDefault();
         const result = await updateCourse({ 
-            id: course.id, title, description 
+            id: course.id, 
+            title, 
+            description,
+            teacherId,
+            studentIds: enrolledStudents,
         });
         if (result.success) {
             const udpatedCourse = result.data;
+            setLoadedCourses(prev => [
+                ...prev.filter(el => el.id !== udpatedCourse.id),
+                updateCourse,
+            ]);
             onEditedCourse(udpatedCourse);
         } else {
             alert(result.error || 'Something went wrong while editing course');
         }
     };
+
     const handleCancelCreate = () => {
         onCancelCreate();
     };
+
     const handleEditTeacher = () => {
         if (userRole === 'ADMIN') {
-            onShowSelectionModal('selectTeacher', course.id, [teacherId]);
-        }
-    };
-    const handleEditStudents = () => {
-        if (userRole === 'ADMIN') {
-            onShowSelectionModal('selectStudents', course.id, enrolledStudents);
+            setSelectionModal(prev => ({
+                ...prev,
+                show: true,
+                type: 'selectTeacher', 
+                id: course.id || null,
+                selectedIds: teacherId ? [teacherId] : [],
+            }));
         }
     };
 
-    return (
+    const handleEditStudents = () => {
+        if (userRole === 'ADMIN') {
+            setSelectionModal(prev => ({
+                ...prev,
+                show: true,
+                type: 'selectStudents', 
+                id: course.id, 
+                selectedIds: enrolledStudents,
+            }));
+        }
+    };
+
+    const handleUpdatedSelection = async ({ type, selectedIds }) => {
+        if (type === 'selectTeacher' && selectedIds.length === 1) {
+            const newTeacherId = selectedIds[0];
+            setTeacherId(newTeacherId);
+            setTeacherName(loadedUsers.find(el => el.id === newTeacherId).first_name);
+        } else if (type === 'selectStudents') {
+            const newStudentIds = selectedIds;
+            setEnrolledStudents(newStudentIds);
+            setEnrolledStudentsNames(newStudentIds.map(studentId => {
+                return loadedUsers.find(el => el.id === studentId).first_name;
+            }));
+        }
+    }
+
+    return (<>
+        {selectionModal.show && (
+            <SelectionModal 
+                type={selectionModal.type}
+                selectedIds={selectionModal.selectedIds}
+                id={selectionModal.id}
+                onUpdatedSelection={handleUpdatedSelection}
+            />
+        )}
         <div id='editable-course-row' className='row editable'>
             <form onSubmit={isNewCourse ? handleCreateCourse : handleEditCourse} >
                 <div className='title'>
@@ -125,5 +188,5 @@ export default function EditableCourseRow({
                 </div>
             </form>
         </div>
-    );
+    </>);
 }

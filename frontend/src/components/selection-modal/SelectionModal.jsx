@@ -1,92 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import './SelectionModal.css';
-import { getUsersByRole, updateUserEnrollments } from '../../services/usersServices';
-import { getCourses, updateCourseStudents, updateCourseTeacher } from '../../services/coursesServices';
+import { getUsersByRole } from '../../services/usersServices';
+import { getCourses } from '../../services/coursesServices';
 import CloseIcon from '@mui/icons-material/Close';
 import DoneIcon from '@mui/icons-material/Done';
 import { useSession } from '../../context/SessionContext';
+import { callbackToStortByName } from '../../utils';
 
-export default function SelectionModal({ type, selectedIds, id, onCloseModal }) {
+export default function SelectionModal({ type, selectedIds, id, onUpdatedSelection }) {
 
     const [title, setTitle] = useState('');
     const [list, setList] = useState([]);
-    const { reloadCourse, reloadUser, setError } = useSession();
-
-    const populateTeachers = async () => {
-        const res = await getUsersByRole('TEACHER');
-        if (res.success) {
-            const teachers = res.data;
-            setList(teachers.map(teacher => ({ 
-                id: teacher.id,
-                name: teacher.first_name, 
-                check: selectedIds.includes(teacher.id),
-            })));
-        }
-    };
-
-    const populateStudents = async () => {
-        const res = await getUsersByRole('STUDENT');
-        if (res.success) {
-            const students = res.data;
-            setList(students.map(student => ({ 
-                id: student.id,
-                name: student.first_name, 
-                check: selectedIds.includes(student.id),
-            })));
-        }
-    };
-
-    const populateCourses = async () => {
-        const res = await getCourses();
-        if (res.success) {
-            const courses = res.data;
-            setList(courses.map(course => ({ 
-                id: course.id,
-                name: course.title, 
-                check: selectedIds.includes(course.id),
-            })));
-        }
-    };
-
-    const handleSubmitNewCourseTeacher = async () => {
-        // Set new teacher for course
-        const selectedTeacherId = list.find(el => el.check === true).id;
-        // Don't update database if the same teacher is selected
-        if (selectedIds.includes(selectedTeacherId)) {
-            return;
-        }
-        const res = await updateCourseTeacher({ courseId: id, teacherId: selectedTeacherId });
-        if (!res.success) {
-            setError(res.error || 'Something went wrong while changing course\'s teacher');
-        }
-        await reloadCourse(id);
-    }
-
-    const handleSubmitNewCourseStudents = async () => {
-        const selectedStudentIds = list.filter(el => el.check === true).map(el => el.id);
-        // Don't update database if the selection is the same
-        if (selectedIds === selectedStudentIds) {
-            return;
-        }
-        const res = await updateCourseStudents({ courseId: id, studentIds: selectedStudentIds });
-        if (!res.success) {
-            setError(res.error || 'Something went wrong while changing course\'s students');
-        }
-        await reloadCourse(id);
-    }
-
-    const handleSubmitNewStudentEnrollments = async () => {
-        const selectedCourseIds = list.filter(el => el.check === true).map(el => el.id);
-        // Don't update database if the selection is the same
-        if (selectedIds === selectedCourseIds) {
-            return;
-        }
-        const res = await updateUserEnrollments({ userId: id, courseIds: selectedCourseIds });
-        if (!res.success) {
-            setError(res.error || 'Something went wrong while updating user\'s enrollments');
-        }
-        await reloadUser(id);
-    }
+    const [newSelectedIds, setNewSelectedIds] = useState(selectedIds);
+    const { setSelectionModal } = useSession();
 
     useEffect(() => {
         switch (type) {
@@ -112,7 +38,53 @@ export default function SelectionModal({ type, selectedIds, id, onCloseModal }) 
         }
     }, []);
 
-    const handleCheckbox = (idx) => {
+    useEffect(() => {
+        setNewSelectedIds(list.filter(el => el.check === true).map(el => el.id));
+    }, [list]);
+
+    const populateTeachers = async () => {
+        const res = await getUsersByRole('TEACHER');
+        if (res.success) {
+            const teachers = res.data;
+            setList(teachers.map(teacher => ({ 
+                id: teacher.id,
+                name: teacher.first_name, 
+                check: selectedIds.includes(teacher.id),
+            })).sort(callbackToStortByName));
+        }
+    };
+
+    const populateStudents = async () => {
+        const res = await getUsersByRole('STUDENT');
+        if (res.success) {
+            const students = res.data;
+            setList(students.map(student => ({ 
+                id: student.id,
+                name: student.first_name, 
+                check: selectedIds.includes(student.id),
+            })).sort(callbackToStortByName));
+        }
+    };
+
+    const populateCourses = async () => {
+        const res = await getCourses();
+        if (res.success) {
+            const courses = res.data;
+            setList(
+                courses.map(course => ({ 
+                    id: course.id,
+                    name: course.title, 
+                    check: selectedIds.includes(course.id),
+                })).sort(callbackToStortByName)
+            );
+        }
+    };
+
+    const closeSelectionModal = () => {
+        setSelectionModal(prev => ({...prev, show: false}));
+    }
+    
+    const handleCheckbox = (id, idx) => {
         setList(prevList => {
             let newList = prevList;
             // For unique selection, remove all other checked options
@@ -128,27 +100,28 @@ export default function SelectionModal({ type, selectedIds, id, onCloseModal }) 
             ];
         });
     }
-
+    
     const handleSubmit = () => {
         switch (type) {
             case 'selectTeacher':
-                handleSubmitNewCourseTeacher();
+                setSelectionModal(prev => ({...prev, selectedIds: newSelectedIds}));
                 break;
             case 'selectStudents':
                 // Enroll and unenroll students to/from course
-                handleSubmitNewCourseStudents();
+                setSelectionModal(prev => ({...prev, selectedIds: newSelectedIds}));
                 break;
             case 'selectCoursesForTeacher':
                 // If teacher, can't currently update without replacing
                 break;
             case 'selectCoursesForStudent':
-                handleSubmitNewStudentEnrollments();
+                setSelectionModal(prev => ({...prev, selectedIds: newSelectedIds}));
                 break;
             default:
                 setTitle('');
                 break;
         }
-        onCloseModal();
+        onUpdatedSelection({ type, selectedIds: newSelectedIds });
+        closeSelectionModal();
     }
 
     return (
@@ -156,7 +129,7 @@ export default function SelectionModal({ type, selectedIds, id, onCloseModal }) 
             <div className='selection-modal'>
                 <div className='top-bar'>
                     <div className='title'>{title}</div>
-                    <div className='close-button' onClick={onCloseModal}><CloseIcon color='white' /></div>
+                    <div className='close-button' onClick={closeSelectionModal}><CloseIcon color='white' /></div>
                 </div>
                 <ul>
                     {list.map((item, idx) => {
@@ -164,7 +137,7 @@ export default function SelectionModal({ type, selectedIds, id, onCloseModal }) 
                             <div className='name'>{item.name}</div>
                             <div 
                                 className={`checkbox${item.check ? ' checked' : ''}`}
-                                onClick={() => handleCheckbox(idx)}
+                                onClick={() => handleCheckbox(list.id, idx)}
                             >
                                 {item.check && <DoneIcon color='1c1c1c' />}
                             </div>

@@ -1,14 +1,9 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { getCourse, getCourses, getUserCourses } from '../services/coursesServices';
 import { getUser, getUsers } from '../services/usersServices';
+import { DEFAULT_SELECTION_MODAL_STATE, DEFAULT_USER_STATE } from '../lib/constants';
 
 const SessionContext = createContext();
-
-const DEFAULT_USER_STATE = {
-    id: '',
-    role: '',
-    name: '',
-};
 
 export default function SessionProvider({ children }) {
     const [loadedCourses, setLoadedCourses] = useState([]);
@@ -16,6 +11,7 @@ export default function SessionProvider({ children }) {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const [userState, setUserState] = useState(DEFAULT_USER_STATE);
+    const [selectionModal, setSelectionModal] = useState(DEFAULT_SELECTION_MODAL_STATE);
 
     useEffect(() => {
         loadUserDetails();
@@ -79,16 +75,20 @@ export default function SessionProvider({ children }) {
                 ...prev.filter(el => el.id !== userId),
                 reloadedUser,
             ]);
+            return reloadedUser;
         } else {
             setError(result.error || 'Something went wrong while reloading course.');
+            return {};
         }
     }
 
     const contextValue = {
-        loadedCourses, loadCourses, reloadCourse,
+        loadedCourses, setLoadedCourses,
+        loadCourses, reloadCourse,
         loadedUsers, loadUsers, reloadUser,
         userState, setUserState,
         loadUserCourses,
+        selectionModal, setSelectionModal,
         setError, setLoading
     };
 

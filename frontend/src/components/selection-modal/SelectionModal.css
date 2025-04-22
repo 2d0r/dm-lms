@@ -1,7 +1,7 @@
 @import url('../../styles/constants.css');
 
 .modal-overlay {
-    position: absolute;
+    position: fixed;
     z-index: 20;
     top: 0; bottom: 0;
     left: 0;
@@ -15,6 +15,7 @@
 }
 
 .selection-modal {
+    position: absolute;
     margin-top: 25vh;
     width: 400px;
     max-height: 50vh;

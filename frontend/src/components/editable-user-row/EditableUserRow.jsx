@@ -1,30 +1,40 @@
 import React, { useEffect, useState } from 'react';
-import { createUser, getUser, updateUser } from '../../services/usersServices';
+import { createUser, getUser, updateUser, updateUserEnrollments } from '../../services/usersServices';
 import './EditableUserRow.css';
 import '../../styles/floatingRows.css';
 import { useSession } from '../../context/SessionContext';
 import { useGetUserDisplayData } from '../../hooks/userHooks';
+import SelectionModal from '../selection-modal/SelectionModal';
+import { useGetCourseNameFromId } from '../../hooks/courseHooks';
 
-export default function EditableUserRow(props) {
-    const { loadedUsers, userState } = useSession();
-    const [name, setName] = useState(props.user.first_name || '');
-    const [username, setUsername] = useState(props.user.username || '');
-    const [role, setRole] = useState(props.user.profile.role || '');
-    const [password, setPassword] = useState(props.user.password || '');
-    const [courseIds, setCourseIds] = useState(props.user.courseIds || []);
+export default function EditableUserRow({
+    user = { profile: {} }, 
+    onCreatedUser, onEditedUser, onEditCourses, onCancel, 
+}) {
+
+    const { loadedUsers, loadedCourses, reloadUser, selectionModal, setError } = useSession();
+    const [name, setName] = useState(user.first_name || '');
+    const [username, setUsername] = useState(user.username || '');
+    const [role, setRole] = useState(user.profile?.role || 'STUDENT');
+    const [password, setPassword] = useState(user.password || '');
+    const [courseIds, setCourseIds] = useState(user.courseIds || []);
     const [courseNames, setCourseNames] = useState(
-        props.user.courseNames || []
+        user.courseNames || []
     );
     const getUserDisplayData = useGetUserDisplayData();
+    const isNewUser = !user.id;
+    const getCourseNameFromId = useGetCourseNameFromId();
 
     const updateUserForDisplay = () => {
-        const user = loadedUsers.find(el => el.id === props.user.id);
+        if (isNewUser) {
+            return;
+        }
+        const newUser = loadedUsers.find(el => el.id === user.id);
         const relatedCourses =
-            user.profile.role === 'STUDENT'
-                ? user.courses
-                : user.courses_taught;
-        const userForDisplay = getUserDisplayData(user, relatedCourses);
-        console.log('userForDisplay', userForDisplay);
+            newUser.profile.role === 'STUDENT'
+                ? newUser.courses
+                : newUser.courses_taught;
+        const userForDisplay = getUserDisplayData(newUser, relatedCourses);
         setName(userForDisplay.name);
         setUsername(userForDisplay.username);
         setRole(userForDisplay.profile.role);
@@ -42,54 +52,101 @@ export default function EditableUserRow(props) {
 
     const handleCreateUser = async e => {
         e.preventDefault();
-        const result = await createUser({
+        const result1 = await createUser({
             name,
             username,
             password,
             role: role || 'STUDENT',
         });
-        if (result.success) {
-            const newUser = result.data;
-            props.onCreatedUser(newUser);
-        } else {
-            alert(result.error || 'Something went wrong while creating user');
+        if (!result1.success) {
+            setError(result1.error || 'Something went wrong while creating user');
+            return;
         }
+        const newUserId = result1.data.id;
+
+        const courseSelection = selectionModal.type === 'selectCoursesForStudent' ? selectionModal.selectedIds : null;
+        if (courseSelection) {
+            const result2 = await updateUserEnrollments({ userId: newUserId, courseIds: courseSelection });
+            if (!result2.success) {
+                setError(result2.error || 'Something went wrong while changing course\'s teacher');
+            }
+        }
+        
+        const newUser = reloadUser(newUserId);
+        onCreatedUser(newUser);
     };
 
-    const handleEditUser = async e => {
+    const handleEditUser = async (e) => {
         e.preventDefault();
-        const result = await updateUser({
-            id: props.user.id,
+        const result1 = await updateUser({
+            id: user.id,
             name,
             username,
             password,
             role,
         });
-        if (result.success) {
-            const udpatedUser = result.data;
-            props.onEditedUser(udpatedUser);
-        } else {
-            alert(result.error || 'Something went wrong while editing user');
+        if (!result1.success) {
+            setError(result1.error || 'Something went wrong while editing user');
         }
+
+        const courseSelection = selectionModal.type === 'selectCoursesForStudent' ? selectionModal.selectedIds : null;
+        if (courseSelection) {
+            const result2 = await updateUserEnrollments({ userId: user.id, courseIds: courseSelection });
+            if (!result2.success) {
+                setError(result2.error || 'Something went wrong while changing course\'s teacher');
+            }
+        }
+        
+        const updatedUser = reloadUser(user.id);
+        onEditedUser(updatedUser);
     };
-    const handleCancelCreate = () => {
-        props.onCancelCreate();
-    };
-    const handleEditCourses = () => {
-        if (role === 'TEACHER') return;
-        props.onEditCourses({
+
+    const handleRoleChange = (e) => {
+        setCourseIds([]);
+        setCourseNames([]);
+        setRole(e.target.value);
+    }
+    
+    const handleClickToEditCourses = () => {
+        if (role !== 'STUDENT') { return; }
+        const selectionModalOptions = {
+            show: true,
             type:
                 role === 'STUDENT'
                     ? 'selectCoursesForStudent'
                     : 'selectCoursesForTeacher',
             selectedIds: courseIds,
-            id: props.user.id || null,
-        });
+            id: user.id || null,
+        }
+        onEditCourses(selectionModalOptions);
     };
 
-    return (
+    const handleUpdatedSelection = async ({ type, selectedIds }) => {
+        if (type === 'selectCoursesForStudent') {
+            setCourseIds(selectedIds);
+            const courseNames = await Promise.all(selectedIds.map(async (courseId) => {
+                const courseName = await getCourseNameFromId(courseId);
+                return courseName || '';
+            }));
+            setCourseNames(courseNames);
+        }
+    }
+
+    const handleCancel = () => {
+        onCancel();
+    };
+
+    return (<>
+        {selectionModal.show && (
+            <SelectionModal 
+                type={selectionModal.type}
+                selectedIds={selectionModal.selectedIds}
+                id={selectionModal.id}
+                onUpdatedSelection={handleUpdatedSelection}
+            />
+        )}
         <div id='editable-user-row' className='row editable'>
-            <form onSubmit={props.user ? handleEditUser : handleCreateUser}>
+            <form onSubmit={isNewUser ? handleCreateUser : handleEditUser}>
                 <div className='name'>
                     <label htmlFor='name'>Edit Name</label>
                     <input
@@ -122,7 +179,7 @@ export default function EditableUserRow(props) {
                             id='password'
                             name='password'
                             placeholder='Password'
-                            required={!props.user}
+                            required={isNewUser}
                             onChange={e => setPassword(e.target.value)}
                             value={password}
                         />
@@ -134,7 +191,7 @@ export default function EditableUserRow(props) {
                         name='role'
                         id='role'
                         defaultValue={role}
-                        onChange={() => setRole(e.target.value)}
+                        onChange={handleRoleChange}
                     >
                         <option value='STUDENT'>STUDENT</option>
                         <option value='TEACHER'>TEACHER</option>
@@ -143,21 +200,22 @@ export default function EditableUserRow(props) {
                     {/* <Dropdown /> */}
                 </div>
                 <div
-                    className={`courses${role === 'TEACHER' ? ' no-edit' : ''}`}
-                    onClick={handleEditCourses}
+                    className={`courses${role !== 'STUDENT' ? ' no-edit' : ''}`}
+                    onClick={handleClickToEditCourses}
                 >
                     <label htmlFor='courses'>
-                        {role === 'TEACHER' ? 'Courses (Edit in Manage Courses)' : 'Edit Courses'}
+                        {role === 'TEACHER' ? 'Courses (Edit in Manage Courses)' :
+                        role === 'ADMIN' ? 'Courses' : 'Edit Courses'}
                     </label>
                     {courseNames?.join(', ')}
                 </div>
                 <div className='buttons'>
                     <button type='submit'>Save</button>
-                    <button type='button' onClick={handleCancelCreate}>
+                    <button type='button' onClick={handleCancel}>
                         Cancel
                     </button>
                 </div>
             </form>
         </div>
-    );
+    </>);
 }
