@@ -5,11 +5,10 @@ import './ManageUsers.css';
 import '../../styles/floatingRows.css';
 import '../../styles/floatingButton.css';
 import EditableUserRow from '../../components/editableUserRow/EditableUserRow';
-import SelectionModal from '../../components/selectionModal/SelectionModal';
 import { useSession } from '../../context/SessionContext';
 
 export default function ManageUsers() {
-    const { loadCourses, loadUsers, loadedUsers, userState, selectionModal, setSelectionModal } = useSession();
+    const { loadCourses, loadUsers, userState, setSelectionModal } = useSession();
     const [usersForDisplay, setUsersForDisplay] = useState([]);
     const [courses, setCourses] = useState([]);
     const [editableUserId, setEditableUserId] = useState(null);
@@ -19,7 +18,7 @@ export default function ManageUsers() {
         populateUsers();
     }, []);
 
-    const getUserCourses = (user, courses) => {
+    const fiterCoursesForUser = (user, courses) => {
         if (user.profile.role === 'STUDENT') {
             return courses
                 .filter(el => el.enrolled_students.includes(user.id))
@@ -36,7 +35,7 @@ export default function ManageUsers() {
         const courses = await loadCourses();
         const newUsers = await loadUsers();
         const newUsersWithCourseNames = newUsers.map(user => {
-            const coursesForUser = getUserCourses(user, courses);
+            const coursesForUser = fiterCoursesForUser(user, courses);
             return {
                 ...user,
                 courseNames: coursesForUser.map(el => el.title),

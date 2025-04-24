@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { deleteCourse, getCourses } from '../../services/coursesServices';
-import { enrollSelf, getUsers, unenrollSelf } from '../../services/usersServices';
+import { getUsers } from '../../services/usersServices';
+import { enrollSelf, unenrollSelf } from '../../services/userCourseServices';
 import './CoursesGrid.css';
 import { useSession } from '../../context/SessionContext';
 

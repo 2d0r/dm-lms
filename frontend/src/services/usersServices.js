@@ -32,47 +32,7 @@ export const getUsersByRole = async (role) => {
 
 export const deleteUser = async (id) => {
     try {
-        const result = await api.delete(`/api/users/delete/${id}/`);
-        return { success: true, status: result.status };
-    } catch (error) {
-        console.error(error);
-        return { success: false, error: error.response?.data || error.message };
-    }
-}
-
-export const enrollSelf = async (courseId) => {
-    try {
-        const result = await api.post(`api/courses/${courseId}/enroll/`);
-        return { success: true, status: result.status };
-    } catch (error) {
-        console.error(error);
-        return { success: false, error: error.response?.data || error.message };
-    }
-}
-
-export const unenrollSelf = async (courseId) => {
-    try {
-        const result = await api.delete(`api/courses/${courseId}/unenroll/`);
-        return { success: true, status: result.status };
-    } catch (error) {
-        console.error(error);
-        return { success: false, error: error.response?.data || error.message };
-    }
-}
-
-export const enrollUser = async (courseId, userId) => {
-    try {
-        const result = await api.post(`api/courses/${courseId}/enroll/${userId}`);
-        return { success: true, status: result.status };
-    } catch (error) {
-        console.error(error);
-        return { success: false, error: error.response?.data || error.message };
-    }
-}
-
-export const unenrollUser = async (courseId, userId) => {
-    try {
-        const result = await api.delete(`api/courses/${courseId}/unenroll/${userId}/`);
+        const result = await api.delete(`/api/users/${id}/`);
         return { success: true, status: result.status };
     } catch (error) {
         console.error(error);
@@ -82,7 +42,7 @@ export const unenrollUser = async (courseId, userId) => {
 
 export const createUser = async ({ name, username, password, role }) => {
     try {
-        const result = await api.post('/api/users/create/', {
+        const result = await api.post('/api/users/', {
             username, password,
             first_name: name,
             profile: { role: role.toUpperCase() },
@@ -99,17 +59,7 @@ export const updateUser = async ({ id, name, username, password, role }) => {
         const payload = { first_name: name, username, role };
         if (password) payload.password = password;
         
-        const result = await api.patch(`/api/users/update/${id}/`, payload);
-        return { success: true, data: result.data };
-    } catch (error) {
-        console.error(error);
-        return { success: false, error: error.response?.data || error.message }
-    }
-}
-
-export const updateUserEnrollments = async ({ userId, courseIds }) => {
-    try {
-        const result = await api.patch(`/api/users/${userId}/enrollments/`, { courseIds });
+        const result = await api.patch(`/api/users/${id}/`, payload);
         return { success: true, data: result.data };
     } catch (error) {
         console.error(error);

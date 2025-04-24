@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { createUser, getUser, updateUser, updateUserEnrollments } from '../../services/usersServices';
+import { createUser, updateUser } from '../../services/usersServices';
+import { updateUserCourses } from '../../services/userCourseServices';
 import './EditableUserRow.css';
 import '../../styles/floatingRows.css';
 import { useSession } from '../../context/SessionContext';
@@ -56,7 +57,7 @@ export default function EditableUserRow({
             name,
             username,
             password,
-            role: role || 'STUDENT',
+            role,
         });
         if (!result1.success) {
             setError(result1.error || 'Something went wrong while creating user');
@@ -66,7 +67,7 @@ export default function EditableUserRow({
 
         const courseSelection = selectionModal.type === 'selectCoursesForStudent' ? selectionModal.selectedIds : null;
         if (courseSelection) {
-            const result2 = await updateUserEnrollments({ userId: newUserId, courseIds: courseSelection });
+            const result2 = await updateUserCourses({ userId: newUserId, courseIds: courseSelection, role });
             if (!result2.success) {
                 setError(result2.error || 'Something went wrong while changing course\'s teacher');
             }
@@ -91,7 +92,7 @@ export default function EditableUserRow({
 
         const courseSelection = selectionModal.type === 'selectCoursesForStudent' ? selectionModal.selectedIds : null;
         if (courseSelection) {
-            const result2 = await updateUserEnrollments({ userId: user.id, courseIds: courseSelection });
+            const result2 = await updateUserCourses({ userId: user.id, courseIds: courseSelection, role });
             if (!result2.success) {
                 setError(result2.error || 'Something went wrong while changing course\'s teacher');
             }

@@ -24,7 +24,7 @@ export const createCourse = async ({ description, title, teacherId }) => {
     const payload = {title, description, teacher: teacherId};
 
     try {
-        const result = await api.post('/api/courses/create/', payload);
+        const result = await api.post('/api/courses/', payload);
         return { success: true, data: result.data };
     } catch (error) {
         console.error(error);
@@ -41,7 +41,7 @@ export const updateCourse = async ({ id, description, title, teacherId, studentI
     if (studentIds) payload.enrolled_students = studentIds;
 
     try {
-        const result = await api.patch(`/api/courses/update/${id}/`, payload);
+        const result = await api.patch(`/api/courses/${id}/`, payload);
         return { success: true, data: result.data };
     } catch (error) {
         console.error(error);
@@ -51,20 +51,10 @@ export const updateCourse = async ({ id, description, title, teacherId, studentI
 
 export const deleteCourse = async (id) => {
     try {
-        const result = await api.delete(`/api/courses/delete/${id}/`);
+        const result = await api.delete(`/api/courses/${id}/`);
         return { success: true, status: result.status };
     } catch (error) {
         console.error(error);
         return { success: false, error: error.response?.data || error.message };
     }
 };
-
-export const getUserCourses = async ({ userId, userRole }) => {
-    try {
-        const result = await api.get(`/api/users/${userId}/courses/?role=${userRole.toLowerCase()}`);
-        return { success: true, data: result.data };
-    } catch (error) {
-        console.error(error);
-        return { success: false, error: error.response?.data || error.message };
-    }
-}

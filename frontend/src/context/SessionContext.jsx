@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { getCourse, getCourses, getUserCourses } from '../services/coursesServices';
+import { getCourse, getCourses } from '../services/coursesServices';
+import { getUserCourses } from '../services/userCourseServices';
 import { getUser, getUsers } from '../services/usersServices';
 import { DEFAULT_SELECTION_MODAL_STATE, DEFAULT_USER_STATE } from '../lib/constants';
 
