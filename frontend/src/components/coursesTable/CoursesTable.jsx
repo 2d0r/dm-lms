@@ -4,7 +4,6 @@ import '../../styles/floatingRows.css';
 import '../../styles/floatingButton.css';
 import { deleteCourse } from '../../services/coursesServices';
 import EditableCourseRow from '../editableCourseRow/EditableCourseRow';
-import SelectionModal from '../selectionModal/SelectionModal';
 import { useSession } from '../../context/SessionContext';
 import { useGetCourseDisplayData } from '../../hooks/courseHooks';
 import { DEFAULT_SELECTION_MODAL_STATE } from '../../lib/constants';

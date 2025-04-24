@@ -84,3 +84,55 @@
         color: var(--lilac);
     }
 }
+
+@media only screen and (max-width: 768px) {
+    .floating-rows {
+        margin-top: calc(var(--mobile-header-height) + 24px);
+        width: 100%;
+        margin-bottom: 24px; 
+        /* calc(var(--floating-button-height) + 24px); */
+        align-items: center;
+        gap: 24px;
+
+        .row {
+            width: calc(100vw - 48px);
+            flex-direction: column;
+            height: auto;
+
+            > div:not(:last-child),
+            form > div:not(:last-child) {
+                border-bottom: var(--border);
+                border-right: none;
+                min-height: 50px;
+                padding: 16px 12px 8px 12px;
+            }
+
+            .title, .name {
+                background-image: var(--gradient-glass-white);
+            }
+
+            .buttons {
+                height: 36px;
+                flex-direction: row;
+
+                button:first-child {
+                    border-bottom: none;
+                    border-right: var(--border);
+                }
+            }
+
+            form {
+                flex-direction: column;
+            }
+
+            label {
+                visibility: visible;
+                top: 4px;
+            }
+
+            textarea, select {
+                width: 100%;
+            }
+        }
+    }
+}

@@ -88,3 +88,9 @@
     font: var(--font-button);
     color: var(--lilac);
 }
+
+@media only screen and (max-width: 768px) {
+    .selection-modal {
+        width: calc(100% - 48px);
+    }
+}

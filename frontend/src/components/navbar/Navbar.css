@@ -13,7 +13,7 @@ header .site-title {
     font-size: xxx-large;
     font-weight: 800;
     color: var(--black);
-    text-shadow: 2px 2px 0px white;
+    text-shadow: 1px 1px 0px white;
 }
 
 nav {
@@ -27,4 +27,27 @@ nav {
     background-color: var(--black);
     color: white;
     font-size: 20px;
+}
+
+
+@media only screen and (max-width: 768px) {
+    header {
+        z-index: 20;
+        position: fixed;
+        top: 0;
+        height: var(--mobile-header-height);
+        background-color: var(--black);
+        padding-top: 12px;
+        
+        .site-title {
+            color: white;
+            text-shadow: none;
+        }
+    }
+    nav {
+        width: 100%;
+        justify-content: space-around;
+        gap: 0;
+        border-width: 1px 0 1px 0;
+    }
 }

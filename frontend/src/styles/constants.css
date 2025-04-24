@@ -17,4 +17,6 @@
   --font-detail: 12px 'Anonymous-bold', monotype;
 
   --floating-rows-gap: 12px;
+  --floating-button-height: 64px;
+  --mobile-header-height: 164px;
 }

@@ -20,3 +20,9 @@
         cursor: default;
     }
 }
+
+@media only screen and (max-width: 768px) {
+    #editable-course-row form textarea {
+        margin-top: 0;
+    }
+}

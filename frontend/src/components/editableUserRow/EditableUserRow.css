@@ -45,3 +45,14 @@
         }
     }
 }
+
+@media only screen and (max-width: 768px) {
+    #editable-user-row {
+        height: auto;
+
+        .username-password > div {
+            width: 100%;
+            height: 50px!important;
+        }
+    }
+}

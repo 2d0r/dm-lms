@@ -19,3 +19,9 @@
         font: var(--font-detail);
     }
 }
+
+@media only screen and (max-width: 768px) {
+    #courses-table .row {
+        height: auto;
+    }
+}

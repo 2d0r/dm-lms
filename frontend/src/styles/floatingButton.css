@@ -19,3 +19,12 @@
         /* background-color: var(--lilac); */
     }
 }
+
+@media only screen and (max-width: 768px) {
+    .floating-button {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        margin-top: 0;
+    }
+}
