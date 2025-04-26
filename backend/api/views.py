@@ -185,6 +185,8 @@ class UserCourseView(APIView):
         if role == 'TEACHER':
             user.courses_taught.set(courses)
             return Response({'message': 'User set as teacher for multiple courses successfully', 'courses': courses})
+        if role == 'ADMIN' and len(courses):
+            return Response({'message': 'Admin can\'t be linked to courses'}, status=403)
         return Response({'error': 'Invalid role'}, status=400)
         
     def post(self, request, user_id, course_id):
@@ -204,6 +206,8 @@ class UserCourseView(APIView):
             course.teacher = user
             course.save()
             return Response({'message': 'User assigned as teacher for course'})
+        if role == 'ADMIN':
+            return Response({'message': 'Admin can\'t be linked to course'}, status=403)
         return Response({'error': 'Invalid role'}, status=400)
     
     def delete(self, request, user_id, course_id):

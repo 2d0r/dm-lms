@@ -4,10 +4,17 @@ import { getUsers } from '../../services/usersServices';
 import { enrollSelf, unenrollSelf } from '../../services/userCourseServices';
 import './CoursesGrid.css';
 import { useSession } from '../../context/SessionContext';
+import { DEFAULT_POPUP_STATE } from '../../lib/constants';
+import Popup from '../popup/popup';
 
 export default function CoursesGrid(props) {
     const { userState, setLoading, setError } = useSession();
     const [courses, setCourses] = useState([]);
+    const [popup, setPopup] = useState(DEFAULT_POPUP_STATE);
+
+    useEffect(() => {
+        populateCourses();
+    }, []);
 
     const populateCourses = async () => {
         const coursesRes = await getCourses();
@@ -32,11 +39,6 @@ export default function CoursesGrid(props) {
         }
     };
 
-    useEffect(() => {
-        populateCourses();
-    }, []);
-    
-
     const handleEnroll = async (courseId) => {
         const result = await enrollSelf(courseId);
         if (result.success) {
@@ -55,12 +57,26 @@ export default function CoursesGrid(props) {
         }
     }
 
+    const handleClickDelete = (courseId) => {
+        setPopup({ 
+            show: true,
+            title: 'Delete course',
+            text: 'Are you sure you want to delete this course?',
+            buttonLabel: ['Yes, delete', 'No, cancel'],
+            buttonOnClick: [
+                () => {
+                    handleDeleteCourse(courseId);
+                    setPopup(DEFAULT_POPUP_STATE);
+                },
+                () => setPopup(DEFAULT_POPUP_STATE),
+            ]
+        })
+    };
     const handleDeleteCourse = async (courseId) => {
         setLoading(true);
         const result = await deleteCourse(courseId);
         if (result.success) {
             populateCourses();
-            // const updatedCourses = courses => courses.filter(el => el.id !== courseId);
         } else {
             setError(
                 result.error || 'Something went wrong while deleting course'
@@ -69,7 +85,7 @@ export default function CoursesGrid(props) {
         setLoading(false);
     };
 
-    return (
+    return (<>
         <div className='course-grid'>
             {courses.map(course => {
                 const isEnrolled = !!course.enrolled_students.find(
@@ -87,8 +103,9 @@ export default function CoursesGrid(props) {
                         <div className='buttons' hidden={userState.role === 'TEACHER'}>
                             {userState.role === 'ADMIN' && (
                                 <button
-                                    className='delete-button'
-                                    onClick={() => handleDeleteCourse(course.id)}
+                                    className='delete-button red'
+                                    // onClick={() => handleDeleteCourse(course.id)}
+                                    onClick={() => handleClickDelete(course.id)}
                                 >
                                     Delete
                                 </button>
@@ -109,5 +126,12 @@ export default function CoursesGrid(props) {
                 );
             })}
         </div>
-    );
+        {popup.show && (
+            <Popup 
+                title={popup.title} text={popup.text} 
+                buttonLabel={popup.buttonLabel}
+                buttonOnClick={popup.buttonOnClick}
+            />
+        )}
+    </>);
 }

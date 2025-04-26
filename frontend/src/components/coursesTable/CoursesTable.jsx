@@ -6,7 +6,8 @@ import { deleteCourse } from '../../services/coursesServices';
 import EditableCourseRow from '../editableCourseRow/EditableCourseRow';
 import { useSession } from '../../context/SessionContext';
 import { useGetCourseDisplayData } from '../../hooks/courseHooks';
-import { DEFAULT_SELECTION_MODAL_STATE } from '../../lib/constants';
+import { DEFAULT_POPUP_STATE, DEFAULT_SELECTION_MODAL_STATE } from '../../lib/constants';
+import Popup from '../popup/popup';
 
 export default function CoursesTable() {
     const { loadCourses, loadUsers, setError, setLoading, loadUserCourses, userState, selectionModal, setSelectionModal } = useSession();
@@ -14,6 +15,7 @@ export default function CoursesTable() {
     const [showNewCourseRow, setShowNewCourseRow] = useState(false);
     const [editableCourseId, setEditableCourseId] = useState(null);
     const getCourseDisplayData = useGetCourseDisplayData();
+    const [popup, setPopup] = useState(DEFAULT_POPUP_STATE);
 
     useEffect(() => {
         populateCourses();
@@ -38,6 +40,21 @@ export default function CoursesTable() {
         setCoursesForDisplay(newCoursesForDisplay);
     };
 
+    const handleClickDelete = (courseId) => {
+        setPopup({ 
+            show: true,
+            title: 'Delete course',
+            text: 'Are you sure you want to delete this course?',
+            buttonLabel: ['Yes, delete', 'No, cancel'],
+            buttonOnClick: [
+                () => {
+                    handleDeleteCourse(courseId);
+                    setPopup(DEFAULT_POPUP_STATE);
+                },
+                () => setPopup(DEFAULT_POPUP_STATE),
+            ],
+        })
+    };
     const handleDeleteCourse = async (courseId) => {
         setLoading(true);
         const result = await deleteCourse(courseId);
@@ -108,7 +125,7 @@ export default function CoursesTable() {
                         </div>
                         <div className='buttons'>
                             <button onClick={() => setEditableCourseId(course.id)}>Edit</button>
-                            <button onClick={() => handleDeleteCourse(course.id)}>Delete</button>
+                            <button onClick={() => handleClickDelete(course.id)} className='delete-button'>Delete</button>
                         </div>
                     </div>
                 );
@@ -125,5 +142,12 @@ export default function CoursesTable() {
             type='button' 
             onClick={() => setShowNewCourseRow(true)}
         >Create Course</button>
+        {popup.show && (
+            <Popup 
+                title={popup.title} text={popup.text} 
+                buttonLabel={popup.buttonLabel}
+                buttonOnClick={popup.buttonOnClick}
+            />
+        )}
     </>);
 }

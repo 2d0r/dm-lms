@@ -42,3 +42,7 @@ select {
 .no-edit {
     cursor: default;
 }
+
+.delete-button:hover:not(.disabled) {
+    color: #ff7575!important;
+}

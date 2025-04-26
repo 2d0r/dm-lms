@@ -1,0 +1,76 @@
+@import url('../../styles/constants.css');
+
+.modal-overlay {
+    position: fixed;
+    z-index: 20;
+    top: 0; bottom: 0;
+    left: 0;
+    height: 100%;
+    width: 100vw;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    background-color: rgb(28, 28, 28, 0.6);
+    backdrop-filter: blur(1px);
+}
+
+.popup {
+    position: absolute;
+    margin-top: 50vh;
+    translate: 0 -50%;
+    width: 400px;
+    max-height: 50vh;
+    overflow-y:scroll;
+    border: var(--border);
+    background-color: var(--black);
+    color: white;
+
+    .top-bar {
+        width: 100%;
+        height: 36px;
+        background-image: var(--gradient-glass-white);
+        border-bottom: var(--border);
+        position: relative;
+        display: flex;
+        justify-content: center;
+        padding: 6px;
+        font: var(--font-h3);
+    }
+
+    .close-button {
+        position: absolute;
+        right: 1px;
+        height: 100%;
+        width: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        border-left: var(--border);
+    }
+}
+
+.popup .content {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+
+    .buttons {
+        display: flex;
+        gap: 24px;
+    }
+    button {
+        cursor: pointer;
+        border: var(--border);
+        font: var(--font-button-small);
+        padding: 12px;
+
+        &:hover {
+            color: var(--lilac);
+            border-color: var(--lilac);
+        }
+    }
+}

@@ -6,6 +6,8 @@ import '../../styles/floatingRows.css';
 import '../../styles/floatingButton.css';
 import EditableUserRow from '../../components/editableUserRow/EditableUserRow';
 import { useSession } from '../../context/SessionContext';
+import Popup from '../../components/popup/popup';
+import { DEFAULT_POPUP_STATE } from '../../lib/constants';
 
 export default function ManageUsers() {
     const { loadCourses, loadUsers, userState, setSelectionModal } = useSession();
@@ -13,6 +15,7 @@ export default function ManageUsers() {
     const [courses, setCourses] = useState([]);
     const [editableUserId, setEditableUserId] = useState(null);
     const [showNewUserRow, setShowNewUserRow] = useState(false);
+    const [popup, setPopup] = useState(DEFAULT_POPUP_STATE);
 
     useEffect(() => {
         populateUsers();
@@ -45,6 +48,21 @@ export default function ManageUsers() {
         setUsersForDisplay(newUsersWithCourseNames);
     };
 
+    const handleClickDelete = (userId) => {
+        setPopup({ 
+            show: true,
+            title: 'Delete user',
+            text: 'Are you sure you want to delete this user?',
+            buttonLabel: ['Yes, delete', 'No, cancel'],
+            buttonOnClick: [
+                () => {
+                    handleDeleteUser(userId);
+                    setPopup(DEFAULT_POPUP_STATE);
+                },
+                () => setPopup(DEFAULT_POPUP_STATE),
+            ]
+        })
+    };
     const handleDeleteUser = async id => {
         if (id === Number(userState.id)) {
             return;
@@ -127,12 +145,12 @@ export default function ManageUsers() {
                                     Edit
                                 </button>
                                 <button
-                                    className={
+                                    className={`delete-button${
                                         user.id === Number(userState.id)
-                                            ? 'disabled'
+                                            ? ' disabled'
                                             : ''
-                                    }
-                                    onClick={() => handleDeleteUser(user.id)}
+                                    }`}
+                                    onClick={() => handleClickDelete(user.id)}
                                 >
                                     Delete
                                 </button>
@@ -155,5 +173,12 @@ export default function ManageUsers() {
                 Add User
             </button>
         </Layout>
+        {popup.show && (
+            <Popup 
+                title={popup.title} text={popup.text} 
+                buttonLabel={popup.buttonLabel}
+                buttonOnClick={popup.buttonOnClick}
+            />
+        )}
     </>);
 }

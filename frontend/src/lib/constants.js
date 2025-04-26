@@ -10,3 +10,11 @@ export const DEFAULT_SELECTION_MODAL_STATE = {
     id: null, 
     selectedIds: [],
 };
+
+export const DEFAULT_POPUP_STATE = {
+    show: false,
+    title: '',
+    text: '',
+    buttonLabel: '',
+    buttonOnClick: () => {},
+};
