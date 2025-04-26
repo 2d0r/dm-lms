@@ -13,7 +13,7 @@ export default function EditableUserRow({
     onCreatedUser, onEditedUser, onEditCourses, onCancel, 
 }) {
 
-    const { loadedUsers, loadedCourses, reloadUser, selectionModal, setError } = useSession();
+    const { loadedUsers, reloadUser, selectionModal, setError } = useSession();
     const [name, setName] = useState(user.first_name || '');
     const [username, setUsername] = useState(user.username || '');
     const [role, setRole] = useState(user.profile?.role || 'STUDENT');
@@ -46,6 +46,10 @@ export default function EditableUserRow({
     useEffect(() => {
         updateUserForDisplay();
     }, []);
+
+    useEffect(() => {
+        console.log('role', role);
+    }, [role])
 
     useEffect(() => {
         updateUserForDisplay();
@@ -90,23 +94,23 @@ export default function EditableUserRow({
             setError(result1.error || 'Something went wrong while editing user');
         }
 
-        const courseSelection = selectionModal.type === 'selectCoursesForStudent' ? selectionModal.selectedIds : null;
-        if (courseSelection) {
+        // Unlink courses at role change
+        if (role !== user.profile.role && user.profile.role) {
+            await updateUserCourses({ userId: user.id, courseIds: [], role: user.profile.role });
+        }
+
+        const courseSelection = selectionModal.type === 'selectCoursesForStudent' ? selectionModal.selectedIds : [];
+        // if (courseSelection) {
             const result2 = await updateUserCourses({ userId: user.id, courseIds: courseSelection, role });
             if (!result2.success) {
                 setError(result2.error || 'Something went wrong while changing course\'s teacher');
             }
-        }
+        // }
         
+        updateUserForDisplay();
         const updatedUser = reloadUser(user.id);
         onEditedUser(updatedUser);
     };
-
-    const handleRoleChange = (e) => {
-        setCourseIds([]);
-        setCourseNames([]);
-        setRole(e.target.value);
-    }
     
     const handleClickToEditCourses = () => {
         if (role !== 'STUDENT') { return; }
@@ -186,9 +190,10 @@ export default function EditableUserRow({
                         />
                     </div>
                 </div>
-                <div className='role'>
-                    <label htmlFor='role'>Edit Role</label>
-                    <select
+                <div className='role no-edit'>
+                    <label htmlFor='role'>Role</label>
+                    {role}
+                    {/* <select
                         name='role'
                         id='role'
                         defaultValue={role}
@@ -197,8 +202,7 @@ export default function EditableUserRow({
                         <option value='STUDENT'>STUDENT</option>
                         <option value='TEACHER'>TEACHER</option>
                         <option value='ADMIN'>ADMIN</option>
-                    </select>
-                    {/* <Dropdown /> */}
+                    </select> */}
                 </div>
                 <div
                     className={`courses${role !== 'STUDENT' ? ' no-edit' : ''}`}

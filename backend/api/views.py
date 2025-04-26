@@ -184,7 +184,7 @@ class UserCourseView(APIView):
             return Response({'message': 'User enrolled in courses successfully'})
         if role == 'TEACHER':
             user.courses_taught.set(courses)
-            return Response({'message': 'User set as teacher for multiple courses successfully'})
+            return Response({'message': 'User set as teacher for multiple courses successfully', 'courses': courses})
         return Response({'error': 'Invalid role'}, status=400)
         
     def post(self, request, user_id, course_id):

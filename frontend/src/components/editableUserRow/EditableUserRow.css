@@ -28,13 +28,12 @@
             border-bottom: var(--border);
         }
     }
-    .role {
-        cursor: pointer;
+    /* .role {
         select {
             cursor: pointer;
             height: 100%;
         }
-    }
+    } */
     .courses {
         cursor: pointer;
     }
