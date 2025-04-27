@@ -10,6 +10,7 @@ export default function AuthForm({ route, method }) {
     const [password, setPassword] = useState('');
     const [fullName, setFullName] = useState('');
     const [role, setRole] = useState('role');
+    const [message, setMessage] = useState('');
     const navigate = useNavigate();
     const { setUserState, setError, setLoading } = useSession();
 
@@ -20,12 +21,13 @@ export default function AuthForm({ route, method }) {
         setLoading(true);
         e.preventDefault();
 
-        try {
-            if (method === 'login') {
+        if (method === 'login') {
+            try {
                 const response = await api.post(route, {
                     username,
                     password,
                 });
+
                 setUserState(prev => ({
                     ...prev,
                     role: response.data.role,
@@ -51,23 +53,25 @@ export default function AuthForm({ route, method }) {
                         navigate('/');
                         break;
                 }
-            } else if (method === 'register') {
-                const response = await api.post(route, {
+            } catch (error) {
+                console.error('Login error', error);
+                setMessage('Username or password is incorrect. Please try again.');
+            }
+        } else if (method === 'register') {
+            try {
+                await api.post(route, {
                     username,
                     password,
                     first_name: fullName,
                     profile: { role: role.toUpperCase() }
                 });
-                if (!response.success) {
-                    setError(response.error || 'Something went wrong while registering user.');
-                }
                 navigate('/login');
+            } catch (error) {
+                setError(error);
+                console.error(error);
             }
-        } catch (error) {
-            setError(error);
-        } finally {
-            setLoading(false);
         }
+        setLoading(false);
     };
 
     const handleSelectRole = (e) => {
@@ -115,6 +119,9 @@ export default function AuthForm({ route, method }) {
                         <option value='teacher'>Teacher</option>
                     </select>
                 </>
+            )}
+            {message && (
+                <div className='message'>{message}</div>
             )}
             <div className='buttons'>
                 <button className='submit-button' type='submit'>

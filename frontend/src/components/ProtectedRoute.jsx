@@ -14,8 +14,13 @@ export default function ProtectedRoute({ children, authorisedRole = 'STUDENT' })
     // Run auth on load
     useEffect(() => {
         auth().catch(() => setIsAuthorised(false));
-        checkAuthByRole();
     }, []);
+
+    useEffect(() => {
+        if (userState.role) {
+            checkAuthByRole();
+        }
+    }, [userState.role])
 
     const refreshToken = async () => {
         // Send request to backend with refresh token to get new access token
@@ -45,13 +50,15 @@ export default function ProtectedRoute({ children, authorisedRole = 'STUDENT' })
         const decoded = jwtDecode(token);
 
         //  Check whether token has expired
-        const tokenExpiration = decoded.exp;
-        const now = Date.now() / 1000; // in seconds
-        if (tokenExpiration < now) {
-            await refreshToken();
-        } else {
-            setIsAuthorised(true);
-        }
+        // const tokenExpiration = decoded.exp;
+        // const now = Date.now() / 1000; // in seconds
+        // if (tokenExpiration < now) {
+        //     await refreshToken();
+        // } else {
+        //     setIsAuthorised(true);
+        // }
+
+        setIsAuthorised(true);
     };
 
     const checkAuthByRole = () => {
@@ -70,5 +77,5 @@ export default function ProtectedRoute({ children, authorisedRole = 'STUDENT' })
         return <div>Loading...</div>;
     }
 
-    return isAuthorised ? children : <Navigate to="/login" />;
+    return isAuthorised ? children : <Navigate to='/login' />;
 }
