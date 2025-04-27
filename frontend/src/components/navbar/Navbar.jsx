@@ -5,26 +5,24 @@ import { useSession } from '../../context/SessionContext';
 
 export default function Navbar() {
     const { userState } = useSession();
-    const { role } = userState;
+    const role = userState.role;
 
     return (
         <header>
             <span className='site-title'>D&M Academy</span>
             <nav>
-                {role === 'STUDENT' || role === 'TEACHER' ? (
+                {role === 'STUDENT' && (<>
                     <NavButton label='Courses' path='/' />
-                ) : (
-                    <NavButton label='Courses' path='/manage-courses' />
-                )}
-                {role === 'STUDENT' && (
                     <NavButton label='My Learning' path='/my-learning' />
-                )}
-                {role === 'TEACHER' && (
+                </>)}
+                {role === 'TEACHER' && (<>
+                    <NavButton label='Courses' path='/' />
                     <NavButton label='My Courses' path='/my-courses' />
-                )}
-                {role === 'ADMIN' && (
+                </>)}
+                {role === 'ADMIN' && (<>
+                    <NavButton label='Courses' path='/manage-courses' />
                     <NavButton label='Users' path='/manage-users' />
-                )}
+                </>)}
                 <NavButton label='Logout' path='/logout' />
             </nav>
         </header>

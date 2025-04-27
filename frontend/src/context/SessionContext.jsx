@@ -3,6 +3,8 @@ import { getCourse, getCourses } from '../services/coursesServices';
 import { getUserCourses } from '../services/userCourseServices';
 import { getUser, getUsers } from '../services/usersServices';
 import { DEFAULT_SELECTION_MODAL_STATE, DEFAULT_USER_STATE } from '../lib/constants';
+import { ACCESS_TOKEN, REFRESH_TOKEN } from '../constants';
+import api from '../api';
 
 const SessionContext = createContext();
 
@@ -69,18 +71,50 @@ export default function SessionProvider({ children }) {
     }
 
     const reloadUser = async (userId) => {
-        const result = await getUser(userId);
-        if (result.success) {
+        try {
+            const result = await getUser(userId);
             const reloadedUser = result.data;
             setLoadedUsers(prev => [
                 ...prev.filter(el => el.id !== userId),
                 reloadedUser,
             ]);
             return reloadedUser;
-        } else {
-            setError(result.error || 'Something went wrong while reloading course.');
-            return {};
+            // } else {
+            //     setError(result.error || 'Something went wrong while reloading course.');
+            //     return {};
+            // }
+        } catch (error) {
+            console.error('Failed to fetch user:', error);
         }
+        
+    }    
+
+    // Registration
+
+    const loadUserDetails = async () => {
+
+        const token = localStorage.getItem(ACCESS_TOKEN);
+        if (!token) {
+            setLoading(false); // no token, no user
+            return;
+        }
+
+        try {
+            console.log('loading user details')
+            const res = await api.get('/api/user/');
+            const user = res.data;
+            setUserState(prev => ({
+                ...prev,
+                role: user.profile.role,
+                id: user.id,
+                name: user.first_name,
+            }));
+        } catch (error) {
+            console.error('Failed to fetch user:', error);
+            // Optionally: logout user if refresh fails
+        }
+
+        setLoading(false);
     }
 
     const contextValue = {
@@ -91,19 +125,6 @@ export default function SessionProvider({ children }) {
         loadUserCourses,
         selectionModal, setSelectionModal,
         setError, setLoading
-    };
-
-    const loadUserDetails = async () => {
-        const result = await getUser(localStorage.getItem('userId'));
-        if (result.success) {
-            const user = result.data;
-            setUserState(prev => ({
-                ...prev,
-                role: user.profile.role,
-                id: user.id,
-                name: user.first_name,
-            }));
-        }
     };
 
     return (

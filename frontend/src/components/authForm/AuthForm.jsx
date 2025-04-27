@@ -36,7 +36,6 @@ export default function AuthForm({ route, method }) {
                 }));
                 localStorage.setItem(ACCESS_TOKEN, response.data.access);
                 localStorage.setItem(REFRESH_TOKEN, response.data.refresh);
-                localStorage.setItem('userId', response.data.id);
 
                 // Navigate based on role
                 switch (response.data.role) {

@@ -9,6 +9,7 @@ urlpatterns = [
     # Users
     path('users/', views.UserView.as_view()), # GET all, POST new
     path('users/<int:user_id>/', views.UserView.as_view()), # GET, PATCH, DELETE by ID
+    path('user/', views.CurrentUserView.as_view(), name='current-user'),
 
     # Users - Courses
     path('users/<int:user_id>/courses/', views.UserCourseView.as_view()),

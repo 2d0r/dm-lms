@@ -17,9 +17,19 @@ export default function ProtectedRoute({ children, authorisedRole = 'STUDENT' })
     }, []);
 
     useEffect(() => {
-        if (userState.role) {
-            checkAuthByRole();
+        const token = localStorage.getItem(ACCESS_TOKEN);
+
+        if (!token) {
+            setIsAuthorised(false);
+            return;
         }
+
+        if (!userState || !userState.role) {
+            // Still loading user, wait.
+            return;
+        }
+
+        checkAuthByRole();
     }, [userState.role])
 
     const refreshToken = async () => {

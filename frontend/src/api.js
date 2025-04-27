@@ -29,26 +29,37 @@ api.interceptors.response.use(
 
         if (error.response?.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
+
             const refreshToken = localStorage.getItem(REFRESH_TOKEN);
+            if (!refreshToken) {
+                window.location.href = '/login';
+                return Promise.reject(error);
+            }
 
             try {
-                const res = await axios.post(import.meta.env.VITE_API_URL + '/token/refresh/', {
+                const res = await axios.post('http://127.0.0.1:8000/api/token/refresh/', {
                     refresh: refreshToken,
                 });
 
                 const newAccessToken = res.data.access;
                 localStorage.setItem(ACCESS_TOKEN, newAccessToken);
 
-                // Update the failed request with the new token
+                api.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
                 originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
 
                 return api(originalRequest); // Retry original request
             } catch (refreshError) {
-                console.error('Token refresh failed', refreshError);
-                // Optionally: logout user or redirect to login
+                console.error('Token refresh failed:', refreshError);
+
+                // 🔥 Important: Clear everything and logout
+                localStorage.removeItem(ACCESS_TOKEN);
+                localStorage.removeItem(REFRESH_TOKEN);
                 window.location.href = '/login';
+
+                return Promise.reject(refreshError);
             }
         }
+
         return Promise.reject(error);
     }
 );

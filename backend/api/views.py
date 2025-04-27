@@ -121,6 +121,13 @@ class UserView(APIView):
         except User.DoesNotExist:
             return Response({'error': 'User not found'}, status=404)
 
+class CurrentUserView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        serializer = UserSerializer(request.user)
+        return Response(serializer.data)
+
 
 # Users - Courses
         
