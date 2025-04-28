@@ -5,7 +5,7 @@
 }
 
 .users-table {
-    /* Styled in index.css > .floating-rows */
+    /* Styled in floating-rows.css */
     max-height: calc(10 * var(--row-height) + 9 * var(--floating-rows-gap));
 }
 

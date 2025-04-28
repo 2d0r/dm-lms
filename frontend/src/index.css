@@ -1,5 +1,5 @@
 @import 'tailwindcss';
-/* Tailwind is not yet used, this cancels default stylings */
+/* Tailwind is currently only used to cancel default stylings */
 
 @font-face {
   font-family: 'Anonymous-bold';
