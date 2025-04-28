@@ -15,7 +15,7 @@ export const useGetCourseDisplayData = () => {
         return {
             ...course,
             enrolledStudentsNames: users.filter(el => course.enrolled_students.includes(el.id)).map(el => el.first_name),
-            teacherName: users.find(el => el.id === course.teacher).first_name,
+            teacherName: users.find(el => el.id === course.teacher)?.first_name || '',
         };
     }
 }

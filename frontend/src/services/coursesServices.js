@@ -32,12 +32,11 @@ export const createCourse = async ({ description, title, teacherId }) => {
     }
 };
 
-export const updateCourse = async ({ id, description, title, teacherId, studentIds }) => {
+export const updateCourse = async ({ id, description, title, teacherId='', studentIds }) => {
 
-    const payload = {};
+    const payload = { teacher: teacherId };
     if (title) payload.title = title;
     if (description) payload.description = description;
-    if (teacherId) payload.teacher = teacherId;
     if (studentIds) payload.enrolled_students = studentIds;
 
     try {
@@ -45,7 +44,7 @@ export const updateCourse = async ({ id, description, title, teacherId, studentI
         return { success: true, data: result.data };
     } catch (error) {
         console.error(error);
-        return { success: false, error: error.response?.data || error.message }
+        return { success: false, error: error.response?.data || error.message };
     }
 }
 

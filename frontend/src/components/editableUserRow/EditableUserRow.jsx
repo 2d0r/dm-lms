@@ -32,13 +32,13 @@ export default function EditableUserRow({
         }
         const newUser = loadedUsers.find(el => el.id === user.id);
         const relatedCourses =
-            newUser.profile.role === 'STUDENT'
+            newUser.profile?.role === 'STUDENT'
                 ? newUser.courses
                 : newUser.courses_taught;
         const userForDisplay = getUserDisplayData(newUser, relatedCourses);
         setName(userForDisplay.name);
         setUsername(userForDisplay.username);
-        setRole(userForDisplay.profile.role);
+        setRole(userForDisplay.profile?.role);
         setCourseNames(userForDisplay.courseNames);
         // setCourseIds(userForDisplay.courses);
     };
@@ -95,25 +95,29 @@ export default function EditableUserRow({
         }
 
         // Unlink courses at role change
-        if (role !== user.profile.role && user.profile.role) {
+        if (role !== user.profile?.role && user.profile.role) {
             await updateUserCourses({ userId: user.id, courseIds: [], role: user.profile.role });
         }
 
-        const courseSelection = selectionModal.type === 'selectCoursesForStudent' ? selectionModal.selectedIds : [];
-        // if (courseSelection) {
-            const result2 = await updateUserCourses({ userId: user.id, courseIds: courseSelection, role });
-            if (!result2.success) {
-                setError(result2.error || 'Something went wrong while changing course\'s teacher');
-            }
-        // }
+        const courseSelection = selectionModal.selectedIds;
+        const result2 = await updateUserCourses({ userId: user.id, courseIds: courseSelection, role });
+        if (!result2.success) {
+            setError(result2.error || 'Something went wrong while changing course\'s teacher');
+        }
         
         updateUserForDisplay();
         const updatedUser = reloadUser(user.id);
         onEditedUser(updatedUser);
     };
+
+    const handleRoleChange = (e) => {
+        setCourseIds([]);
+        setCourseNames([]);
+        setRole(e.target.value);
+    }
     
     const handleClickToEditCourses = () => {
-        if (role !== 'STUDENT') { return; }
+        if (role === 'ADMIN') { return; }
         const selectionModalOptions = {
             show: true,
             type:
@@ -128,6 +132,14 @@ export default function EditableUserRow({
 
     const handleUpdatedSelection = async ({ type, selectedIds }) => {
         if (type === 'selectCoursesForStudent') {
+            setCourseIds(selectedIds);
+            const courseNames = await Promise.all(selectedIds.map(async (courseId) => {
+                const courseName = await getCourseNameFromId(courseId);
+                return courseName || '';
+            }));
+            setCourseNames(courseNames);
+        } else if (type === 'selectCoursesForTeacher') {
+            console.log('selectedIds', selectedIds)
             setCourseIds(selectedIds);
             const courseNames = await Promise.all(selectedIds.map(async (courseId) => {
                 const courseName = await getCourseNameFromId(courseId);
@@ -192,26 +204,27 @@ export default function EditableUserRow({
                 </div>
                 <div className='role no-edit'>
                     <label htmlFor='role'>Role</label>
-                    {role}
-                    {/* <select
-                        name='role'
-                        id='role'
-                        defaultValue={role}
-                        onChange={handleRoleChange}
-                    >
-                        <option value='STUDENT'>STUDENT</option>
-                        <option value='TEACHER'>TEACHER</option>
-                        <option value='ADMIN'>ADMIN</option>
-                    </select> */}
+                    {isNewUser ? (
+                        <select
+                            name='role'
+                            id='role'
+                            defaultValue={role}
+                            onChange={handleRoleChange}
+                        >
+                            <option value='STUDENT'>STUDENT</option>
+                            <option value='TEACHER'>TEACHER</option>
+                            <option value='ADMIN'>ADMIN</option>
+                        </select>
+                    )
+                    : role}
                 </div>
                 <div
-                    className={`courses${role !== 'STUDENT' ? ' no-edit' : ''}`}
+                    className={`courses${role === 'ADMIN' ? ' no-edit' : ''}`}
                     onClick={handleClickToEditCourses}
                 >
-                    <label htmlFor='courses'>
-                        {role === 'TEACHER' ? 'Courses (Edit in Manage Courses)' :
-                        role === 'ADMIN' ? 'Courses' : 'Edit Courses'}
-                    </label>
+                    <label htmlFor='courses'>{
+                        role === 'ADMIN' ? 'Courses' : 'Edit Courses'
+                    }</label>
                     {courseNames?.join(', ')}
                 </div>
                 <div className='buttons'>

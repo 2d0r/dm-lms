@@ -76,6 +76,7 @@ export default function EditableCourseRow({
 
     const handleEditCourse = async (e) => {
         e.preventDefault();
+        console.log('teacherId', teacherId)
         const result = await updateCourse({ 
             id: course.id, 
             title, 
@@ -128,6 +129,9 @@ export default function EditableCourseRow({
             const newTeacherId = selectedIds[0];
             setTeacherId(newTeacherId);
             setTeacherName(loadedUsers.find(el => el.id === newTeacherId).first_name);
+        } else if (type === 'selectTeacher' && selectedIds.length === 0) {
+            setTeacherId('');
+            setTeacherName('');
         } else if (type === 'selectStudents') {
             const newStudentIds = selectedIds;
             setEnrolledStudents(newStudentIds);

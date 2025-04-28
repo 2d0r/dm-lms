@@ -34,7 +34,9 @@ export default function CoursesTable() {
         // Get course relational data for display
         const updatedUsers = await loadUsers();
         const newCoursesForDisplay = updatedCourses.map((course) => {
-            const relatedUsers = updatedUsers.filter(user => course.teacher === user.id || course.enrolled_students.includes(user.id));
+            const relatedUsers = updatedUsers.filter(
+                user => course.teacher === user.id || course.enrolled_students.includes(user.id)
+            );
             return getCourseDisplayData(course, relatedUsers);
         });
         setCoursesForDisplay(newCoursesForDisplay);

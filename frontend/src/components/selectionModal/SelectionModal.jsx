@@ -39,7 +39,7 @@ export default function SelectionModal({ type, selectedIds, id, onUpdatedSelecti
     }, []);
 
     useEffect(() => {
-        setNewSelectedIds(list.filter(el => el.check === true).map(el => el.id));
+        setNewSelectedIds(list.filter(el => el.check === true)?.map(el => el.id) || []);
     }, [list]);
 
     const populateTeachers = async () => {
@@ -89,8 +89,9 @@ export default function SelectionModal({ type, selectedIds, id, onUpdatedSelecti
             let newList = prevList;
             // For unique selection, remove all other checked options
             if (type === 'selectTeacher') {
-                newList.forEach((el, idx) => {
-                    newList[idx].check = false;
+                newList.forEach((el, idx2) => {
+                    if (idx !== idx2)
+                        newList[idx2].check = false;
                 });
             }
             return [
@@ -102,24 +103,8 @@ export default function SelectionModal({ type, selectedIds, id, onUpdatedSelecti
     }
     
     const handleSubmit = () => {
-        switch (type) {
-            case 'selectTeacher':
-                setSelectionModal(prev => ({...prev, selectedIds: newSelectedIds}));
-                break;
-            case 'selectStudents':
-                // Enroll and unenroll students to/from course
-                setSelectionModal(prev => ({...prev, selectedIds: newSelectedIds}));
-                break;
-            case 'selectCoursesForTeacher':
-                // If teacher, can't currently update without replacing
-                break;
-            case 'selectCoursesForStudent':
-                setSelectionModal(prev => ({...prev, selectedIds: newSelectedIds}));
-                break;
-            default:
-                setTitle('');
-                break;
-        }
+        console.log('newSelectedIds', newSelectedIds)
+        setSelectionModal(prev => ({...prev, selectedIds: newSelectedIds}));
         onUpdatedSelection({ type, selectedIds: newSelectedIds });
         closeSelectionModal();
     }

@@ -9,6 +9,7 @@ import ManageUsers from './pages/manageUsers/ManageUsers';
 import MyCourses from './pages/MyCourses';
 import MyLearning from './pages/MyLearning';
 import ManageCourses from './pages/ManageCourses';
+import SessionProvider from './context/SessionContext';
 
 function Logout() {
     localStorage.clear();
@@ -22,6 +23,7 @@ function RegisterAndLogout() {
 
 function App() {
     return (
+        <SessionProvider>
         <BrowserRouter>
             <Routes>
                 <Route path='/login' element={<Login />} />
@@ -70,6 +72,7 @@ function App() {
                 />
             </Routes>
         </BrowserRouter>
+        </SessionProvider>
     );
 }
 

@@ -27,7 +27,7 @@ export default function CoursesGrid(props) {
             const users = usersRes.data;
             const coursesWithTeacherName = courses.map(course => {
                 const teacher = users.find(user => user.id === course.teacher);
-                return { ...course, teacherName: teacher.first_name };
+                return { ...course, teacherName: teacher?.first_name };
             });
             setCourses(coursesWithTeacherName);
         } else {
@@ -97,7 +97,7 @@ export default function CoursesGrid(props) {
                     <div className='course-card' key={`course-${course.id}`}>
                         <div className='card-head'>
                             <span className='title'>{course.title}</span>
-                            <span className='subtitle'>prof. {course.teacherName}</span>
+                            <span className='subtitle'>prof. {course.teacherName || 'TBA'}</span>
                         </div>
                         <div className='description'>{course.description}</div>
                         <div className='buttons' hidden={userState.role === 'TEACHER'}>

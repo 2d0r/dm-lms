@@ -10,7 +10,7 @@ import Popup from '../../components/popup/popup';
 import { DEFAULT_POPUP_STATE } from '../../lib/constants';
 
 export default function ManageUsers() {
-    const { loadCourses, loadUsers, userState, setSelectionModal } = useSession();
+    const { loadCourses, loadUsers, userState, setSelectionModal, setError } = useSession();
     const [usersForDisplay, setUsersForDisplay] = useState([]);
     const [courses, setCourses] = useState([]);
     const [editableUserId, setEditableUserId] = useState(null);
@@ -22,11 +22,11 @@ export default function ManageUsers() {
     }, []);
 
     const fiterCoursesForUser = (user, courses) => {
-        if (user.profile.role === 'STUDENT') {
+        if (user.profile?.role === 'STUDENT') {
             return courses
                 .filter(el => el.enrolled_students.includes(user.id))
                 .map(el => ({ title: el.title, id: el.id }));
-        } else if (user.profile.role === 'TEACHER') {
+        } else if (user.profile?.role === 'TEACHER') {
             return courses
                 .filter(el => el.teacher === user.id)
                 .map(el => ({ title: el.title, id: el.id }));

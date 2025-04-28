@@ -191,7 +191,7 @@ class UserCourseView(APIView):
             return Response({'message': 'User enrolled in courses successfully'})
         if role == 'TEACHER':
             user.courses_taught.set(courses)
-            return Response({'message': 'User set as teacher for multiple courses successfully', 'courses': courses})
+            return Response({'message': 'User set as teacher for multiple courses successfully'})
         if role == 'ADMIN' and len(courses):
             return Response({'message': 'Admin can\'t be linked to courses'}, status=403)
         return Response({'error': 'Invalid role'}, status=400)
