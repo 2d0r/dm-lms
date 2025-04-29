@@ -1,5 +1,11 @@
 @import url('../../styles/constants.css');
 
+.form-overlay {
+    position: relative;
+    height: 100vh;
+    width: 100vw;
+}
+
 .form-container {
     position: absolute;
     top: 50%;

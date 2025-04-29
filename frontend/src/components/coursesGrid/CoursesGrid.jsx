@@ -17,6 +17,7 @@ export default function CoursesGrid(props) {
     }, []);
 
     const populateCourses = async () => {
+        setLoading(true);
         const coursesRes = await getCourses();
         const usersRes = await getUsers();
         if (coursesRes.success && usersRes.success) {
@@ -37,6 +38,7 @@ export default function CoursesGrid(props) {
                     'Something went wrong while populating courses'
             );
         }
+        setLoading(false);
     };
 
     const handleEnroll = async (courseId) => {
@@ -62,8 +64,8 @@ export default function CoursesGrid(props) {
             show: true,
             title: 'Delete course',
             text: 'Are you sure you want to delete this course?',
-            buttonLabel: ['Yes, delete', 'No, cancel'],
-            buttonOnClick: [
+            buttonLabels: ['Yes, delete', 'No, cancel'],
+            buttonOnClicks: [
                 () => {
                     handleDeleteCourse(courseId);
                     setPopup(DEFAULT_POPUP_STATE);
@@ -94,7 +96,7 @@ export default function CoursesGrid(props) {
                 const buttonLabel = isEnrolled && props.studentId ? 'Unenroll' : isEnrolled ? 'Enrolled' : 'Enroll';
                 
                 return (
-                    <div className='course-card' key={`course-${course.id}`}>
+                    <div className='course-card fade-in' key={`course-${course.id}`}>
                         <div className='card-head'>
                             <span className='title'>{course.title}</span>
                             <span className='subtitle'>prof. {course.teacherName || 'TBA'}</span>
@@ -126,12 +128,11 @@ export default function CoursesGrid(props) {
                 );
             })}
         </div>
-        {popup.show && (
-            <Popup 
-                title={popup.title} text={popup.text} 
-                buttonLabel={popup.buttonLabel}
-                buttonOnClick={popup.buttonOnClick}
-            />
-        )}
+        <Popup
+            show={popup.show}
+            title={popup.title} text={popup.text} 
+            buttonLabels={popup.buttonLabels}
+            buttonOnClicks={popup.buttonOnClicks}
+        />
     </>);
 }

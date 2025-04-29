@@ -22,7 +22,6 @@
     display: flex;
     flex-direction: column;
     color: white;
-    
 
     .delete-button {
         width: auto;

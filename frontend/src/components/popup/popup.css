@@ -1,19 +1,5 @@
 @import url('../../styles/constants.css');
 
-.modal-overlay {
-    position: fixed;
-    z-index: 20;
-    top: 0; bottom: 0;
-    left: 0;
-    height: 100%;
-    width: 100vw;
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    background-color: rgb(28, 28, 28, 0.6);
-    backdrop-filter: blur(1px);
-}
-
 .popup {
     position: absolute;
     margin-top: 50vh;

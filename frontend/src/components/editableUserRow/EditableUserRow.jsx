@@ -154,14 +154,6 @@ export default function EditableUserRow({
     };
 
     return (<>
-        {selectionModal.show && (
-            <SelectionModal 
-                type={selectionModal.type}
-                selectedIds={selectionModal.selectedIds}
-                id={selectionModal.id}
-                onUpdatedSelection={handleUpdatedSelection}
-            />
-        )}
         <div id='editable-user-row' className='row editable'>
             <form onSubmit={isNewUser ? handleCreateUser : handleEditUser}>
                 <div className='name'>
@@ -235,5 +227,12 @@ export default function EditableUserRow({
                 </div>
             </form>
         </div>
+        <SelectionModal 
+            show={selectionModal.show}
+            type={selectionModal.type}
+            selectedIds={selectionModal.selectedIds}
+            id={selectionModal.id}
+            onUpdatedSelection={handleUpdatedSelection}
+        />
     </>);
 }

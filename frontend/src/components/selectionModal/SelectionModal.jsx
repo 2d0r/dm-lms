@@ -7,7 +7,7 @@ import DoneIcon from '@mui/icons-material/Done';
 import { useSession } from '../../context/SessionContext';
 import { callbackToStortByName } from '../../utils';
 
-export default function SelectionModal({ type, selectedIds, id, onUpdatedSelection }) {
+export default function SelectionModal({ type, selectedIds, id, onUpdatedSelection, show }) {
 
     const [title, setTitle] = useState('');
     const [list, setList] = useState([]);
@@ -36,7 +36,7 @@ export default function SelectionModal({ type, selectedIds, id, onUpdatedSelecti
                 setTitle('');
                 break;
         }
-    }, []);
+    }, [show, type]);
 
     useEffect(() => {
         setNewSelectedIds(list.filter(el => el.check === true)?.map(el => el.id) || []);
@@ -110,8 +110,8 @@ export default function SelectionModal({ type, selectedIds, id, onUpdatedSelecti
     }
 
     return (
-        <div className='modal-overlay'>
-            <div className='selection-modal'>
+        <div className={`modal-overlay fade-in-out${show ? ' show' : ''}`}>
+            <div className={`selection-modal scale-up-down${show ? ' show' : ''}`}>
                 <div className='top-bar'>
                     <div className='title'>{title}</div>
                     <div className='close-button' onClick={closeSelectionModal}><CloseIcon color='white' /></div>

@@ -1,0 +1,51 @@
+@import url('../../styles/constants.css');
+
+@keyframes fade-grow-fade {
+    0% {
+        opacity: 0;
+        transform: scale(100%);
+    }
+    20% {
+        opacity: 1;
+        transform: scale(150%);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(150%);
+    }
+    70% {
+        opacity: 0;
+        transform: scale(100%);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(100%);
+    }
+}
+
+.loading-container {
+    width: 100%;
+    min-height: 70vh;
+    display: flex;
+    padding: 48px;
+    align-items: center;
+    justify-content: center;
+    gap: 48px;
+
+    .square {
+        height: 36px;
+        width: 36px;
+        border: var(--border);
+        background-color: var(--black);
+    }
+}
+
+#loading-square-1 {
+    animation: fade-grow-fade 1.5s linear 0s infinite;
+}
+#loading-square-2 {
+    animation: fade-grow-fade 1.5s linear 0.25s infinite;
+}
+#loading-square-3 {
+    animation: fade-grow-fade 1.5s linear 0.5s infinite;
+}

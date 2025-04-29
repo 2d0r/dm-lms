@@ -1,14 +1,19 @@
 import React from 'react';
 import Navbar from '../navbar/Navbar';
-import Footer from '../footer/Footer';
 import './Layout.css';
+import { useSession } from '../../context/SessionContext';
+import LoadingAnimation from '../loadingAnimation/LoadingAnimation';
 
 export default function Layout({ children }) {
+
+    const { loading } = useSession();
+
     return (
         <div className='wrapper'>
             <Navbar />
-            <main>{children}</main>
-            {/* <Footer /> */}
+            {loading ? <LoadingAnimation />
+                : <main>{children}</main>
+            }
         </div>
     );
 }

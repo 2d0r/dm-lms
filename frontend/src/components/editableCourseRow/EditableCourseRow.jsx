@@ -142,14 +142,6 @@ export default function EditableCourseRow({
     }
 
     return (<>
-        {selectionModal.show && (
-            <SelectionModal 
-                type={selectionModal.type}
-                selectedIds={selectionModal.selectedIds}
-                id={selectionModal.id}
-                onUpdatedSelection={handleUpdatedSelection}
-            />
-        )}
         <div id='editable-course-row' className='row editable'>
             <form onSubmit={isNewCourse ? handleCreateCourse : handleEditCourse} >
                 <div className='title'>
@@ -192,5 +184,12 @@ export default function EditableCourseRow({
                 </div>
             </form>
         </div>
+        <SelectionModal 
+            show={selectionModal.show}
+            type={selectionModal.type}
+            selectedIds={selectionModal.selectedIds}
+            id={selectionModal.id}
+            onUpdatedSelection={handleUpdatedSelection}
+        />
     </>);
 }

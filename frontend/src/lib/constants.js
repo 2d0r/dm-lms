@@ -15,6 +15,6 @@ export const DEFAULT_POPUP_STATE = {
     show: false,
     title: '',
     text: '',
-    buttonLabel: '',
-    buttonOnClick: () => {},
+    buttonLabels: [],
+    buttonOnClicks: [],
 };

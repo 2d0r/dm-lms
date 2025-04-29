@@ -10,7 +10,10 @@ import { DEFAULT_POPUP_STATE, DEFAULT_SELECTION_MODAL_STATE } from '../../lib/co
 import Popup from '../popup/popup';
 
 export default function CoursesTable() {
-    const { loadCourses, loadUsers, setError, setLoading, loadUserCourses, userState, selectionModal, setSelectionModal } = useSession();
+    const { 
+        loadCourses, loadUsers, loadUserCourses, userState, setSelectionModal,
+        setError, loading, setLoading,
+    } = useSession();
     const [coursesForDisplay, setCoursesForDisplay] = useState([]);
     const [showNewCourseRow, setShowNewCourseRow] = useState(false);
     const [editableCourseId, setEditableCourseId] = useState(null);
@@ -22,6 +25,7 @@ export default function CoursesTable() {
     }, []);
 
     const populateCourses = async (options) => {
+        setLoading(true);
         let updatedCourses = [];
 
         if (options?.updatedCourses) {
@@ -40,6 +44,7 @@ export default function CoursesTable() {
             return getCourseDisplayData(course, relatedUsers);
         });
         setCoursesForDisplay(newCoursesForDisplay);
+        setLoading(false);
     };
 
     const handleClickDelete = (courseId) => {
@@ -47,13 +52,13 @@ export default function CoursesTable() {
             show: true,
             title: 'Delete course',
             text: 'Are you sure you want to delete this course?',
-            buttonLabel: ['Yes, delete', 'No, cancel'],
-            buttonOnClick: [
+            buttonLabels: ['Yes, delete', 'No, cancel'],
+            buttonOnClicks: [
                 () => {
                     handleDeleteCourse(courseId);
-                    setPopup(DEFAULT_POPUP_STATE);
+                    setPopup(prev => ({...prev, show: false}));
                 },
-                () => setPopup(DEFAULT_POPUP_STATE),
+                () => setPopup(prev => ({...prev, show: false})),
             ],
         })
     };
@@ -108,7 +113,7 @@ export default function CoursesTable() {
                     )
                 }
                 return (
-                    <div className='row' key={`course-${idx}`}>
+                    <div className='row fade-in' key={`course-${idx}`}>
                         <div className='title'>
                             <label>Title</label>
                             {course.title}
@@ -139,17 +144,16 @@ export default function CoursesTable() {
                 />
             )}
         </div>
-        <button 
-            className='floating-button' 
+        {!loading && <button 
+            className='floating-button fade-in' 
             type='button' 
             onClick={() => setShowNewCourseRow(true)}
-        >Create Course</button>
-        {popup.show && (
-            <Popup 
-                title={popup.title} text={popup.text} 
-                buttonLabel={popup.buttonLabel}
-                buttonOnClick={popup.buttonOnClick}
-            />
-        )}
+        >Create Course</button>}
+        <Popup 
+            show={popup.show}
+            title={popup.title} text={popup.text} 
+            buttonLabels={popup.buttonLabels}
+            buttonOnClicks={popup.buttonOnClicks}
+        />
     </>);
 }

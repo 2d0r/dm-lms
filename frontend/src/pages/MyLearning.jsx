@@ -2,13 +2,17 @@ import React from 'react';
 import CoursesGrid from '../components/coursesGrid/CoursesGrid';
 import Layout from '../components/layout/Layout';
 import { useSession } from '../context/SessionContext';
+import LoadingAnimation from '../components/loadingAnimation/LoadingAnimation';
 
 export default function MyLearning() {
-    const { userState } = useSession();
+    
+    const { userState, loading } = useSession();
 
     return (
         <Layout>
-            <CoursesGrid studentId={userState.id} />
+            {loading ? <LoadingAnimation /> 
+                : <CoursesGrid studentId={userState.id} />
+            }
         </Layout>
     );
 }

@@ -39,10 +39,63 @@ select {
     -moz-appearance: none;
 }
 
+.modal-overlay {
+    position: fixed;
+    z-index: 20;
+    top: 0; bottom: 0;
+    left: 0;
+    height: 100%;
+    width: 100vw;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    background-color: rgb(28, 28, 28, 0.6);
+    backdrop-filter: blur(1px);
+}
+
+
+
+
+/* Utility classes */
+
 .no-edit {
     cursor: default;
 }
 
 .delete-button:hover:not(.disabled) {
     color: #ff7575!important;
+}
+
+.fade-in {
+    opacity: 0;
+    animation: fadeIn 0.25s forwards;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+.fade-in-out {
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity linear 0.2s, visibility 0ms ease-in 0.2s;
+
+    &.show {
+        visibility: visible;
+        opacity: 1;
+        transform: scale(100%);
+        transition-delay: 0s;
+    }
+}
+
+.scale-up-down {
+    transform: scale(90%);
+    transition: transform linear 0.2s;
+
+    &.show {
+        transform: scale(100%);
+        transition-delay: 0s;
+    }
 }

@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import Login from './pages/login/Login';
-import Register from './pages/register/Register';
+import Login from './pages/Login';
+import Register from './pages/Register';
 import Courses from './pages/Courses';
 import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/ProtectedRoute';
-import ManageUsers from './pages/manageUsers/ManageUsers';
+import ManageUsers from './pages/ManageUsers';
 import MyCourses from './pages/MyCourses';
 import MyLearning from './pages/MyLearning';
 import ManageCourses from './pages/ManageCourses';
