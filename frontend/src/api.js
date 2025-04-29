@@ -3,9 +3,11 @@
 import axios from 'axios';
 import { ACCESS_TOKEN, REFRESH_TOKEN } from './constants';
 
-const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL
-});
+const baseURL = import.meta.env.VITE_API_URL;
+
+console.log('[🔗 VITE_API_URL]', baseURL);
+
+const api = axios.create({ baseURL });
 
 api.interceptors.request.use(
     (config) => {
@@ -37,7 +39,6 @@ api.interceptors.response.use(
             }
 
             try {
-                const baseURL = import.meta.env.VITE_API_URL;
                 const res = await axios.post(baseURL + '/api/token/refresh/', {
                     refresh: refreshToken,
                 });
