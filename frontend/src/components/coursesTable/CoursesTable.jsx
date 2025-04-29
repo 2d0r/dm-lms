@@ -8,6 +8,7 @@ import { useSession } from '../../context/SessionContext';
 import { useGetCourseDisplayData } from '../../hooks/courseHooks';
 import { DEFAULT_POPUP_STATE, DEFAULT_SELECTION_MODAL_STATE } from '../../lib/constants';
 import Popup from '../popup/popup';
+import LoadingAnimation from '../loadingAnimation/LoadingAnimation';
 
 export default function CoursesTable() {
     const { 
@@ -21,11 +22,12 @@ export default function CoursesTable() {
     const [popup, setPopup] = useState(DEFAULT_POPUP_STATE);
 
     useEffect(() => {
+        setLoading(true);
         populateCourses();
+        setLoading(false);
     }, []);
 
     const populateCourses = async (options) => {
-        setLoading(true);
         let updatedCourses = [];
 
         if (options?.updatedCourses) {
@@ -44,7 +46,6 @@ export default function CoursesTable() {
             return getCourseDisplayData(course, relatedUsers);
         });
         setCoursesForDisplay(newCoursesForDisplay);
-        setLoading(false);
     };
 
     const handleClickDelete = (courseId) => {
@@ -63,7 +64,6 @@ export default function CoursesTable() {
         })
     };
     const handleDeleteCourse = async (courseId) => {
-        setLoading(true);
         const result = await deleteCourse(courseId);
         if (result.success) {
             setCoursesForDisplay(courses => courses.filter(el => el.id !== courseId));
@@ -72,7 +72,6 @@ export default function CoursesTable() {
                 result.error || 'Something went wrong while deleting course'
             );
         }
-        setLoading(false);
     };
 
     const handleCreatedCourse = (newCourse) => {
@@ -99,7 +98,7 @@ export default function CoursesTable() {
     }
     
 
-    return (<>
+    return loading ? <LoadingAnimation /> : (<>
         <div id='courses-table' className='floating-rows'>
             {coursesForDisplay.map((course, idx) => {
                 if (editableCourseId === course.id) {

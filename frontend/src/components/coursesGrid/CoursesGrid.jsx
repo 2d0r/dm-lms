@@ -6,18 +6,20 @@ import './CoursesGrid.css';
 import { useSession } from '../../context/SessionContext';
 import { DEFAULT_POPUP_STATE } from '../../lib/constants';
 import Popup from '../popup/popup';
+import LoadingAnimation from '../loadingAnimation/LoadingAnimation';
 
 export default function CoursesGrid(props) {
-    const { userState, setLoading, setError } = useSession();
+    const { userState, loading, setLoading, setError } = useSession();
     const [courses, setCourses] = useState([]);
     const [popup, setPopup] = useState(DEFAULT_POPUP_STATE);
 
     useEffect(() => {
+        setLoading(true);
         populateCourses();
+        setLoading(false);
     }, []);
 
     const populateCourses = async () => {
-        setLoading(true);
         const coursesRes = await getCourses();
         const usersRes = await getUsers();
         if (coursesRes.success && usersRes.success) {
@@ -38,7 +40,6 @@ export default function CoursesGrid(props) {
                     'Something went wrong while populating courses'
             );
         }
-        setLoading(false);
     };
 
     const handleEnroll = async (courseId) => {
@@ -75,7 +76,6 @@ export default function CoursesGrid(props) {
         })
     };
     const handleDeleteCourse = async (courseId) => {
-        setLoading(true);
         const result = await deleteCourse(courseId);
         if (result.success) {
             populateCourses();
@@ -84,10 +84,9 @@ export default function CoursesGrid(props) {
                 result.error || 'Something went wrong while deleting course'
             );
         }
-        setLoading(false);
     };
 
-    return (<>
+    return loading ? <LoadingAnimation /> : (<>
         <div className='course-grid'>
             {courses.map(course => {
                 const isEnrolled = !!course.enrolled_students.find(

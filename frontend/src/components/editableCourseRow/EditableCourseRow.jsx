@@ -76,7 +76,6 @@ export default function EditableCourseRow({
 
     const handleEditCourse = async (e) => {
         e.preventDefault();
-        console.log('teacherId', teacherId)
         const result = await updateCourse({ 
             id: course.id, 
             title, 

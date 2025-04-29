@@ -8,11 +8,12 @@ import EditableUserRow from '../../components/editableUserRow/EditableUserRow';
 import { useSession } from '../../context/SessionContext';
 import Popup from '../../components/popup/popup';
 import { DEFAULT_POPUP_STATE } from '../../lib/constants';
+import LoadingAnimation from '../loadingAnimation/LoadingAnimation';
 
 export default function UsersTable() {
     const { 
         loadCourses, loadUsers, userState, setSelectionModal, 
-        setError, setLoading 
+        setError, loading, setLoading 
     } = useSession();
     const [usersForDisplay, setUsersForDisplay] = useState([]);
     const [courses, setCourses] = useState([]);
@@ -21,8 +22,14 @@ export default function UsersTable() {
     const [popup, setPopup] = useState(DEFAULT_POPUP_STATE);
 
     useEffect(() => {
+        setLoading(true);
         populateUsers();
+        setLoading(false);
     }, []);
+
+    useEffect(() => {
+        console.log('loading', loading)
+    }, [loading])
 
     const fiterCoursesForUser = (user, courses) => {
         if (user.profile?.role === 'STUDENT') {
@@ -38,7 +45,6 @@ export default function UsersTable() {
     };
 
     const populateUsers = async () => {
-        setLoading(true);
         const courses = await loadCourses();
         const newUsers = await loadUsers();
         const newUsersWithCourseNames = newUsers.map(user => {
@@ -50,7 +56,6 @@ export default function UsersTable() {
             }
         });
         setUsersForDisplay(newUsersWithCourseNames);
-        setLoading(false);
     };
 
     const handleClickDelete = (userId) => {
@@ -108,7 +113,7 @@ export default function UsersTable() {
         setShowNewUserRow(false);
     };
 
-    return (<>
+    return loading ? <LoadingAnimation /> : (<>
         <div className='users-table floating-rows'>
             {usersForDisplay.map((user, idx) => {
                 if (user.id === editableUserId) {

@@ -48,10 +48,6 @@ export default function EditableUserRow({
     }, []);
 
     useEffect(() => {
-        console.log('role', role);
-    }, [role])
-
-    useEffect(() => {
         updateUserForDisplay();
     }, [loadedUsers]);
 
@@ -139,7 +135,6 @@ export default function EditableUserRow({
             }));
             setCourseNames(courseNames);
         } else if (type === 'selectCoursesForTeacher') {
-            console.log('selectedIds', selectedIds)
             setCourseIds(selectedIds);
             const courseNames = await Promise.all(selectedIds.map(async (courseId) => {
                 const courseName = await getCourseNameFromId(courseId);

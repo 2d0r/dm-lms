@@ -103,7 +103,6 @@ export default function SelectionModal({ type, selectedIds, id, onUpdatedSelecti
     }
     
     const handleSubmit = () => {
-        console.log('newSelectedIds', newSelectedIds)
         setSelectionModal(prev => ({...prev, selectedIds: newSelectedIds}));
         onUpdatedSelection({ type, selectedIds: newSelectedIds });
         closeSelectionModal();

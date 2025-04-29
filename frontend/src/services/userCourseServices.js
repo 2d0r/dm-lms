@@ -12,7 +12,6 @@ export const getUserCourses = async ({ userId, userRole }) => {
 
 export const updateUserCourses = async ({ userId, courseIds=[], role }) => {
     try {
-        console.log('userId, role, courseIds', userId, role, courseIds)
         const result = await api.patch(`/api/users/${userId}/courses/?role=${role}`, { courseIds });
         return { success: true, data: result.data };
     } catch (error) {

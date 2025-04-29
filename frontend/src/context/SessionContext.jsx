@@ -100,7 +100,6 @@ export default function SessionProvider({ children }) {
         }
 
         try {
-            console.log('loading user details')
             const res = await api.get('/api/user/');
             const user = res.data;
             setUserState(prev => ({
@@ -113,8 +112,6 @@ export default function SessionProvider({ children }) {
             console.error('Failed to fetch user:', error);
             // Optionally: logout user if refresh fails
         }
-
-        setLoading(false);
     }
 
     const contextValue = {
@@ -124,7 +121,7 @@ export default function SessionProvider({ children }) {
         userState, setUserState,
         loadUserCourses,
         selectionModal, setSelectionModal,
-        setError, setLoading
+        error, setError, loading, setLoading
     };
 
     return (
