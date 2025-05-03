@@ -34,7 +34,7 @@ export default function CoursesTable() {
             updatedCourses = options.updatedCourses;
         } else if (userState.role === 'TEACHER') {
             updatedCourses = await loadUserCourses({ userId: userState.id, userRole: userState.role });
-        } else {
+        } else if (userState.role) {
             updatedCourses = await loadCourses();
         }
         // Get course relational data for display
