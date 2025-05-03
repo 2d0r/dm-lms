@@ -138,7 +138,7 @@ export default function AuthForm({ route, method }) {
                     ) : (
                         <button
                             className='redirect-button'
-                            type='button'
+                            type='button' name='login'
                             onClick={() => navigate('/login')}
                         >
                             Login
