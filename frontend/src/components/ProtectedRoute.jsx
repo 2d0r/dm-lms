@@ -1,9 +1,7 @@
+import React, { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';
-import api from '../api';
-import { REFRESH_TOKEN, ACCESS_TOKEN } from '../constants';
-import { useState, useEffect } from 'react';
 import { useSession } from '../context/SessionContext';
+import { ACCESS_TOKEN } from '../constants';
 
 export default function ProtectedRoute({ children, authorisedRole = 'STUDENT' }) {
     // Check someone is authorised before allowing them to access this route
@@ -30,26 +28,7 @@ export default function ProtectedRoute({ children, authorisedRole = 'STUDENT' })
         }
 
         checkAuthByRole();
-    }, [userState.role])
-
-    const refreshToken = async () => {
-        // Send request to backend with refresh token to get new access token
-        const refreshToken = localStorage.getItem(REFRESH_TOKEN);
-        try {
-            const response = await api.post('/api/token/refresh/', {
-                refresh: refreshToken,
-            });
-            if (response.status === 200) {
-                localStorage.setItem(ACCESS_TOKEN, response.data.access);
-                setIsAuthorised(true);
-            } else {
-                setIsAuthorised(false);
-            }
-        } catch (error) {
-            console.error(error);
-            setIsAuthorised(false);
-        }
-    };
+    }, [userState.role]);
 
     const auth = async () => {
         const token = localStorage.getItem(ACCESS_TOKEN);
@@ -57,16 +36,6 @@ export default function ProtectedRoute({ children, authorisedRole = 'STUDENT' })
             setIsAuthorised(false);
             return;
         }
-        const decoded = jwtDecode(token);
-
-        //  Check whether token has expired
-        // const tokenExpiration = decoded.exp;
-        // const now = Date.now() / 1000; // in seconds
-        // if (tokenExpiration < now) {
-        //     await refreshToken();
-        // } else {
-        //     setIsAuthorised(true);
-        // }
 
         setIsAuthorised(true);
     };

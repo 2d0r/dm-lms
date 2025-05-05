@@ -29,7 +29,7 @@ export const useGetCourseNameFromId = () => {
             return course.title;
         }
 
-        result = await getCourse(id);
+        const result = await getCourse(id);
         if (!result.success) {
             setError(result.error || 'Something went wrong while getting course');
             return;

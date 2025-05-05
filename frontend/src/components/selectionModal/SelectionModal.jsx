@@ -7,7 +7,7 @@ import DoneIcon from '@mui/icons-material/Done';
 import { useSession } from '../../context/SessionContext';
 import { callbackToStortByName } from '../../utils';
 
-export default function SelectionModal({ type, selectedIds, id, onUpdatedSelection, show }) {
+export default function SelectionModal({ type, selectedIds, onUpdatedSelection, show }) {
 
     const [title, setTitle] = useState('');
     const [list, setList] = useState([]);

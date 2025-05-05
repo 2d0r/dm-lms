@@ -1,5 +1,6 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { vi } from 'vitest';
+import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, test, expect, vi, beforeEach } from 'vitest';
 import CoursesTable from '../components/coursesTable/CoursesTable';
 import { useSession } from '../context/SessionContext';
 import { useGetCourseDisplayData } from '../hooks/courseHooks';

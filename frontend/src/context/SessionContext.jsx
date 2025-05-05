@@ -1,9 +1,9 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { getCourse, getCourses } from '../services/coursesServices';
 import { getUserCourses } from '../services/userCourseServices';
 import { getUser, getUsers } from '../services/usersServices';
 import { DEFAULT_SELECTION_MODAL_STATE, DEFAULT_USER_STATE } from '../lib/constants';
-import { ACCESS_TOKEN, REFRESH_TOKEN } from '../constants';
+import { ACCESS_TOKEN } from '../constants';
 import api from '../api';
 
 const SessionContext = createContext();

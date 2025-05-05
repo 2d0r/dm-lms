@@ -1,4 +1,5 @@
-import { describe, expect, vi, beforeEach } from 'vitest';
+import React from 'react';
+import { describe, test, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import SelectionModal from '../components/selectionModal/SelectionModal';
 import * as usersServices from '../services/usersServices';

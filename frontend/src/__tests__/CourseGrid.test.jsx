@@ -1,5 +1,6 @@
+import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
-import { vi, test } from 'vitest';
+import { describe, test, expect, vi, beforeEach } from 'vitest';
 import CoursesGrid from '../components/coursesGrid/CoursesGrid';
 import { useSession } from '../context/SessionContext';
 import * as coursesServices from '../services/coursesServices';

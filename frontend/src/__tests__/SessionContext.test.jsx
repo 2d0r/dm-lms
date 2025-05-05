@@ -1,7 +1,7 @@
+import React from 'react';
 import { describe, test, expect, vi, beforeEach } from 'vitest';
 import { render, waitFor } from '@testing-library/react';
 import SessionProvider, { useSession } from '../context/SessionContext';
-import React from 'react';
 import api from '../api';
 import { ACCESS_TOKEN } from '../constants';
 

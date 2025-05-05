@@ -203,8 +203,10 @@ class UserCourseView(APIView):
         try:
             user = User.objects.get(pk=user_id)
             course = Course.objects.get(pk=course_id)
-        except:
-            return Response({'error': 'User or course not found'}, status=404)
+        except User.DoesNotExist:
+            return Response({'error': 'User not found'}, status=404)
+        except Course.DoesNotExist:
+            return Response({'error': 'Course not found'}, status=404)
         
         if role == 'STUDENT':
             user.courses.add(course)
@@ -229,8 +231,10 @@ class UserCourseView(APIView):
                 return Response({'message': 'User unenrolled successfully'})
             if role == 'TEACHER':
                 return Response({'error': 'Teacher cannot be removed from course'})
-        except:
-            return Response({'error': 'User or course not found'}, status=404)
+        except User.DoesNotExist:
+            return Response({'error': 'User not found'}, status=404)
+        except Course.DoesNotExist:
+            return Response({'error': 'Course not found'}, status=404)
 
 # Tokens
 

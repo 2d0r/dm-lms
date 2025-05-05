@@ -1,5 +1,6 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { expect, vi } from 'vitest';
+import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, test, expect, vi } from 'vitest';
 import EditableUserRow from '../components/editableUserRow/EditableUserRow';
 import '@testing-library/jest-dom';
 
@@ -60,21 +61,6 @@ describe('EditableUserRow', () => {
         onEditedUser: vi.fn(), 
         onEditCourses: vi.fn(),
     };
-    const basePropsNew = {
-        user: {
-            id: undefined,
-            first_name: '',
-            username: '',
-            profile: { role: 'TEACHER' },
-            password: '1',
-            courseIds: [],
-            courseNames: [],
-        },
-        onCancel: vi.fn(),
-        onCreatedUser: vi.fn(), 
-        onEditedUser: vi.fn(), 
-        onEditCourses: vi.fn(),
-    };
 
     test('renders input fields with provided course data', () => {
         render(<EditableUserRow {...baseProps} />);
@@ -98,31 +84,6 @@ describe('EditableUserRow', () => {
         expect(baseProps.onEditCourses).toHaveBeenCalled();
         expect(screen.getByTestId('selection-modal')).toBeInTheDocument();
     });
-
-    // test('calls onEditedUser when Save is clicked for an existing user', async () => {
-    //     const mockOnEdited = vi.fn();
-    //     render(<EditableUserRow {...baseProps} onEditedUser={mockOnEdited}/>);
-    //     fireEvent.click(screen.getByText('Save'));
-    //     await waitFor(() => {
-    //         expect(mockOnEdited).toHaveBeenCalled();
-    //     });
-    // });
-    
-    // test('calls onCreatedUser when Save is clicked for a new user', async () => {
-    //     const mockOnEdited = vi.fn();
-    //     const mockOnCreated = vi.fn();
-    //     render(<EditableUserRow {...basePropsNew} onCreatedUser={mockOnCreated} onEditedUser={mockOnEdited} />);
-    //     fireEvent.change(screen.getByLabelText(/Edit Name/i), {
-    //         target: { value: 'Test User' }
-    //     });
-    //     fireEvent.change(screen.getByLabelText(/Edit Username/i), {
-    //         target: { value: 'testuser' }
-    //     });
-    //     fireEvent.click(screen.getByText('Save'));
-    //     await waitFor(() => {
-    //         expect(mockOnCreated).toHaveBeenCalled();
-    //     });
-    // });
 
     test('calls onCancelCreate when cancel is clicked', () => {
         render(<EditableUserRow {...baseProps} />);

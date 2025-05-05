@@ -1,5 +1,6 @@
-import { describe, vi, beforeEach, expect } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import React from 'react';
+import { describe, test, expect, vi, beforeEach } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
 import UsersTable from '../components/usersTable/UsersTable';
 import '@testing-library/jest-dom';
 

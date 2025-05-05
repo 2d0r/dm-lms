@@ -1,3 +1,4 @@
+import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { test, expect, vi } from 'vitest';
 import AuthForm from '../components/authForm/AuthForm';

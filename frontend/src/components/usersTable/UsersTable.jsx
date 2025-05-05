@@ -15,7 +15,7 @@ export default function UsersTable() {
         setError, loading, setLoading 
     } = useSession();
     const [usersForDisplay, setUsersForDisplay] = useState([]);
-    const [courses, setCourses] = useState([]);
+    const [courses] = useState([]);
     const [editableUserId, setEditableUserId] = useState(null);
     const [showNewUserRow, setShowNewUserRow] = useState(false);
     const [popup, setPopup] = useState(DEFAULT_POPUP_STATE);
