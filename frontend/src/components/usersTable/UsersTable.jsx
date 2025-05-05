@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { deleteUser } from '../../services/usersServices';
-import Layout from '../../components/layout/Layout';
 import './UsersTable.css';
 import '../../styles/floatingRows.css';
 import '../../styles/floatingButton.css';

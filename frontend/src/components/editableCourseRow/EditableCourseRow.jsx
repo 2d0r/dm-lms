@@ -100,15 +100,14 @@ export default function EditableCourseRow({
     };
 
     const handleEditTeacher = () => {
-        if (userRole === 'ADMIN') {
-            setSelectionModal(prev => ({
-                ...prev,
-                show: true,
-                type: 'selectTeacher', 
-                id: course.id || null,
-                selectedIds: teacherId ? [teacherId] : [],
-            }));
-        }
+        if (userRole !== 'ADMIN') return;
+        setSelectionModal(prev => ({
+            ...prev,
+            show: true,
+            type: 'selectTeacher', 
+            id: course.id || null,
+            selectedIds: teacherId ? [teacherId] : [],
+        }));
     };
 
     const handleEditStudents = () => {

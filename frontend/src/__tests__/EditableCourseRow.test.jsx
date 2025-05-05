@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { vi } from 'vitest';
 import EditableCourseRow from '../components/editableCourseRow/EditableCourseRow';
 import '@testing-library/jest-dom';
@@ -22,6 +22,29 @@ vi.mock('../hooks/courseHooks', () => ({
     useGetCourseDisplayData: () => vi.fn(),
 }));
 
+vi.mock('../services/coursesServices', () => ({
+    createCourse: vi.fn().mockResolvedValue({
+        success: true,
+        data: {
+            id: '1',
+            title: 'New Course',
+            description: 'Updated description',
+            teacher: '123',
+            enrolled_students: [],
+        },
+    }),
+    updateCourse: vi.fn().mockResolvedValue({
+        success: true,
+        data: {
+            id: '1',
+            title: 'New Course',
+            description: 'Updated description',
+            teacher: '123',
+            enrolled_students: [],
+        },
+    }),
+}));
+
 describe('EditableCourseRow', () => {
     const baseProps = {
         course: {
@@ -32,6 +55,18 @@ describe('EditableCourseRow', () => {
             teacherName: 'Alice',
             enrolled_students: ['2'],
             enrolledStudentsNames: ['Bob'],
+        },
+        onCancelCreate: vi.fn(),
+        onCreatedCourse: vi.fn(),
+        onEditedCourse: vi.fn(),
+    };
+    const basePropsNew = {
+        course: { 
+            id: undefined,
+            title: 'New Course',
+            description: 'Test description',
+            teacher: '1',
+            enrolled_students: [],
         },
         onCancelCreate: vi.fn(),
         onCreatedCourse: vi.fn(),
@@ -56,9 +91,40 @@ describe('EditableCourseRow', () => {
         expect(screen.getByLabelText(/Edit Title/)).toHaveValue('Science');
     });
 
+    test('calls onEditedCourse when Save is clicked for an existing course', async () => {
+        const mockOnEdited = vi.fn();
+        render(<EditableCourseRow {...baseProps} onEditedCourse={mockOnEdited}/>);
+        fireEvent.click(screen.getByText('Save'));
+        await waitFor(() => {
+            expect(mockOnEdited).toHaveBeenCalled();
+        });
+    });
+
+    test('calls onEditedCourse when Save is clicked for a new course', async () => {
+        const mockOnEdited = vi.fn();
+        const mockOnCreated = vi.fn();
+        render(<EditableCourseRow {...basePropsNew} onCreatedCourse={mockOnCreated} onEditedCourse={mockOnEdited} />);
+        fireEvent.click(screen.getByText('Save'));
+        await waitFor(() => {
+            expect(mockOnCreated).toHaveBeenCalled();
+        });
+    });
+
     test('calls onCancelCreate when cancel is clicked', () => {
         render(<EditableCourseRow {...baseProps} />);
         fireEvent.click(screen.getByText('Cancel'));
         expect(baseProps.onCancelCreate).toHaveBeenCalled();
+    });
+
+    test('opens Selection Modal when Edit Teacher box is clicked', () => {
+        render(<EditableCourseRow {...baseProps} />);
+        fireEvent.click(screen.getByText('Edit Teacher'));
+        expect(screen.getByTestId('selection-modal')).toBeInTheDocument();
+    });
+
+    test('opens Selection Modal when Edit Students box is clicked', () => {
+        render(<EditableCourseRow {...baseProps} />);
+        fireEvent.click(screen.getByText('Edit Students'));
+        expect(screen.getByTestId('selection-modal')).toBeInTheDocument();
     });
 });

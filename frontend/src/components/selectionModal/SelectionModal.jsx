@@ -109,11 +109,13 @@ export default function SelectionModal({ type, selectedIds, id, onUpdatedSelecti
     }
 
     return (
-        <div className={`modal-overlay fade-in-out${show ? ' show' : ''}`}>
-            <div className={`selection-modal scale-up-down${show ? ' show' : ''}`}>
+        <div className={`modal-overlay fade-in-out${show ? ' show' : ''}`} data-testid='modal-overlay'>
+            <div className={`selection-modal scale-up-down${show ? ' show' : ''}`} data-testid='selection-modal'>
                 <div className='top-bar'>
                     <div className='title'>{title}</div>
-                    <div className='close-button' onClick={closeSelectionModal}><CloseIcon color='white' /></div>
+                    <div className='close-button' onClick={closeSelectionModal} data-testid='close-button'>
+                        <CloseIcon color='white' />
+                    </div>
                 </div>
                 <ul>
                     {list.map((item, idx) => {

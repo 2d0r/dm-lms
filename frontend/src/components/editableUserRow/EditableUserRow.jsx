@@ -17,7 +17,7 @@ export default function EditableUserRow({
     const [name, setName] = useState(user.first_name || '');
     const [username, setUsername] = useState(user.username || '');
     const [role, setRole] = useState(user.profile?.role || 'STUDENT');
-    const [password, setPassword] = useState(user.password || '');
+    const [password, setPassword] = useState('');
     const [courseIds, setCourseIds] = useState(user.courseIds || []);
     const [courseNames, setCourseNames] = useState(
         user.courseNames || []
