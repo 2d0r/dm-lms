@@ -61,7 +61,6 @@
     border-top: var(--border);
     display: flex;
     justify-content: flex-end;
-    align-items: 30px;
     font: var(--font-button);
 
     button {

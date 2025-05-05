@@ -15,7 +15,6 @@
     background-color: var(--black);
     display: flex;
     flex-direction: column;
-    gap: -1px;
     border: 1px solid white;
     color: white;
 }
