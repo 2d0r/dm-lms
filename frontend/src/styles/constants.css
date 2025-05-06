@@ -1,5 +1,6 @@
 :root {
   --black: #1C1C1C;
+  --black-glass: rgb(28, 28, 28, 0.6);
   --grey: rgb(139, 139, 139);
   --lilac: #B48ED5;
   --lilac-faded: rgb(180, 142, 213, 0.3);
@@ -9,6 +10,7 @@
 
   --border: 1px solid white;
 
+  --font-h1: 800 36px 'Playfair', serif;
   --font-h2: 600 20px 'Playfair', serif;
   --font-h3: 600 16px 'Playfair', serif;
   --font-body: 400 12px 'Playfair', serif;

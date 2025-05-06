@@ -81,72 +81,78 @@ export default function AuthForm({ route, method }) {
 
     return (
         <section className='form-overlay'>
-            <form onSubmit={handleSubmit} className='form-container fade-in'>
-                <div className='title'>{title}</div>
-                <input
-                    className='form-input'
-                    type='text'
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    placeholder='Username'
-                />
-                <input
-                    className='form-input'
-                    type='password'
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder='Password'
-                />
-                {method === 'register' && (
-                    <>
-                        <input
-                            className='form-input'
-                            type='text'
-                            value={fullName}
-                            onChange={(e) => setFullName(e.target.value)}
-                            placeholder='Full Name'
-                        />
-                        <select
-                            className='form-input custom-select'
-                            name='role'
-                            id='role'
-                            value={role}
-                            onChange={handleSelectRole}
-                        >
-                            <option value='role' disabled>
-                                Role
-                            </option>
-                            <option value='student'>Student</option>
-                            <option value='teacher'>Teacher</option>
-                        </select>
-                    </>
-                )}
-                {message && (
-                    <div className='message'>{message}</div>
-                )}
-                <div className='buttons'>
-                    <button className='submit-button' type='submit'>
-                        {submitLabel}
-                    </button>
-                    {method === 'login' ? (
-                        <button
-                            className='redirect-button'
-                            type='button'
-                            onClick={() => navigate('/register')}
-                        >
-                            Sign up
-                        </button>
-                    ) : (
-                        <button
-                            className='redirect-button'
-                            type='button' name='login'
-                            onClick={() => navigate('/login')}
-                        >
-                            Login
-                        </button>
-                    )}
+            <div className='form-container'>
+                <div className='hero'>
+                    <span className='over-title'>Welcome to </span>
+                    The D&M Academy
                 </div>
-            </form>
+                <form onSubmit={handleSubmit} id='auth-form' className='fade-in'>
+                    <div className='title'>{title}</div>
+                    <input
+                        className='form-input'
+                        type='text'
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        placeholder='Username'
+                    />
+                    <input
+                        className='form-input'
+                        type='password'
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder='Password'
+                    />
+                    {method === 'register' && (
+                        <>
+                            <input
+                                className='form-input'
+                                type='text'
+                                value={fullName}
+                                onChange={(e) => setFullName(e.target.value)}
+                                placeholder='Full Name'
+                            />
+                            <select
+                                className='form-input custom-select'
+                                name='role'
+                                id='role'
+                                value={role}
+                                onChange={handleSelectRole}
+                            >
+                                <option value='role' disabled>
+                                    Role
+                                </option>
+                                <option value='student'>Student</option>
+                                <option value='teacher'>Teacher</option>
+                            </select>
+                        </>
+                    )}
+                    {message && (
+                        <div className='message'>{message}</div>
+                    )}
+                    <div className='buttons'>
+                        <button className='submit-button' type='submit'>
+                            {submitLabel}
+                        </button>
+                        {method === 'login' ? (
+                            <button
+                                className='redirect-button'
+                                type='button'
+                                onClick={() => navigate('/register')}
+                            >
+                                Sign up
+                            </button>
+                        ) : (
+                            <button
+                                className='redirect-button'
+                                type='button' name='login'
+                                onClick={() => navigate('/login')}
+                            >
+                                Login
+                            </button>
+                        )}
+                    </div>
+                </form>
+            </div>
         </section>
     );
 }

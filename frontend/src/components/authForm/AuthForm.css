@@ -8,10 +8,35 @@
 
 .form-container {
     position: absolute;
-    top: 50%;
+    top: 25%;
     left: 50%;
-    translate: -50% -50%;
-    width: 280px;
+    translate: -50% 0;
+    width: 420px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 48px;
+}
+
+.form-container .hero {
+    width: 100%;
+    border: var(--border);
+    background-color: var(--black);
+    backdrop-filter: blur(10px);
+    padding: 36px;
+    display: flex;
+    flex-direction: column;
+    font: var(--font-h1);
+    color: white;
+    text-align: center;
+
+    .over-title {
+        font: var(--font-detail);
+    }
+}
+
+form#auth-form {
+    width: 100%;
     background-color: var(--black);
     display: flex;
     flex-direction: column;
@@ -19,7 +44,7 @@
     color: white;
 }
 
-.form-container .title {
+form .title {
     height: 30px;
     width: 100%;
     border-bottom: 1px solid white;
@@ -30,14 +55,14 @@
     background-image: var(--gradient-glass-white);
 }
 
-.form-container .form-input {
+form .form-input {
     padding: 0 12px;
     height: 40px;
     border-bottom: 1px solid white;
     font: var(--font-h3);
 }
 
-.form-container .message {
+form .message {
     padding: 6px 12px;
     display: flex;
     justify-content: center;
@@ -46,7 +71,7 @@
     color: var(--grey);
 }
 
-.form-container .buttons {
+form .buttons {
     height: 40px;
     display: flex;
     font-weight: 800;
@@ -70,6 +95,15 @@
 
 @media only screen and (max-width: 768px) {
     .form-container {
+        top: 20%;
+        width: calc(100vw - 48px);
+
+        .hero {
+            gap: 6px;
+        }
+    }
+
+    form#auth-form {
         width: calc(100vw - 48px);
         
         .title {
