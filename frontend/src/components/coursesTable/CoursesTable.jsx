@@ -13,7 +13,7 @@ import LoadingAnimation from '../loadingAnimation/LoadingAnimation';
 export default function CoursesTable() {
     const { 
         loadCourses, loadUsers, loadUserCourses, userState, setSelectionModal,
-        setError, loading, setLoading,
+        setError, loading,
     } = useSession();
     const [coursesForDisplay, setCoursesForDisplay] = useState([]);
     const [showNewCourseRow, setShowNewCourseRow] = useState(false);
@@ -22,9 +22,7 @@ export default function CoursesTable() {
     const [popup, setPopup] = useState(DEFAULT_POPUP_STATE);
 
     useEffect(() => {
-        setLoading(true);
         populateCourses();
-        setLoading(false);
     }, []);
 
     const populateCourses = async (options) => {
@@ -98,7 +96,9 @@ export default function CoursesTable() {
     }
     
 
-    return loading ? <LoadingAnimation /> : (<>
+    return loading || coursesForDisplay.length === 0 ? (
+        <LoadingAnimation />
+    ) : (<>
         <div id='courses-table' className='floating-rows'>
             {coursesForDisplay.map((course, idx) => {
                 if (editableCourseId === course.id) {

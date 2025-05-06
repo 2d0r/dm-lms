@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '../../constants';
 import './AuthForm.css';
 import { useSession } from '../../context/SessionContext';
+import LoadingAnimation from '../loadingAnimation/LoadingAnimation';
 
 export default function AuthForm({ route, method }) {
     const [username, setUsername] = useState('');
@@ -13,7 +14,7 @@ export default function AuthForm({ route, method }) {
     const [role, setRole] = useState('role');
     const [message, setMessage] = useState('');
     const navigate = useNavigate();
-    const { setUserState, setError, setLoading } = useSession();
+    const { setUserState, setError, setLoading, loading } = useSession();
 
     const title = method === 'login' ? 'Login' : 'Register';
     const submitLabel = title;
@@ -38,20 +39,11 @@ export default function AuthForm({ route, method }) {
                 localStorage.setItem(ACCESS_TOKEN, response.data.access);
                 localStorage.setItem(REFRESH_TOKEN, response.data.refresh);
 
-                // Navigate based on role
-                switch (response.data.role) {
-                    case 'STUDENT':
-                        navigate('/');
-                        break;
-                    case 'TEACHER':
-                        navigate('/');
-                        break;
-                    case 'ADMIN':
-                        navigate('/manage-courses');
-                        break;
-                    default:
-                        navigate('/');
-                        break;
+                // Redirect based on role
+                if (response.data.role === 'ADMIN') {
+                    navigate('/manage-courses');
+                } else {
+                    navigate('/');
                 }
             } catch (error) {
                 console.error('Login error', error);
@@ -131,7 +123,7 @@ export default function AuthForm({ route, method }) {
                     )}
                     <div className='buttons'>
                         <button className='submit-button' type='submit'>
-                            {submitLabel}
+                            {loading ? <LoadingAnimation inline={true} /> : submitLabel}
                         </button>
                         {method === 'login' ? (
                             <button
@@ -139,7 +131,7 @@ export default function AuthForm({ route, method }) {
                                 type='button'
                                 onClick={() => navigate('/register')}
                             >
-                                Sign up
+                                Sign Up
                             </button>
                         ) : (
                             <button

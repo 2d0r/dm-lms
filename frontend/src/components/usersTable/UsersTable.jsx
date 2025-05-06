@@ -12,7 +12,7 @@ import LoadingAnimation from '../loadingAnimation/LoadingAnimation';
 export default function UsersTable() {
     const { 
         loadCourses, loadUsers, userState, setSelectionModal, 
-        setError, loading, setLoading 
+        setError, loading 
     } = useSession();
     const [usersForDisplay, setUsersForDisplay] = useState([]);
     const [courses] = useState([]);
@@ -21,9 +21,7 @@ export default function UsersTable() {
     const [popup, setPopup] = useState(DEFAULT_POPUP_STATE);
 
     useEffect(() => {
-        setLoading(true);
         populateUsers();
-        setLoading(false);
     }, []);
 
     useEffect(() => {
@@ -112,7 +110,9 @@ export default function UsersTable() {
         setShowNewUserRow(false);
     };
 
-    return loading ? <LoadingAnimation /> : (<>
+    return loading || usersForDisplay.length === 0 ? (
+        <LoadingAnimation />
+    ) : (<>
         <div className='users-table floating-rows'>
             {usersForDisplay.map((user, idx) => {
                 if (user.id === editableUserId) {

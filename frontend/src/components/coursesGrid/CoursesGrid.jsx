@@ -9,14 +9,12 @@ import Popup from '../popup/popup';
 import LoadingAnimation from '../loadingAnimation/LoadingAnimation';
 
 export default function CoursesGrid(props) {
-    const { userState, loading, setLoading, setError } = useSession();
+    const { userState, loading, setError } = useSession();
     const [courses, setCourses] = useState([]);
     const [popup, setPopup] = useState(DEFAULT_POPUP_STATE);
 
     useEffect(() => {
-        setLoading(true);
         populateCourses();
-        setLoading(false);
     }, []);
 
     const populateCourses = async () => {
@@ -86,7 +84,7 @@ export default function CoursesGrid(props) {
         }
     };
 
-    return loading ? <LoadingAnimation /> : (<>
+    return loading || courses.length === 0 ? <LoadingAnimation /> : (<>
         <div className='course-grid'>
             {courses.map(course => {
                 const isEnrolled = !!course.enrolled_students.find(

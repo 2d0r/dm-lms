@@ -35,7 +35,7 @@
     }
 }
 
-form#auth-form {
+#auth-form {
     width: 100%;
     background-color: var(--black);
     display: flex;
@@ -44,7 +44,7 @@ form#auth-form {
     color: white;
 }
 
-form .title {
+#auth-form .title {
     height: 30px;
     width: 100%;
     border-bottom: 1px solid white;
@@ -55,14 +55,14 @@ form .title {
     background-image: var(--gradient-glass-white);
 }
 
-form .form-input {
+#auth-form .form-input {
     padding: 0 12px;
     height: 40px;
     border-bottom: 1px solid white;
     font: var(--font-h3);
 }
 
-form .message {
+#auth-form .message {
     padding: 6px 12px;
     display: flex;
     justify-content: center;
@@ -71,7 +71,7 @@ form .message {
     color: var(--grey);
 }
 
-form .buttons {
+#auth-form .buttons {
     height: 40px;
     display: flex;
     font-weight: 800;
@@ -103,7 +103,7 @@ form .buttons {
         }
     }
 
-    form#auth-form {
+    #auth-form {
         width: calc(100vw - 48px);
         
         .title {
