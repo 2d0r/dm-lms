@@ -113,19 +113,19 @@ export default function CoursesTable() {
                 }
                 return (
                     <div className='row fade-in' key={`course-${idx}`}>
-                        <div className='title'>
+                        <div className='cell title'>
                             <label>Title</label>
                             {course.title}
                         </div>
-                        <div className='teacher'>
+                        <div className='cell teacher'>
                             <label>Teacher</label>
                             {course.teacherName}
                         </div>
-                        <div className='students'>
+                        <div className='cell textarea students'>
                             <label>Students</label>
                             {course.enrolledStudentsNames?.join(', ') || ''}
                         </div>
-                        <div className='description'>
+                        <div className='cell textarea description'>
                             <label>Description</label>
                             {course.description}
                         </div>

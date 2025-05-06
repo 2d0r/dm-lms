@@ -130,26 +130,24 @@ export default function UsersTable() {
                 }
                 return (
                     <div className='row fade-in' key={`user-${user.id}`}>
-                        <div className='name'>
+                        <div className='cell name'>
                             <label>Name</label>
                             {user.first_name || 'N/A'}
                         </div>
-                        <div className='username'>
+                        <div className='cell username'>
                             <label>Username</label>
                             {user.username}
                         </div>
-                        <div className='role'>
+                        <div className='cell role'>
                             <label>Role</label>
                             {user.profile?.role || 'Loading...'}
                         </div>
-                        <div className='courses'>
+                        <div className='cell textarea courses'>
                             <label>Courses</label>
                             {user.courseNames.join(', ') || 'N/A'}
                         </div>
                         <div className='buttons'>
-                            <button
-                                onClick={() => setEditableUserId(user.id)}
-                            >
+                            <button onClick={() => setEditableUserId(user.id)}>
                                 Edit
                             </button>
                             <button

@@ -142,7 +142,7 @@ export default function EditableCourseRow({
     return (<>
         <div id='editable-course-row' className='row editable'>
             <form onSubmit={isNewCourse ? handleCreateCourse : handleEditCourse} >
-                <div className='title'>
+                <div className='cell title'>
                     <label htmlFor='title'>Edit Title</label>
                     <input
                         type='text'
@@ -154,15 +154,15 @@ export default function EditableCourseRow({
                         value={title}
                     />
                 </div>
-                <div className={`teacher${userRole === 'TEACHER' ? ' no-edit' : ''}`} onClick={handleEditTeacher}>
+                <div className={`cell teacher${userRole === 'TEACHER' ? ' no-edit' : ''}`} onClick={handleEditTeacher}>
                     <label htmlFor='teacher'>{userRole === 'TEACHER' ? '' : 'Edit '}Teacher</label>
                     {teacherName}
                 </div>
-                <div className={`students${userRole === 'TEACHER' ? ' no-edit': ''}`} onClick={handleEditStudents}>
+                <div className={`cell textarea students${userRole === 'TEACHER' ? ' no-edit': ''}`} onClick={handleEditStudents}>
                     <label htmlFor='students'>{userRole === 'TEACHER' ? '' : 'Edit '}Students</label>
                     {enrolledStudentsNames.join(', ')}
                 </div>
-                <div className='description'>
+                <div className='cell textarea description'>
                     <label htmlFor='description'>Edit Description</label>
                     <textarea
                         type='text'

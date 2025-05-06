@@ -3,7 +3,7 @@
 #editable-course-row form {
     .description textarea {
         height: 100%;
-        margin-top: 18px;
+        width: 100%;
         border: none;
     }
     .students, .teacher {
@@ -13,16 +13,15 @@
             color: var(--grey);
         }
     }
-    .students select {
-        margin-top: 18px;
-    }
     .no-edit {
         cursor: default;
     }
 }
 
 @media only screen and (max-width: 768px) {
-    #editable-course-row form textarea {
-        margin-top: 0;
+    #editable-course-row form {
+        textarea {
+            min-height: 60px;
+        }
     }
 }

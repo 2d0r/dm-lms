@@ -151,7 +151,7 @@ export default function EditableUserRow({
     return (<>
         <div id='editable-user-row' className='row editable'>
             <form onSubmit={isNewUser ? handleCreateUser : handleEditUser}>
-                <div className='name'>
+                <div className='cell name'>
                     <label htmlFor='name'>Edit Name</label>
                     <input
                         type='text'
@@ -164,7 +164,7 @@ export default function EditableUserRow({
                     />
                 </div>
                 <div className='username-password'>
-                    <div className='username'>
+                    <div className='cell username'>
                         <label htmlFor='username'>Edit Username</label>
                         <input
                             type='text'
@@ -176,7 +176,7 @@ export default function EditableUserRow({
                             value={username}
                         />
                     </div>
-                    <div className='password'>
+                    <div className='cell password'>
                         <label htmlFor='password'>Edit Password</label>
                         <input
                             type='password'
@@ -189,7 +189,7 @@ export default function EditableUserRow({
                         />
                     </div>
                 </div>
-                <div className='role no-edit'>
+                <div className='cell role no-edit'>
                     <label htmlFor='role'>Role</label>
                     {isNewUser ? (
                         <select
@@ -206,7 +206,7 @@ export default function EditableUserRow({
                     : role}
                 </div>
                 <div
-                    className={`courses${role === 'ADMIN' ? ' no-edit' : ''}`}
+                    className={`cell textarea courses${role === 'ADMIN' ? ' no-edit' : ''}`}
                     onClick={handleClickToEditCourses}
                 >
                     <label htmlFor='courses'>{

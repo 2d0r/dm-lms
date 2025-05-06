@@ -15,15 +15,20 @@
     color: white;
     cursor: default;
 
-    > div, form > div {
+    .cell {
         display: flex;
         align-items: center;
         padding: 12px;
         position: relative;
-    }
-    > div:not(:last-child),
-    form > div:not(:last-child) {
-        border-right: var(--border);
+
+        &:not(:last-child) {
+            border-right: var(--border);
+        }
+        &.textarea {
+            padding-top: 20px;
+            overflow: scroll;
+            align-items: flex-start;
+        }
     }
     label {
         position: absolute;
@@ -89,8 +94,7 @@
     .floating-rows {
         margin-top: calc(var(--mobile-header-height) + 24px);
         width: 100%;
-        margin-bottom: 24px; 
-        /* calc(var(--floating-button-height) + 24px); */
+        margin-bottom: 24px;
         align-items: center;
         gap: 24px;
 
@@ -99,18 +103,15 @@
             flex-direction: column;
             height: auto;
 
-            > div:not(:last-child),
-            form > div:not(:last-child) {
+            .cell {
                 border-bottom: var(--border);
                 border-right: none;
                 min-height: 50px;
                 padding: 16px 12px 8px 12px;
             }
-
             .title, .name {
                 background-image: var(--gradient-glass-white);
             }
-
             .buttons {
                 height: 36px;
                 flex-direction: row;
@@ -120,19 +121,22 @@
                     border-right: var(--border);
                 }
             }
-
             form {
                 flex-direction: column;
             }
-
             label {
                 visibility: visible;
                 top: 4px;
             }
-
             textarea, select {
                 width: 100%;
             }
         }
+    }
+}
+
+@media (pointer: coarse) {
+    .floating-rows .row label {
+        visibility: visible;
     }
 }
