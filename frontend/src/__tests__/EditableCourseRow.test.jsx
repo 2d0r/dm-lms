@@ -57,7 +57,7 @@ describe('EditableCourseRow', () => {
             enrolled_students: ['2'],
             enrolledStudentsNames: ['Bob'],
         },
-        onCancelCreate: vi.fn(),
+        onCancel: vi.fn(),
         onCreatedCourse: vi.fn(),
         onEditedCourse: vi.fn(),
     };
@@ -69,7 +69,7 @@ describe('EditableCourseRow', () => {
             teacher: '1',
             enrolled_students: [],
         },
-        onCancelCreate: vi.fn(),
+        onCancel: vi.fn(),
         onCreatedCourse: vi.fn(),
         onEditedCourse: vi.fn(),
     };
@@ -111,10 +111,10 @@ describe('EditableCourseRow', () => {
         });
     });
 
-    test('calls onCancelCreate when cancel is clicked', () => {
+    test('calls onCancel when cancel is clicked', () => {
         render(<EditableCourseRow {...baseProps} />);
         fireEvent.click(screen.getByText('Cancel'));
-        expect(baseProps.onCancelCreate).toHaveBeenCalled();
+        expect(baseProps.onCancel).toHaveBeenCalled();
     });
 
     test('opens Selection Modal when Edit Teacher box is clicked', () => {

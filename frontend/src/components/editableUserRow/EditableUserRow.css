@@ -26,6 +26,9 @@
         .username {
             border-bottom: var(--border);
         }
+        .password {
+            border-right: var(--border);
+        }
     }
     /* .role {
         select {

@@ -5,6 +5,7 @@ import { getUser, getUsers } from '../services/usersServices';
 import { DEFAULT_SELECTION_MODAL_STATE, DEFAULT_USER_STATE } from '../lib/constants';
 import { ACCESS_TOKEN } from '../constants';
 import api from '../api';
+import { Navigate } from 'react-router-dom';
 
 const SessionContext = createContext();
 
@@ -15,6 +16,7 @@ export default function SessionProvider({ children }) {
     const [loading, setLoading] = useState(false);
     const [userState, setUserState] = useState(DEFAULT_USER_STATE);
     const [selectionModal, setSelectionModal] = useState(DEFAULT_SELECTION_MODAL_STATE);
+    // const navigate = useNavigate();
 
     useEffect(() => {
         loadUserDetails();
@@ -23,6 +25,19 @@ export default function SessionProvider({ children }) {
     useEffect(() => {
         if (error) alert(JSON.stringify(error));
     }, [error]);
+
+    // Redirect to login if user logs out (for token expiry)
+    useEffect(() => {
+        if (userState.role) return;
+
+        const timeoutId = setTimeout(() => {
+            if (!userState.role) {
+                return <Navigate to='/login' />
+            }
+        }, 2000);
+
+        return () => clearTimeout(timeoutId);
+    }, [userState.role]);
 
     const loadCourses = async () => {
         const result = await getCourses();

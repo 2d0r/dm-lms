@@ -85,7 +85,7 @@ describe('EditableUserRow', () => {
         expect(screen.getByTestId('selection-modal')).toBeInTheDocument();
     });
 
-    test('calls onCancelCreate when cancel is clicked', () => {
+    test('calls onCancel when cancel is clicked', () => {
         render(<EditableUserRow {...baseProps} />);
         fireEvent.click(screen.getByText('Cancel'));
         expect(baseProps.onCancel).toHaveBeenCalled();

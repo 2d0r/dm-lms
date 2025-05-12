@@ -24,10 +24,6 @@ export default function UsersTable() {
         populateUsers();
     }, []);
 
-    useEffect(() => {
-        console.log('loading', loading)
-    }, [loading])
-
     const fiterCoursesForUser = (user, courses) => {
         if (user.profile?.role === 'STUDENT') {
             return courses

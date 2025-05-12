@@ -25,6 +25,12 @@ export default function CoursesTable() {
         populateCourses();
     }, []);
 
+    useEffect(() => {
+        if (userState.role && userState.id) {
+            populateCourses();
+        }
+    }, [userState]);
+
     const populateCourses = async (options) => {
         let updatedCourses = [];
 
@@ -106,7 +112,7 @@ export default function CoursesTable() {
                         <EditableCourseRow
                             key={`course-${course.id}`}
                             course={course}
-                            onCancelCreate={handleCancelEdit}
+                            onCancel={handleCancelEdit}
                             onEditedCourse={(updatedCourse) => handleEditedCourse(updatedCourse, idx)}
                         />
                     )
@@ -138,7 +144,7 @@ export default function CoursesTable() {
             })}
             {showNewCourseRow && (
                 <EditableCourseRow 
-                    onCancelCreate={() => setShowNewCourseRow(false)}
+                    onCancel={handleCancelEdit}
                     onCreatedCourse={handleCreatedCourse}
                 />
             )}

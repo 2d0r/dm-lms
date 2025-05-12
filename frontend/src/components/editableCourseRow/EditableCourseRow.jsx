@@ -8,7 +8,7 @@ import SelectionModal from '../selectionModal/SelectionModal';
 
 export default function EditableCourseRow({ 
     course={}, 
-    onCancelCreate, onCreatedCourse, onEditedCourse,
+    onCancel, onCreatedCourse, onEditedCourse,
 }) {
 
     const { loadedCourses, loadedUsers, userState, selectionModal, setSelectionModal, setError, setLoadedCourses } = useSession();
@@ -96,7 +96,7 @@ export default function EditableCourseRow({
     };
 
     const handleCancelCreate = () => {
-        onCancelCreate();
+        onCancel();
     };
 
     const handleEditTeacher = () => {
