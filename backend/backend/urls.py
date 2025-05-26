@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
-from api.views import MyTokenObtainPairView
+from api.views.token_views import MyTokenObtainPairView
 # Pre-built views for JWT authentication
 from rest_framework_simplejwt.views import TokenRefreshView
 from django.http import JsonResponse
