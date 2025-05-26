@@ -43,6 +43,7 @@
     align-items: center;
     justify-content: center;
     gap: 24px;
+    text-align: center;
 
     .buttons {
         display: flex;
@@ -58,5 +59,11 @@
             color: var(--lilac);
             border-color: var(--lilac);
         }
+    }
+}
+
+@media only screen and (max-width: 768px) {
+    .popup {
+        width: calc(100vw - 48px);
     }
 }

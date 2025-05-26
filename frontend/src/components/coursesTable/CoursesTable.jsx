@@ -52,6 +52,17 @@ export default function CoursesTable() {
         setCoursesForDisplay(newCoursesForDisplay);
     };
 
+    const handleClickCreateCourse = () => {
+        setShowNewCourseRow(true);
+        // Wait for new card and scroll to it
+        setTimeout(() => {
+            window.scrollTo({
+                top: document.body.scrollHeight,
+                behavior: 'smooth'
+            });
+        }, 100);
+    }
+
     const handleClickDelete = (courseId) => {
         setPopup({ 
             show: true,
@@ -151,7 +162,7 @@ export default function CoursesTable() {
         {!loading && <button 
             className='floating-button fade-in' 
             type='button' 
-            onClick={() => setShowNewCourseRow(true)}
+            onClick={handleClickCreateCourse}
         >Create Course</button>}
         <Popup 
             show={popup.show}

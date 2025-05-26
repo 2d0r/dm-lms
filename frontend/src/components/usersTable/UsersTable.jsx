@@ -51,6 +51,17 @@ export default function UsersTable() {
         setUsersForDisplay(newUsersWithCourseNames);
     };
 
+    const handleClickAddUser = () => {
+        setShowNewUserRow(true);
+        // Wait for new card and scroll to it
+        setTimeout(() => {
+            window.scrollTo({
+                top: document.body.scrollHeight,
+                behavior: 'smooth'
+            });
+        }, 100);
+    }
+
     const handleClickDelete = (userId) => {
         setPopup({ 
             show: true,
@@ -170,7 +181,7 @@ export default function UsersTable() {
         </div>
         <button
             className='floating-button fade-in'
-            onClick={() => setShowNewUserRow(true)}
+            onClick={handleClickAddUser}
         >
             Add User
         </button>

@@ -1,8 +1,7 @@
 @import url('./constants.css');
 
 .floating-button {
-    /* position: absolute;
-    bottom: 60px; */
+    z-index: 20;
     margin-top: 60px;
     border: var(--border);
     background-image: var(--gradient-lilac-black);

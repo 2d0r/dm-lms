@@ -53,10 +53,11 @@
         visibility: hidden;
     }
     .buttons {
+        z-index: 20;
         min-width: 60px;
+        padding: 0;
         display: flex;
         flex-direction: column;
-        padding: 0;
     }
     .buttons button {
         height: 100%;
