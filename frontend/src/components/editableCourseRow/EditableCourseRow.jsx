@@ -51,7 +51,7 @@ export default function EditableCourseRow({
 
     // HANDLERS
 
-    const handleCreateCourse = async (e) => {
+    const handleSubmitNewCourse = async (e) => {
         e.preventDefault();
         let result = await createCourse({ description, title, teacherId });
         if (!result.success) {
@@ -74,7 +74,7 @@ export default function EditableCourseRow({
         onCreatedCourse(newCourse);
     };
 
-    const handleEditCourse = async (e) => {
+    const handleSubmitEditedCourse = async (e) => {
         e.preventDefault();
         const result = await updateCourse({ 
             id: course.id, 
@@ -141,7 +141,7 @@ export default function EditableCourseRow({
 
     return (<>
         <div id='editable-course-row' className='row editable'>
-            <form onSubmit={isNewCourse ? handleCreateCourse : handleEditCourse} >
+            <form onSubmit={isNewCourse ? handleSubmitNewCourse : handleSubmitEditedCourse} >
                 <div className='cell title'>
                     <label htmlFor='title'>Edit Title</label>
                     <input
@@ -158,11 +158,11 @@ export default function EditableCourseRow({
                     <label htmlFor='teacher'>{userRole === 'TEACHER' ? '' : 'Edit '}Teacher</label>
                     {teacherName}
                 </div>
-                <div className={`cell textarea students${userRole === 'TEACHER' ? ' no-edit': ''}`} onClick={handleEditStudents}>
+                <div className={`cell scrollable students${userRole === 'TEACHER' ? ' no-edit': ''}`} onClick={handleEditStudents}>
                     <label htmlFor='students'>{userRole === 'TEACHER' ? '' : 'Edit '}Students</label>
                     {enrolledStudentsNames.join(', ')}
                 </div>
-                <div className='cell textarea description'>
+                <div className='cell scrollable description'>
                     <label htmlFor='description'>Edit Description</label>
                     <textarea
                         type='text'

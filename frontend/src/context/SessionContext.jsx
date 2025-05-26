@@ -28,7 +28,7 @@ export default function SessionProvider({ children }) {
 
     // Redirect to login if user logs out (for token expiry)
     useEffect(() => {
-        if (userState.role) return;
+        if (userState.role || location.pathname.endsWith('login')) return;
 
         const timeoutId = setTimeout(() => {
             if (!userState.role) {

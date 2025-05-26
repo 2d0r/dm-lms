@@ -24,10 +24,24 @@
         &:not(:last-child) {
             border-right: var(--border);
         }
-        &.textarea {
+        &.scrollable {
             padding-top: 20px;
-            overflow: scroll;
+            padding-bottom: 0;
             align-items: flex-start;
+            mask-image: linear-gradient(black 75%, transparent 100%);
+        }
+        .content {
+            overflow-y: scroll;
+            height: 100%;
+            padding-bottom: 12px;
+        }
+        /* Hide scrollbar */
+        .content::-webkit-scrollbar {
+            display: none; /* Chrome, Safari and Opera */
+        }
+        .content {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
         }
     }
     label {
@@ -108,6 +122,11 @@
                 border-right: none;
                 min-height: 50px;
                 padding: 16px 12px 8px 12px;
+
+                &.scrollable {
+                    mask-image: none;
+                    height: 60px;
+                }
             }
             .title, .name {
                 background-image: var(--gradient-glass-white);

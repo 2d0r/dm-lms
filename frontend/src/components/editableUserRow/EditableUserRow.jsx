@@ -206,7 +206,7 @@ export default function EditableUserRow({
                     : role}
                 </div>
                 <div
-                    className={`cell textarea courses${role === 'ADMIN' ? ' no-edit' : ''}`}
+                    className={`cell scrollable courses${role === 'ADMIN' ? ' no-edit' : ''}`}
                     onClick={handleClickToEditCourses}
                 >
                     <label htmlFor='courses'>{

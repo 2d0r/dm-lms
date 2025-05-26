@@ -138,9 +138,9 @@ export default function UsersTable() {
                             <label>Role</label>
                             {user.profile?.role || 'Loading...'}
                         </div>
-                        <div className='cell textarea courses'>
+                        <div className='cell scrollable courses'>
                             <label>Courses</label>
-                            {user.courseNames.join(', ') || 'N/A'}
+                            <content>{user.courseNames.join(', ') || 'N/A'}</content>
                         </div>
                         <div className='buttons'>
                             <button onClick={() => setEditableUserId(user.id)}>

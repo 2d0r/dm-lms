@@ -21,4 +21,6 @@
   --floating-rows-gap: 12px;
   --floating-button-height: 64px;
   --mobile-header-height: 164px;
+
+  --scroll-fade: linear-gradient(0deg, rgba(0,0,0,0) 0%, var(--grey) 100%);
 }

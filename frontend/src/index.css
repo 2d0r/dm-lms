@@ -55,17 +55,24 @@ select {
 }
 
 
-
-
 /* Utility classes */
 
 .no-edit {
     cursor: default;
 }
-
 .delete-button:hover:not(.disabled) {
     color: #ff7575!important;
 }
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+
+/* Global animations */
 
 .fade-in {
     opacity: 0;

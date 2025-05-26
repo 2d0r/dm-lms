@@ -127,13 +127,13 @@ export default function CoursesTable() {
                             <label>Teacher</label>
                             {course.teacherName}
                         </div>
-                        <div className='cell textarea students'>
+                        <div className='cell scrollable students'>
                             <label>Students</label>
-                            {course.enrolledStudentsNames?.join(', ') || ''}
+                            <div className='content'>{course.enrolledStudentsNames?.join(', ') || ''}</div>
                         </div>
-                        <div className='cell textarea description'>
+                        <div className='cell scrollable description'>
                             <label>Description</label>
-                            {course.description}
+                            <div className='content'>{course.description}</div>
                         </div>
                         <div className='buttons'>
                             <button onClick={() => setEditableCourseId(course.id)}>Edit</button>
