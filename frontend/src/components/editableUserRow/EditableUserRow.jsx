@@ -7,13 +7,14 @@ import { useSession } from '../../context/SessionContext';
 import { useGetUserDisplayData } from '../../hooks/userHooks';
 import SelectionModal from '../selectionModal/SelectionModal';
 import { useGetCourseNameFromId } from '../../hooks/courseHooks';
+import { DEFAULT_SELECTION_MODAL_STATE } from '../../lib/constants';
 
 export default function EditableUserRow({
     user = { profile: {} }, 
     onCreatedUser, onEditedUser, onEditCourses, onCancel, 
 }) {
 
-    const { loadedUsers, reloadUser, selectionModal, setError } = useSession();
+    const { loadedUsers, reloadUser, selectionModal, setSelectionModal, setError } = useSession();
     const [name, setName] = useState(user.first_name || '');
     const [username, setUsername] = useState(user.username || '');
     const [role, setRole] = useState(user.profile?.role || 'STUDENT');
@@ -51,7 +52,7 @@ export default function EditableUserRow({
         updateUserForDisplay();
     }, [loadedUsers]);
 
-    const handleCreateUser = async e => {
+    const handleSubmitNewUser = async e => {
         e.preventDefault();
         const result1 = await createUser({
             name,
@@ -65,7 +66,8 @@ export default function EditableUserRow({
         }
         const newUserId = result1.data.id;
 
-        const courseSelection = selectionModal.type === 'selectCoursesForStudent' ? selectionModal.selectedIds : null;
+        // const courseSelection = selectionModal.type === 'selectCoursesForStudent' ? selectionModal.selectedIds : null;
+        const courseSelection = courseIds;
         if (courseSelection) {
             const result2 = await updateUserCourses({ userId: newUserId, courseIds: courseSelection, role });
             if (!result2.success) {
@@ -74,10 +76,11 @@ export default function EditableUserRow({
         }
         
         const newUser = reloadUser(newUserId);
+        setSelectionModal(DEFAULT_SELECTION_MODAL_STATE);
         onCreatedUser(newUser);
     };
 
-    const handleEditUser = async (e) => {
+    const handleSubmitEditedUser = async (e) => {
         e.preventDefault();
         const result1 = await updateUser({
             id: user.id,
@@ -95,7 +98,7 @@ export default function EditableUserRow({
             await updateUserCourses({ userId: user.id, courseIds: [], role: user.profile.role });
         }
 
-        const courseSelection = selectionModal.selectedIds;
+        const courseSelection = courseIds;
         const result2 = await updateUserCourses({ userId: user.id, courseIds: courseSelection, role });
         if (!result2.success) {
             setError(result2.error || 'Something went wrong while changing course\'s teacher');
@@ -104,6 +107,7 @@ export default function EditableUserRow({
         updateUserForDisplay();
         const updatedUser = reloadUser(user.id);
         onEditedUser(updatedUser);
+        setSelectionModal(DEFAULT_SELECTION_MODAL_STATE);
     };
 
     const handleRoleChange = (e) => {
@@ -127,6 +131,7 @@ export default function EditableUserRow({
     };
 
     const handleUpdatedSelection = async ({ type, selectedIds }) => {
+        console.log('handleUpdatedSelection');
         if (type === 'selectCoursesForStudent') {
             setCourseIds(selectedIds);
             const courseNames = await Promise.all(selectedIds.map(async (courseId) => {
@@ -150,7 +155,7 @@ export default function EditableUserRow({
 
     return (<>
         <div id='editable-user-row' className='row editable'>
-            <form onSubmit={isNewUser ? handleCreateUser : handleEditUser}>
+            <form onSubmit={isNewUser ? handleSubmitNewUser : handleSubmitEditedUser}>
                 <div className='cell name'>
                     <label htmlFor='name'>Edit Name</label>
                     <input

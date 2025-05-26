@@ -92,7 +92,6 @@ export default function CoursesTable() {
             updatedCourses: [...coursesForDisplay.slice(0, idx), updatedCourse, ...coursesForDisplay.slice(idx + 1)],
         });
         setEditableCourseId(null);
-        setShowNewCourseRow(false);
         setSelectionModal(DEFAULT_SELECTION_MODAL_STATE);
     }
 
