@@ -67,10 +67,10 @@ export default function EditableCourseRow({
         }
         newCourse = result.data;
 
-        setLoadedCourses(prev => ({
+        setLoadedCourses(prev => ([
             ...prev.filter(el => el.id !== newCourse.id),
             newCourse,
-        }));
+        ]));
         onCreatedCourse(newCourse);
     };
 
@@ -84,12 +84,13 @@ export default function EditableCourseRow({
             studentIds: enrolledStudents,
         });
         if (result.success) {
-            const udpatedCourse = result.data;
+            const updatedCourse = result.data;
+            console.log('loadedCourses', loadedCourses);
             setLoadedCourses(prev => [
-                ...prev.filter(el => el.id !== udpatedCourse.id),
-                updateCourse,
+                ...prev.filter(el => el.id !== updatedCourse.id),
+                updatedCourse,
             ]);
-            onEditedCourse(udpatedCourse);
+            onEditedCourse(updatedCourse);
         } else {
             alert(result.error || 'Something went wrong while editing course');
         }
