@@ -140,7 +140,7 @@ export default function UsersTable() {
                         </div>
                         <div className='cell scrollable courses'>
                             <label>Courses</label>
-                            <content>{user.courseNames.join(', ') || 'N/A'}</content>
+                            <div className='content'>{user.courseNames.join(', ') || 'N/A'}</div>
                         </div>
                         <div className='buttons'>
                             <button onClick={() => setEditableUserId(user.id)}>
